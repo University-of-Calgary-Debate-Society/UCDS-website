@@ -1,4 +1,17 @@
-# Welcome to your organization's demo respository
-This code repository (or "repo") is designed to demonstrate the best GitHub has to offer with the least amount of noise.
+# UCDS Website
 
-The repo includes an `index.html` file (so it can render a web page), two GitHub Actions workflows, and a CSS stylesheet dependency.
+A starter static website scaffold for the UCDS project.
+
+## Files
+
+- `index.html` — main page structure
+- `styles.css` — responsive visual styles
+- `script.js` — simple page script
+
+## Getting Started
+
+Open this folder in VS Code and preview `index.html` in your browser. For local development, use a static file server such as Live Server.
+
+## Notes
+
+This is a foundation for a website project. Replace content and update styles as needed for the final UCDS design.
