@@ -1,13 +1,10 @@
 # UCDS Website
 
-Static website designed to consolidate and project a professional appearance for the debate club. 
+A starter static website scaffold for the UCDS project.
 
 ## Files
 
 - `index.html` — main page structure
-- `blog.html` — blog posts retrieved from Google Drive
-- `connect.html` — exec profiles and social media links
-- `blog.html` — newsletter
 - `styles.css` — responsive visual styles
 - `script.js` — simple page script
 
