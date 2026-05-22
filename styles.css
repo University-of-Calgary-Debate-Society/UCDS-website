@@ -24,6 +24,14 @@ body {
   animation: fadeInPage 0.8s ease-in-out forwards;
 }
 
+body.events-body {
+  background-image: url('./photos/background5.jpg');
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
 .container {
   width: min(1100px, calc(100% - 2rem));
   margin: 0 auto;
@@ -36,6 +44,10 @@ body {
   top: 0;
   z-index: 100;
   height: 5rem;
+}
+
+.join-body .site-header {
+  position: relative;
 }
 
 .site-header .container {
@@ -103,7 +115,7 @@ nav a:hover {
 .hero {
   padding: 8rem 0 5rem;
   /* make the image span the full width of the viewport */
-  background: linear-gradient(180deg, rgba(4,23,43,0.55) 0%, rgba(11,46,89,0.45) 45%, rgba(13,62,120,0.45) 100%), url("./photos/background1.jpg");
+  background: linear-gradient(180deg, rgba(4, 23, 43, 0.233) 0%, rgba(11, 46, 89, 0.274) 45%, rgba(13, 61, 120, 0.199) 100%), url("./photos/background1.jpg");
   background-repeat: no-repeat;
   background-position: center top;
   background-size: cover;
@@ -146,10 +158,10 @@ nav a:hover {
 .hero-intro {
   max-width: 48rem;
   width: min(90%, 48rem);
-  background: rgba(0, 0, 0, 0.25);
+  background: #112854;
   padding: 3rem 2rem;
   border-radius: 1.25rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: none;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -160,6 +172,18 @@ nav a:hover {
   z-index: 2;
   opacity: 0;
   animation: fadeInUpIntro 1s ease-out 1s forwards;
+  filter: drop-shadow(8px 6px 0px #2563eb);
+}
+
+.hero-intro::after {
+  content: '';
+  position: absolute;
+  bottom: -70px;
+  border-width: 80px 80px 0;
+  border-style: solid;
+  border-color: #112854 transparent transparent transparent;
+  display: block;
+  width: 0;
 }
 
 .hero-logo {
@@ -268,7 +292,7 @@ nav a:hover {
 .hero-card ul {
   margin: 1.25rem 0 0;
   padding-left: 1.25rem;
-  color: #475569;
+  color: #000000;
 }
 
 .hero-card li {
@@ -315,10 +339,12 @@ nav a:hover {
   margin: 0;
   font-size: clamp(1.25rem, 2vw, 1rem);
   color: #000000;
+  text-align: center;
 }
 
 .section {
   padding: 5.5rem 0;
+  background-color: #0b1a3a;
 }
 
 .section-header {
@@ -334,6 +360,12 @@ nav a:hover {
   text-align: center;
 }
 
+.spacer {
+  height: 16rem;
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
 .title-box {
   display: inline-block;
   padding: 0.85rem 2.25rem;
@@ -347,6 +379,7 @@ nav a:hover {
 
 .section-header.straddle,
 #about .section-header,
+#mission .section-header,
 #calendar .section-header {
   margin-top: -5.5rem;
   margin-bottom: 0;
@@ -355,6 +388,7 @@ nav a:hover {
 
 .section-header.straddle .title-box,
 #about .section-header h2,
+#mission .section-header h2,
 #calendar .section-header h2 {
   display: inline-block;
   margin: 0 0 3rem;
@@ -372,11 +406,13 @@ nav a:hover {
 @media (max-width: 860px) {
   .title-box,
   #about .section-header h2,
+  #mission .section-header h2,
   #calendar .section-header h2 {
     padding: 0.75rem 1.75rem;
   }
   .section-header.straddle .title-box,
   #about .section-header h2,
+  #mission .section-header h2,
   #calendar .section-header h2 {
     margin: 0 0 2.5rem;
   }
@@ -425,6 +461,12 @@ nav a:hover {
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
 
+.cards.social-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
 .cta-banner {
   background: linear-gradient(135deg, #2563eb, #0f3460);
   color: #ffffff;
@@ -452,10 +494,10 @@ nav a:hover {
   border: 1px solid #d1d5db;
   border-radius: 1.25rem;
   padding: 2rem;
-  color: #0f172a;
+  color: #000000;
 }
 
-.team-grid {
+.cards.team-grid {
   display: grid;
   gap: 3rem;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -482,13 +524,14 @@ nav a:hover {
   background: #ffffff;
   border: 1px solid #d1d5db;
   border-radius: 1rem;
-  color: #0f172a;
+  color: #000000;
   width: 100%;
 }
 
 .profile-avatar {
-  width: 170px;
-  height: 170px;
+  width: 210px;
+  height: 210px;
+  margin-bottom: 2rem;
   background-color: #dbe9ff;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Ccircle cx='60' cy='60' r='58' fill='%232563eb'/%3E%3Cpath fill='%23ffffff' d='M60 34a18 18 0 1 0 0 36 18 18 0 0 0 0-36zm0 50c-16.1 0-29.2 11.7-31.2 26.9a3 3 0 0 0 3 3.1h56.4a3 3 0 0 0 3-3.1C89.2 95.7 76.1 84 60 84z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
@@ -504,6 +547,7 @@ nav a:hover {
   font-size: 1rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+  text-align: center;
 }
 
 .profile-email-text {
@@ -676,7 +720,7 @@ details[open] summary ~ * {
 .card,
 .hero-card,
 .contact-card {
-  color: #0f172a;
+  color: #000000;
 }
 
 .card {
@@ -684,24 +728,63 @@ details[open] summary ~ * {
   border: 1px solid #d1d5db;
   border-radius: 1rem;
   padding: 1.75rem;
-  color: #0f172a;
+  color: #000000;
+}
+
+.events-body .card,
+.join-body .card,
+.contact-card,
+.social-grid .card {
+  box-shadow: 8px 8px 0px #204a99;
+  transition: opacity 0.8s ease-out, transform 1s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 1s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.events-body .card:hover,
+.join-body .card:hover,
+.contact-card:hover,
+.social-grid .card:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: 12px 12px 0px #3b82f6;
 }
 
 .card h3 {
   margin-top: 0;
 }
 
+.card p {
+  color: #6f6f6f;
+  text-align: left;
+}
+
 .social-card {
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 1rem;
-  align-items: center;
+  align-items: stretch;
+}
+
+.social-card > div {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.social-card p {
+  color: #6f6f6f;
+  text-align: left;
+  margin-bottom: 1.5rem;
+}
+
+.social-card .button {
+  margin-top: auto;
+  align-self: flex-end;
 }
 
 .social-logo {
   width: 3rem;
   height: 3rem;
   object-fit: contain;
+  align-self: flex-start;
 }
 
 .blog-card {
@@ -880,6 +963,50 @@ details[open] summary ~ * {
   animation: fadeInLeftScroll 0.8s ease-out forwards;
 }
 
+@keyframes fadeInScroll {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in.visible {
+  animation: fadeInScroll 0.8s ease-out forwards;
+}
+
+@keyframes fadeInUpLinear {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up-linear.visible {
+  animation: fadeInUpLinear 0.8s linear forwards;
+}
+
+/* We use transitions instead of animations to prevent hover snapping */
+.lift-out-shadow {
+  opacity: 0;
+  transform: translate(8px, 8px);
+  box-shadow: 0px 0px 0px #204a99;
+  transition: opacity 0.8s ease-out, transform 1s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 1s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.lift-out-shadow.visible {
+  opacity: 1;
+  transform: translate(0, 0);
+  box-shadow: 8px 8px 0px #204a99;
+}
+
 /* Parallax Section & Floating Profiles */
 .parallax-section {
   background: linear-gradient(rgba(4, 23, 43, 0.7), rgba(4, 23, 43, 0.7)), url("./photos/background2.jpg");
@@ -905,4 +1032,141 @@ details[open] summary ~ * {
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+}
+
+.connect-page-banner .button-group {
+  transform: translateY(-5rem);
+}
+
+.events-page-banner {
+  height: 70vh;
+  min-height: 400px;
+  background-image: linear-gradient(rgba(4, 23, 43, 0.267), rgba(4, 23, 43, 0.116)), url('./photos/background4.jpg');
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* Global Animation Toggle */
+body.no-animations *,
+body.no-animations *::before,
+body.no-animations *::after {
+  animation-duration: 0.01ms !important;
+  animation-delay: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  transition-delay: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* Special Join Button */
+.special-join-button {
+  font-size: 1.5rem !important;
+  padding: 1.25rem 3.5rem !important;
+  transition: background-color 0.4s ease, box-shadow 0.4s ease, color 0.4s ease !important;
+  position: relative;
+  z-index: 102;
+  will-change: transform;
+}
+
+.special-join-button:hover {
+  background-color: #60a5fa !important;
+  box-shadow: 0 0 50px 20px rgba(96, 165, 250, 0.75) !important;
+  color: #ffffff !important;
+}
+
+#member-card {
+  position: relative;
+  z-index: 102;
+}
+
+/* Mute Toggle */
+.mute-container {
+  text-align: center;
+  padding-top: 2rem;
+  position: relative;
+  z-index: 100;
+}
+
+.mute-toggle-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #f6f6f6;
+  color: #000000;
+  padding: 0.5rem 1.25rem;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid #d1d5db;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transition: background-color 0.2s ease;
+}
+
+.mute-toggle-label:hover {
+  background: #e5e7eb;
+}
+
+/* Easter Egg Black Hole */
+@keyframes collapseToVoid {
+  0% { transform: scale(1.5) rotate(0deg); opacity: 1; filter: brightness(1); }
+  30% { transform: scale(0.8) rotate(180deg); opacity: 1; filter: brightness(0); background-color: #000000; color: transparent; box-shadow: none; }
+  100% { transform: scale(0) rotate(720deg); opacity: 1; filter: brightness(0); background-color: #000000; color: transparent; box-shadow: none; }
+}
+
+.collapsing-btn {
+  animation: collapseToVoid 1.5s cubic-bezier(0.5, 0, 0.2, 1) forwards !important;
+  pointer-events: none;
+  color: transparent !important;
+}
+
+.bh-shockwave {
+  position: absolute;
+  width: 20px; height: 20px;
+  margin-left: -10px; margin-top: -10px;
+  border-radius: 50%;
+  background: transparent;
+  border: 4px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 40px 20px rgba(200, 220, 255, 0.5), inset 0 0 40px 20px rgba(200, 220, 255, 0.5);
+  z-index: 1005;
+  pointer-events: none;
+  animation: shockwaveExpand 2.5s cubic-bezier(0.1, 0.8, 0.1, 1) forwards;
+}
+@keyframes shockwaveExpand {
+  0% { transform: scale(1); opacity: 1; border-width: 10px; }
+  100% { transform: scale(300); opacity: 0; border-width: 0px; }
+}
+
+/* Void Button Easter Egg */
+#void-btn {
+  position: fixed;
+  z-index: 105;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translate(-50%, -50%);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.void-text {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 6rem;
+  white-space: nowrap;
+  font-family: 'Courier New', Courier, monospace;
+  color: #ffffff;
+  font-size: 1.15rem;
+  letter-spacing: 0.15em;
+  opacity: 0;
+  animation: fadeInPage 2s ease-out 5s forwards;
+}
+
+.void-hitbox {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
 }

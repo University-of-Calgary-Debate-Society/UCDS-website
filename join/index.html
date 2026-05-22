@@ -18,7 +18,7 @@
   </script>
   <!-- End MailerLite Universal -->
 </head>
-<body>
+<body class="join-body">
   <header class="site-header">
     <div class="container header-inner">
       <a class="brand" href="/">
@@ -37,53 +37,42 @@
   </header>
 
   <main>
+    <div class="mute-container">
+      <label class="mute-toggle-label">
+        <input type="checkbox" id="muteToggle" />
+        Mute Audio
+      </label>
+    </div>
+
     <section class="section">
       <div class="container">
         <div class="section-header">
           <h1>Join the Debate Society</h1>
         </div>
         <p class="section-copy">Become a part of our vibrant community. Whether you are an experienced debater or just starting, UCDS offers a platform to grow, learn, and compete. Joining is easy and opens up a world of opportunities.</p>
-        <div class="cards feature-grid" style="margin-top: 3rem;">
-            <article class="card">
+        <div style="max-width: 600px; margin: 3rem auto 0;">
+            <article id="member-card" class="card">
                 <h3>Become a Member</h3>
-                <p>Sign up through the university portal to become an official member. Membership gives you access to all our training sessions, workshops, and social events.</p>
-                <div class="button-group">
-                    <a class="button" href="https://docs.google.com/forms/d/e/1FAIpQLScF8JDuM1xkYcl47M0PffvOLgXThYukyjkn3FaghPwiPgIsNg/viewform" target="_blank" rel="noreferrer">Sign Up Now</a>
-                </div>
+                <p>Sign up through the google form to become an official member. All members have access to all our training sessions, workshops, and social events. To vote and compete, you must pay club fees.</p>
             </article>
+        </div>
+
+        <section class="spacer"></section>
+
+        <div style="text-align: center;">
+            <a class="button special-join-button" href="https://docs.google.com/forms/d/e/1FAIpQLScF8JDuM1xkYcl47M0PffvOLgXThYukyjkn3FaghPwiPgIsNg/viewform" target="_blank" rel="noreferrer">Commence</a>
+        </div>
+
+        <section class="spacer"></section>
+
+        <div style="max-width: 600px; margin: 0 auto;">
             <article class="card">
                 <h3>Join our Newsletter</h3>
-                <p>Stay in the loop with our weekly newsletter. Get updates on upcoming events, tournament results, and debate topics delivered straight to your inbox.</p>
+                <p>Stay in the loop with our monthly newsletter. Get updates on upcoming events, tournament results, general details, and debate resources delivered straight to your inbox.</p>
                 <div class="button-group">
                     <a class="button button-secondary" href="javascript:void(0);" id="openNewsletter">Subscribe</a>
                 </div>
             </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section alt">
-      <div class="container">
-        <div class="section-header straddle">
-          <h1 class="title-box">Connect with us online.</h1>
-        </div>
-        <div class="cards feature-grid">
-          <article class="card social-card">
-            <img src="../photos/Instagram_icon.png" alt="Instagram logo" class="social-logo" />
-            <div>
-              <h3>Instagram</h3>
-              <p>Follow the University of Calgary Debate Society for news, events, and updates.</p>
-              <a class="button" href="https://www.instagram.com/ucalgary.debate/" target="_blank" rel="noreferrer">Visit Instagram</a>
-            </div>
-          </article>
-          <article class="card social-card">
-            <img src="../photos/discord.png" alt="Discord logo" class="social-logo" />
-            <div>
-              <h3>Discord</h3>
-              <p>Join our Discord community for discussion, announcements, and debate sessions.</p>
-              <a class="button" href="https://discord.gg/5TAG3c8TwC" target="_blank" rel="noreferrer">Join Discord</a>
-            </div>
-          </article>
         </div>
       </div>
     </section>
@@ -118,6 +107,11 @@
       <div class="ml-embedded" data-form="XfwsT4"></div>
     </div>
   </div>
+
+  <audio id="background-audio" src="../audio/button_proximity_1.mp3" loop autoplay></audio>
+  <audio id="layer-audio" src="../audio/button_proximity_2.mp3" loop autoplay></audio>
+  <audio id="layer-audio-3" src="../audio/button_proximity_3.mp3" loop autoplay></audio>
+  <audio id="easter-egg-audio" src="../audio/blackhole_easteregg.mp3" loop></audio>
 
   <script src="../script.js"></script>
 </body>
