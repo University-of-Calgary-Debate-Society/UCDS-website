@@ -3,38 +3,89 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Void</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background-color: #000000;
-      color: #ffffff;
-      font-family: "Courier New", Courier, monospace;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      overflow: hidden;
-    }
-    .void-content {
-      text-align: center;
-      max-width: 600px;
-      padding: 2rem;
-      opacity: 0;
-      animation: fadeIn 3s ease-in-out forwards;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-  </style>
+  <meta property="og:image" content="./photos/logo_seo.png" />
+  <meta name="twitter:image" content="./photos/logo_seo.png" />
+  <title>University of Calgary Debate Society | Home</title>
+  <link rel="icon" href="./photos/logo.jpg" type="image/jpeg" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="void-content">
-    <p>you have collapsed the boundaries.</p>
-    <br><br>
-    <p>there is nothing here but silence.</p>
-  </div>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="/">
+        <img src="./photos/logo.jpg" alt="University of Calgary Debate Society logo" class="logo-image" />
+        <span class="brand-text">University of Calgary Debate Society</span>
+      </a>
+      <nav>
+        <a href="/">Home</a>
+        <a href="events">Events</a>
+        <a href="blog">Blog</a>
+        <a href="resources">Resources</a>
+        <a href="connect">Connect</a>
+        <a href="join" class="nav-join-button">Join</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-center">
+        <div class="hero-intro">
+          <img src="./photos/logo.jpg" alt="UCDS Logo" class="hero-logo" />
+          <span class="eyebrow">Welcome to UCDS</span>
+          <h1>University of Calgary Debate Society</h1>
+          <p class="hero-text">Empowering students through discourse, critical thinking, and competitive debate.</p>
+          <div class="hero-actions">
+            <a class="button" href="events">Events</a>
+            <a class="button button-secondary" href="join">Get Involved</a>
+            <button id="toggleAnimationsBtn" class="button button-secondary" style="font-family: inherit; font-size: 1rem;">Disable Animations</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="section">
+      <div class="container">
+        <div class="section-header straddle">
+          <h2 class="title-box">About Us</h2>
+        </div>
+        <p class="section-copy" style="margin-bottom: 1.5rem;">The University of Calgary Debate Society (UCDS) is a vibrant community of students passionate about discussion and competitive debate. We welcome members of all experience levels to join us in improving their public speaking, critical thinking, and advocacy skills.</p>
+        <p class="section-copy">Our club hosts regular meetings, workshops, and participates in regional and national tournaments. Whether you're a seasoned debater or completely new to the activity, we welcome all students interested in debate and intellectual discourse.</p>
+      </div>
+    </section>
+
+    <section id="mission" class="section alt">
+      <div class="container">
+        <div class="section-header straddle">
+          <h2 class="title-box">Our Mission</h2>
+        </div>
+        <p class="section-copy">Our mission is to foster a supportive and intellectually stimulating environment where students can engage with complex issues, develop their analytical abilities, and represent the University of Calgary at regional, national, and international debate tournaments.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>&copy; <span id="currentYear"></span> UCDS. All rights reserved.</p>
+      <div class="footer-socials">
+        <a href="https://www.instagram.com/ucalgary.debate/" target="_blank" rel="noreferrer" aria-label="Instagram">
+          <img src="./photos/instagram_footer.png" alt="Instagram" class="footer-social-icon" />
+        </a>
+        <a href="https://www.facebook.com/DebateUofC/" target="_blank" rel="noreferrer" aria-label="Facebook">
+          <img src="./photos/facebook_footer.png" alt="Facebook" class="footer-social-icon" />
+        </a>
+        <a href="https://linktr.ee/ucds.debate" target="_blank" rel="noreferrer" aria-label="Linktree">
+          <img src="./photos/linktree_footer.png" alt="Linktree" class="footer-social-icon" />
+        </a>
+        <a href="https://x.com/UCDebate" target="_blank" rel="noreferrer" aria-label="X (Twitter)">
+          <img src="./photos/x_footer.png" alt="X (Twitter)" class="footer-social-icon" />
+        </a>
+        <a href="https://discord.gg/5TAG3c8TwC" target="_blank" rel="noreferrer" aria-label="Discord">
+          <img src="./photos/discord_footer.png" alt="Discord" class="footer-social-icon" />
+        </a>
+      </div>
+    </div>
+  </footer>
+  <script src="script.js"></script>
 </body>
 </html>
