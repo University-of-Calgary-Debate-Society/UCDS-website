@@ -5,7 +5,9 @@ async function renderBlogPosts() {
   }
 
   try {
-    const response = await fetch("./data/blog-posts.json");
+    const isSubpage = document.querySelector('script[src="../script.js"]') !== null;
+    const basePath = isSubpage ? '../' : './';
+    const response = await fetch(basePath + "data/blog-posts.json");
     if (!response.ok) throw new Error("Could not fetch blog posts");
     const blogPosts = await response.json();
 
