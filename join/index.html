@@ -37,7 +37,11 @@
   </header>
 
   <main>
-    <div class="mute-container">
+    <div class="mute-container" style="display: flex; gap: 1rem; justify-content: center;">
+      <label class="mute-toggle-label">
+        <input type="checkbox" id="effectsToggle" />
+        Enable Special Effects
+      </label>
       <label class="mute-toggle-label">
         <input type="checkbox" id="muteToggle" />
         Mute Audio
@@ -60,19 +64,7 @@
         <section class="spacer"></section>
 
         <div style="text-align: center;">
-            <a class="button special-join-button" href="https://docs.google.com/forms/d/e/1FAIpQLScF8JDuM1xkYcl47M0PffvOLgXThYukyjkn3FaghPwiPgIsNg/viewform" target="_blank" rel="noreferrer">Commence</a>
-        </div>
-
-        <section class="spacer"></section>
-
-        <div style="max-width: 600px; margin: 0 auto;">
-            <article class="card">
-                <h3>Join our Newsletter</h3>
-                <p>Stay in the loop with our monthly newsletter. Get updates on upcoming events, tournament results, general details, and debate resources delivered straight to your inbox.</p>
-                <div class="button-group">
-                    <a class="button button-secondary" href="javascript:void(0);" id="openNewsletter">Subscribe</a>
-                </div>
-            </article>
+            <a class="button special-join-button" href="welcome/" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLScF8JDuM1xkYcl47M0PffvOLgXThYukyjkn3FaghPwiPgIsNg/viewform', '_blank');">Commence</a>
         </div>
       </div>
     </section>

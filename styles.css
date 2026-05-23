@@ -1039,7 +1039,7 @@ details[open] summary ~ * {
 }
 
 .events-page-banner {
-  height: 70vh;
+  height: 40vh;
   min-height: 400px;
   background-image: linear-gradient(rgba(4, 23, 43, 0.267), rgba(4, 23, 43, 0.116)), url('./photos/background4.jpg');
   background-attachment: fixed;

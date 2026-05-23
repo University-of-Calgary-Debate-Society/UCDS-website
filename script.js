@@ -414,7 +414,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
 
-      if (document.body.classList.contains('no-animations')) {
+      const effectsToggle = document.getElementById('effectsToggle');
+      const effectsEnabled = effectsToggle ? effectsToggle.checked : true;
+
+      if (document.body.classList.contains('no-animations') || !effectsEnabled) {
         currentScale = targetScale; // Snap to scale instantly if animations are disabled
         if (!easterEggTriggered) specialBtn.style.transform = `scale(${currentScale})`;
       } else {
@@ -432,10 +435,12 @@ document.addEventListener("DOMContentLoaded", () => {
       // Visual fade logic with animated stars
       if (fadeOverlay) {
         let fadeOpacity = 0;
-        if (easterEggTriggered) {
-          fadeOpacity = 1; // Permanently black
-        } else if (currentDistance <= 600) {
-          fadeOpacity = 1 - Math.max(0, (currentDistance - 250) / 350); // Fade in black void
+        if (effectsEnabled) {
+          if (easterEggTriggered) {
+            fadeOpacity = 1; // Permanently black
+          } else if (currentDistance <= 600) {
+            fadeOpacity = 1 - Math.max(0, (currentDistance - 250) / 350); // Fade in black void
+          }
         }
         fadeOverlay.style.opacity = fadeOpacity;
 
@@ -507,16 +512,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 // Respawn outside the screen when they reach the button
                 if (dist < 40) {
+                  const currentDocW = Math.max(document.documentElement.scrollWidth, window.innerWidth);
+                  const currentDocH = Math.max(document.documentElement.scrollHeight, window.innerHeight);
                   if (Math.random() > 0.5) {
                     star.x = Math.random() > 0.5 ? -20 : canvasW + 20;
-                    star.y = Math.random() * canvasH;
+                    star.y = (Math.random() * currentDocH) - window.scrollY;
                   } else {
-                    star.x = Math.random() * canvasW;
+                    star.x = (Math.random() * currentDocW) - window.scrollX;
                     star.y = Math.random() > 0.5 ? -20 : canvasH + 20;
                   }
                   // Pick a new random base position for when hover ends
-                  star.baseX = Math.random() * canvasW;
-                  star.baseY = Math.random() * canvasH;
+                  star.baseX = (Math.random() * currentDocW) - window.scrollX;
+                  star.baseY = (Math.random() * currentDocH) - window.scrollY;
                   star.vx = 0;
                   star.vy = 0;
                   star.history = []; // Clear history on teleport
@@ -668,7 +675,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const isMuted = muteToggle && muteToggle.checked;
         
         if (easterEggTriggered) targetVol1 = 0;
-        if (isMuted) targetVol1 = 0;
+        if (isMuted || !effectsEnabled) targetVol1 = 0;
         
         backgroundAudio.volume += (targetVol1 - backgroundAudio.volume) * 0.1;
 
@@ -681,7 +688,7 @@ document.addEventListener("DOMContentLoaded", () => {
               targetVol2 = ((currentDistance - 250) / 250) * 0.5; // Fade out from 500px to 250px
             }
           }
-          if (isMuted) targetVol2 = 0;
+          if (isMuted || !effectsEnabled) targetVol2 = 0;
           layerAudio.volume += (targetVol2 - layerAudio.volume) * 0.1; // Smooth volume transition
         }
         if (layerAudio3) {
@@ -689,12 +696,12 @@ document.addEventListener("DOMContentLoaded", () => {
           if (!easterEggTriggered) {
             targetVol3 = currentDistance <= 500 ? 1 - (currentDistance / 500) : 0; // Fade in from 500px to max loudness (1.0)
           }
-          if (isMuted) targetVol3 = 0;
+          if (isMuted || !effectsEnabled) targetVol3 = 0;
           layerAudio3.volume += (targetVol3 - layerAudio3.volume) * 0.1; // Smooth volume transition
         }
         if (easterEggAudio) {
           let targetVolEE = easterEggTriggered ? 1.0 : 0;
-          if (isMuted) targetVolEE = 0;
+          if (isMuted || !effectsEnabled) targetVolEE = 0;
           easterEggAudio.volume += (targetVolEE - easterEggAudio.volume) * 0.05; // Fade in gradually
         }
       }
