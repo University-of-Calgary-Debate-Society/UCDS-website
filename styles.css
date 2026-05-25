@@ -645,13 +645,30 @@ details[open] summary ~ * {
 }
 
 .profile-details details[open] summary ~ * {
+  animation: profileDropdownExpand 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   max-height: 400px;
   opacity: 1;
   transform: translateY(0);
   margin-top: 0.5rem;
 }
 
+@keyframes profileDropdownExpand {
+  from {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-8px);
+    margin-top: 0;
+  }
+  to {
+    max-height: 400px;
+    opacity: 1;
+    transform: translateY(0);
+    margin-top: 0.5rem;
+  }
+}
+
 .profile-details details.closing[open] summary ~ * {
+  animation: none;
   max-height: 0;
   opacity: 0;
   transform: translateY(-8px);
@@ -1169,4 +1186,47 @@ body.no-animations *::after {
   width: 90px;
   height: 90px;
   border-radius: 50%;
+}
+
+/* Development Warning Banner */
+.dev-warning {
+  position: fixed;
+  top: 1.25rem;
+  left: 1.25rem;
+  background: #ffffff;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  z-index: 9999;
+  max-width: 320px;
+  transition: opacity 0.5s ease;
+}
+
+.dev-warning.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.dev-warning-icon {
+  background-color: #b8860b; /* Dark yellow */
+  color: #ffffff;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.15rem;
+  flex-shrink: 0;
+}
+
+.dev-warning-text {
+  color: #000000;
+  font-family: sans-serif;
+  font-size: 0.85rem;
+  line-height: 1.3;
 }

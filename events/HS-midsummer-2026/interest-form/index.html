@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta property="og:image" content="../../../photos/logo_seo.png" />
+  <meta name="twitter:image" content="../../../photos/logo_seo.png" />
+  <title>University of Calgary Debate Society | Expression of Interest</title>
+  <link rel="icon" href="../../../photos/logo.jpg" type="image/jpeg" />
+  <link rel="stylesheet" href="../../../styles.css" />
+  <style>
+    .form-container {
+      max-width: 650px;
+      margin: 40px auto;
+      background-color: #ffffff;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      border-top: 6px solid var(--ucds-blue, #1d224c);
+    }
+    .form-title {
+      background-color: #000000;
+      color: #ffffff;
+      padding: 12px 15px;
+      margin-top: -10px; /* Offset to bring it closer to the top of the container */
+      margin-bottom: 10px;
+      text-align: center;
+      border-radius: 4px;
+    }
+    .form-subtitle {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #555;
+    }
+    .form-group {
+      margin-bottom: 25px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: bold;
+      color: #333;
+    }
+    .form-group input[type="text"],
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    .form-group input[type="text"]:focus,
+    .form-group select:focus {
+      border-color: var(--ucds-blue, #1d224c);
+      outline: none;
+    }
+    .radio-option {
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+    }
+    .radio-option input[type="radio"] {
+      margin-right: 10px;
+      transform: scale(1.2);
+    }
+    .radio-option label {
+      margin-bottom: 0;
+      font-weight: normal;
+    }
+    .other-input {
+      margin-top: 10px;
+      display: none;
+    }
+    .submit-btn {
+      background-color: var(--ucds-blue, #1d224c);
+      color: #ffffff;
+      padding: 14px 28px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 16px;
+      width: 100%;
+      transition: background-color 0.3s ease;
+    }
+    .submit-btn:hover {
+      background-color: #000000;
+    }
+    .required-asterisk {
+      color: red;
+    }
+  </style>
+</head>
+<body class="events-body">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="../../../">
+        <img src="../../../photos/logo.jpg" alt="University of Calgary Debate Society logo" class="logo-image" />
+        <span class="brand-text">University of Calgary Debate Society</span>
+      </a>
+      <nav>
+        <a href="../../../">Home</a>
+        <a href="../../../events/">Events</a>
+        <a href="../../../blog/">Blog</a>
+        <a href="../../../resources/">Resources</a>
+        <a href="../../../connect/">Connect</a>
+        <a href="../../../join/" class="nav-join-button">Join</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="container">
+        <div class="form-container animate-on-scroll lift-out-shadow">
+          <h2 class="form-title">Expression of Interest</h2>
+          <p class="form-subtitle">Summer Tournament - July 25, 2026</p>
+          
+          <!-- Replace this URL with your Google Apps Script Web App URL -->
+          <form action="https://script.google.com/macros/s/AKfycbxY5tyZP-OOiyaBmd69OJzOc04AnXKgCe296hperms1h91xERTU7JOV3L1zs-mta0ws/exec" method="POST" id="interestForm">
+            
+            <div class="form-group">
+              <label for="institution">What is your institution? <span class="required-asterisk">*</span></label>
+              <input type="text" id="institution" name="institution" required placeholder="Enter your school or institution name">
+            </div>
+
+            <div class="form-group">
+              <label>Are you a debater, parent, coach or other? (please specify) <span class="required-asterisk">*</span></label>
+              <div class="radio-option">
+                <input type="radio" id="role_debater" name="role" value="Debater" required onchange="toggleOtherInput()">
+                <label for="role_debater">Debater</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="role_parent" name="role" value="Parent" required onchange="toggleOtherInput()">
+                <label for="role_parent">Parent</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="role_coach" name="role" value="Coach" required onchange="toggleOtherInput()">
+                <label for="role_coach">Coach</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="role_other" name="role" value="Other" required onchange="toggleOtherInput()">
+                <label for="role_other">Other</label>
+              </div>
+              <div class="other-input" id="otherInputContainer">
+                <input type="text" id="role_other_text" name="role_other_text" placeholder="Please specify your role">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Would you prefer an online or in-person tournament? <span class="required-asterisk">*</span></label>
+              <div class="radio-option">
+                <input type="radio" id="format_inperson" name="format" value="In-person" required>
+                <label for="format_inperson">In-person</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="format_online" name="format" value="Online" required>
+                <label for="format_online">Online</label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>If you are a debater please specify the school grade you have just completed.</label>
+              <div class="radio-option">
+                <input type="radio" id="grade_6" name="grade" value="Grade 6 (will be considered the Junior High division)">
+                <label for="grade_6">Grade 6 (will be considered the Junior High division)</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="grade_7" name="grade" value="Grade 7">
+                <label for="grade_7">Grade 7</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="grade_8" name="grade" value="Grade 8">
+                <label for="grade_8">Grade 8</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="grade_9" name="grade" value="Grade 9">
+                <label for="grade_9">Grade 9</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="grade_10" name="grade" value="Grade 10">
+                <label for="grade_10">Grade 10</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="grade_11" name="grade" value="Grade 11">
+                <label for="grade_11">Grade 11</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="grade_12" name="grade" value="Grade 12">
+                <label for="grade_12">Grade 12</label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>If you are a parent or coach, are you able to chaperone your debaters?</label>
+              <div class="radio-option">
+                <input type="radio" id="chaperone_yes" name="chaperone" value="Yes">
+                <label for="chaperone_yes">Yes</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="chaperone_no" name="chaperone" value="No">
+                <label for="chaperone_no">No</label>
+              </div>
+            </div>
+
+            <button type="submit" class="submit-btn">Submit</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>&copy; <span id="currentYear"></span> UCDS. All rights reserved.</p>
+      <div class="footer-socials">
+        <a href="https://www.instagram.com/ucalgary.debate/" target="_blank" rel="noreferrer" aria-label="Instagram">
+          <img src="../../../photos/instagram_footer.png" alt="Instagram" class="footer-social-icon" />
+        </a>
+        <a href="https://www.facebook.com/DebateUofC/" target="_blank" rel="noreferrer" aria-label="Facebook">
+          <img src="../../../photos/facebook_footer.png" alt="Facebook" class="footer-social-icon" />
+        </a>
+        <a href="https://linktr.ee/ucds.debate" target="_blank" rel="noreferrer" aria-label="Linktree">
+          <img src="../../../photos/linktree_footer.png" alt="Linktree" class="footer-social-icon" />
+        </a>
+        <a href="https://x.com/UCDebate" target="_blank" rel="noreferrer" aria-label="X (Twitter)">
+          <img src="../../../photos/x_footer.png" alt="X (Twitter)" class="footer-social-icon" />
+        </a>
+        <a href="https://discord.gg/5TAG3c8TwC" target="_blank" rel="noreferrer" aria-label="Discord">
+          <img src="../../../photos/discord_footer.png" alt="Discord" class="footer-social-icon" />
+        </a>
+      </div>
+    </div>
+  </footer>
+  <script src="../../../script.js"></script>
+  <script>
+    function toggleOtherInput() {
+      const otherRadio = document.getElementById('role_other');
+      const otherInputContainer = document.getElementById('otherInputContainer');
+      const otherInput = document.getElementById('role_other_text');
+      
+      if (otherRadio.checked) {
+        otherInputContainer.style.display = 'block';
+        otherInput.required = true;
+      } else {
+        otherInputContainer.style.display = 'none';
+        otherInput.required = false;
+        otherInput.value = '';
+      }
+    }
+    
+    document.getElementById('interestForm').addEventListener('submit', function(e) {
+      e.preventDefault(); // Prevent the default form submission
+      
+      const form = e.target;
+      const btn = form.querySelector('.submit-btn');
+      
+      // Update button state
+      btn.innerText = 'Submitting...';
+      btn.disabled = true;
+      btn.style.backgroundColor = '#555';
+
+      // Send the data via fetch
+      fetch(form.action, {
+        method: 'POST',
+        mode: 'no-cors', // Crucial for Google Apps Script without CORS errors
+        body: new FormData(form)
+      })
+      .then(() => {
+        // Replace form content with a success message
+        const container = document.querySelector('.form-container');
+        container.innerHTML = `
+          <h2 class="form-title">Thank You!</h2>
+          <div style="text-align: center; padding: 30px 10px;">
+            <p style="font-size: 18px; margin-bottom: 25px;">Your interest has been successfully recorded.</p>
+            <a href="../" style="display: inline-block; background-color: #1d224c; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold;">Return to Event Details</a>
+          </div>
+        `;
+      })
+      .catch(error => {
+        console.error('Error!', error.message);
+        btn.innerText = 'Error - Try Again';
+        btn.disabled = false;
+        btn.style.backgroundColor = '';
+        alert('There was a problem submitting your form. Please try again later.');
+      });
+    });
+  </script>
+</body>
+</html>
