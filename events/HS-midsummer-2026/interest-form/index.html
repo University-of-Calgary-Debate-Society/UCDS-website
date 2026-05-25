@@ -29,8 +29,8 @@
     }
     .form-subtitle {
       text-align: center;
-      margin-bottom: 30px;
-      color: #555;
+      margin-bottom: 40px;
+      color: #202020;
     }
     .form-group {
       margin-bottom: 25px;
@@ -116,14 +116,13 @@
       <div class="container">
         <div class="form-container animate-on-scroll lift-out-shadow">
           <h2 class="form-title">Expression of Interest</h2>
-          <p class="form-subtitle">Summer Tournament - July 25, 2026</p>
+          <p class="form-subtitle">By submitting this form, you are expressing your interest in participating in the July 25, 2026 tournament.</p>
           
-          <!-- Replace this URL with your Google Apps Script Web App URL -->
           <form action="https://script.google.com/macros/s/AKfycbxY5tyZP-OOiyaBmd69OJzOc04AnXKgCe296hperms1h91xERTU7JOV3L1zs-mta0ws/exec" method="POST" id="interestForm">
             
             <div class="form-group">
               <label for="institution">What is your institution? <span class="required-asterisk">*</span></label>
-              <input type="text" id="institution" name="institution" required placeholder="Enter your school or institution name">
+              <input type="text" id="institution" name="institution" required placeholder="Enter your school, institution name or independent">
             </div>
 
             <div class="form-group">
@@ -161,47 +160,63 @@
               </div>
             </div>
 
-            <div class="form-group">
-              <label>If you are a debater please specify the school grade you have just completed.</label>
+            <div class="form-group" id="gradeGroup" style="display:none;">
+              <label>If you are a debater please specify the school grade you have just completed. <span class="required-asterisk">*</span></label>
               <div class="radio-option">
-                <input type="radio" id="grade_6" name="grade" value="Grade 6 (will be considered the Junior High division)">
+                <input type="radio" id="grade_6" name="grade" value="Grade 6 (will be considered the Junior High division)" class="grade-radio">
                 <label for="grade_6">Grade 6 (will be considered the Junior High division)</label>
               </div>
               <div class="radio-option">
-                <input type="radio" id="grade_7" name="grade" value="Grade 7">
+                <input type="radio" id="grade_7" name="grade" value="Grade 7" class="grade-radio">
                 <label for="grade_7">Grade 7</label>
               </div>
               <div class="radio-option">
-                <input type="radio" id="grade_8" name="grade" value="Grade 8">
+                <input type="radio" id="grade_8" name="grade" value="Grade 8" class="grade-radio">
                 <label for="grade_8">Grade 8</label>
               </div>
               <div class="radio-option">
-                <input type="radio" id="grade_9" name="grade" value="Grade 9">
+                <input type="radio" id="grade_9" name="grade" value="Grade 9" class="grade-radio">
                 <label for="grade_9">Grade 9</label>
               </div>
               <div class="radio-option">
-                <input type="radio" id="grade_10" name="grade" value="Grade 10">
+                <input type="radio" id="grade_10" name="grade" value="Grade 10" class="grade-radio">
                 <label for="grade_10">Grade 10</label>
               </div>
               <div class="radio-option">
-                <input type="radio" id="grade_11" name="grade" value="Grade 11">
+                <input type="radio" id="grade_11" name="grade" value="Grade 11" class="grade-radio">
                 <label for="grade_11">Grade 11</label>
               </div>
               <div class="radio-option">
-                <input type="radio" id="grade_12" name="grade" value="Grade 12">
+                <input type="radio" id="grade_12" name="grade" value="Grade 12" class="grade-radio">
                 <label for="grade_12">Grade 12</label>
               </div>
             </div>
 
-            <div class="form-group">
-              <label>If you are a parent or coach, are you able to chaperone your debaters?</label>
+            <div class="form-group" id="chaperoneGroup" style="display:none;">
+              <label>If you are a parent or coach, are you able to chaperone your debaters? <span class="required-asterisk">*</span></label>
               <div class="radio-option">
-                <input type="radio" id="chaperone_yes" name="chaperone" value="Yes">
+                <input type="radio" id="chaperone_yes" name="chaperone" value="Yes" class="chaperone-radio">
                 <label for="chaperone_yes">Yes</label>
               </div>
               <div class="radio-option">
-                <input type="radio" id="chaperone_no" name="chaperone" value="No">
+                <input type="radio" id="chaperone_no" name="chaperone" value="No" class="chaperone-radio">
                 <label for="chaperone_no">No</label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Are you willing to help out at the tournament? (e.g., judging, registration, running events)</label>
+              <div class="radio-option">
+                <input type="radio" id="help_yes" name="willing_to_help" value="Yes" onchange="toggleEmailInput()">
+                <label for="help_yes">Yes</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="help_no" name="willing_to_help" value="No" onchange="toggleEmailInput()">
+                <label for="help_no">No</label>
+              </div>
+              <div class="other-input" id="emailInputContainer" style="margin-top: 15px;">
+                <label for="helper_email">Please provide your email address so we can contact you: <span class="required-asterisk">*</span></label>
+                <input type="text" id="helper_email" name="helper_email" placeholder="Enter your email address">
               </div>
             </div>
 
@@ -237,6 +252,7 @@
   <script src="../../../script.js"></script>
   <script>
     function toggleOtherInput() {
+      // Role logic for "Other" text input
       const otherRadio = document.getElementById('role_other');
       const otherInputContainer = document.getElementById('otherInputContainer');
       const otherInput = document.getElementById('role_other_text');
@@ -248,6 +264,54 @@
         otherInputContainer.style.display = 'none';
         otherInput.required = false;
         otherInput.value = '';
+      }
+
+      // Grade logic: show and require if Debater is checked
+      const debaterRadio = document.getElementById('role_debater');
+      const gradeGroup = document.getElementById('gradeGroup');
+      const gradeRadios = document.querySelectorAll('.grade-radio');
+
+      if (debaterRadio.checked) {
+        gradeGroup.style.display = 'block';
+        gradeRadios.forEach(radio => radio.required = true);
+      } else {
+        gradeGroup.style.display = 'none';
+        gradeRadios.forEach(radio => {
+          radio.required = false;
+          radio.checked = false; // clear selection if hidden
+        });
+      }
+
+      // Chaperone logic: show and require if Parent or Coach is checked
+      const parentRadio = document.getElementById('role_parent');
+      const coachRadio = document.getElementById('role_coach');
+      const chaperoneGroup = document.getElementById('chaperoneGroup');
+      const chaperoneRadios = document.querySelectorAll('.chaperone-radio');
+
+      if (parentRadio.checked || coachRadio.checked) {
+        chaperoneGroup.style.display = 'block';
+        chaperoneRadios.forEach(radio => radio.required = true);
+      } else {
+        chaperoneGroup.style.display = 'none';
+        chaperoneRadios.forEach(radio => {
+          radio.required = false;
+          radio.checked = false; // clear selection if hidden
+        });
+      }
+    }
+
+    function toggleEmailInput() {
+      const helpYesRadio = document.getElementById('help_yes');
+      const emailInputContainer = document.getElementById('emailInputContainer');
+      const emailInput = document.getElementById('helper_email');
+
+      if (helpYesRadio.checked) {
+        emailInputContainer.style.display = 'block';
+        emailInput.required = true;
+      } else {
+        emailInputContainer.style.display = 'none';
+        emailInput.required = false;
+        emailInput.value = '';
       }
     }
     
@@ -284,7 +348,7 @@
         btn.innerText = 'Error - Try Again';
         btn.disabled = false;
         btn.style.backgroundColor = '';
-        alert('There was a problem submitting your form. Please try again later.');
+        alert('There was a problem submitting your form. Please email business.michaelwang@gmail.com for assistance.');
       });
     });
   </script>
