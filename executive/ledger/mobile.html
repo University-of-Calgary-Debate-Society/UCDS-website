@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta property="og:image" content="../../photos/logo_seo.png" />
+  <meta name="twitter:image" content="../../photos/logo_seo.png" />
+  <title>UCDS | Financial Ledger</title>
+  <link rel="icon" href="../../photos/logo.jpg" type="image/jpeg" />
+  <link rel="stylesheet" href="../../css/styles.css" />
+  <script>
+    // Session state protection
+    (function() {
+      if (sessionStorage.getItem('execLoggedIn') !== 'true') {
+        window.location.replace("../index.html");
+      }
+      
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('force') === 'mobile') {
+        return;
+      }
+      const isMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      if (!isMobile) {
+        window.location.replace("index.html" + window.location.search);
+      } else {
+        sessionStorage.removeItem('forceDesktop');
+      }
+    })();
+  </script>
+  <style>
+    .ledger-container {
+      background: #112854;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 1rem;
+      padding: 2.5rem 1.25rem;
+      color: #ffffff;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+      max-width: 500px;
+      margin: 2rem auto;
+    }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      transition: color 0.2s ease;
+    }
+    .back-btn:active {
+      color: #ffffff;
+    }
+    .balance-card {
+      background: rgba(37, 99, 235, 0.1);
+      border: 1px solid rgba(37, 99, 235, 0.2);
+      border-left: 4px solid #2563eb;
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 8px;
+      border-radius: 99px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      width: fit-content;
+    }
+    .status-loading {
+      background: rgba(245, 158, 11, 0.15);
+      color: #f59e0b;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+    .status-connected {
+      background: rgba(34, 197, 94, 0.15);
+      color: #22c55e;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+    .status-demo {
+      background: rgba(99, 102, 241, 0.15);
+      color: #818cf8;
+      border: 1px solid rgba(99, 102, 241, 0.3);
+    }
+    .status-error {
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    .filter-bar {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 1.5rem;
+    }
+    .search-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      color: #ffffff;
+      font-size: 0.9rem;
+      outline: none;
+      box-sizing: border-box;
+    }
+    .search-input:focus {
+      border-color: #2563eb;
+    }
+    .select-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      color: #ffffff;
+      font-size: 0.9rem;
+      outline: none;
+      cursor: pointer;
+      box-sizing: border-box;
+    }
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .ledger-table {
+      width: 100%;
+      border-collapse: collapse;
+      color: #cbd5e1;
+      font-size: 0.8rem;
+      min-width: 500px;
+    }
+    .ledger-table th {
+      background: rgba(0, 0, 0, 0.35);
+      padding: 10px 12px;
+      text-align: left;
+      font-weight: 700;
+      color: #ffffff;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.12);
+    }
+    .ledger-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+  </style>
+</head>
+<body class="events-body">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="../../">
+        <img src="../../photos/logo.jpg" alt="University of Calgary Debate Society logo" class="logo-image" />
+        <span class="brand-text">UCDS</span>
+      </a>
+      <button class="menu-toggle" aria-label="Toggle navigation"><span class="hamburger"></span></button>
+      <nav class="site-nav">
+        <a href="../../">Home</a>
+        <a href="../../events/">Events</a>
+        <a href="../../blog/">Blog</a>
+        <a href="../../resources/">Resources</a>
+        <a href="../../connect/">Connect</a>
+        <a href="../../join/" class="nav-join-button">Join</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="container" style="padding: 0 10px;">
+        
+        <div class="ledger-container">
+          <a href="../mobile.html" class="back-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" style="width: 14px; height: 14px;">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+            Back to Dashboard
+          </a>
+
+          <div style="margin-bottom: 1.25rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <h1 style="font-size: 1.85rem; color: #ffffff; margin: 0; font-weight: 800; letter-spacing: -0.01em;">Financial Ledger</h1>
+              <div id="connection-status" class="status-badge status-loading">
+                <span>Syncing...</span>
+              </div>
+            </div>
+            <p style="margin: 0; color: #94a3b8; font-size: 0.85rem; line-height: 1.4;">
+              Access is restricted and audited. Connected to Google Sheets database.
+            </p>
+          </div>
+
+          <!-- Configuration Alert (Hidden by default unless using demo) -->
+          <div id="config-alert" style="display: none; background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.25); border-left: 4px solid #6366f1; padding: 10px 12px; border-radius: 6px; margin-bottom: 15px; font-size: 0.8rem; color: #c7d2fe; line-height: 1.4;">
+            💡 <strong>Demo Mode</strong>: Showing fallback data. To link your Google Sheet, edit this file and replace the <code>SPREADSHEET_ID</code> variable.
+          </div>
+
+          <!-- Balance summary -->
+          <div class="balance-card">
+            <div>
+              <span style="font-size: 0.75rem; color: #93c5fd; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 2px;">Account Net Position</span>
+              <span id="net-position" style="font-size: 1.75rem; color: #ffffff; font-weight: 800;">$0.00 CAD</span>
+            </div>
+            <div>
+              <span id="ledger-stats" style="font-size: 0.8rem; color: #94a3b8; font-weight: 600;">0 transactions loaded</span>
+            </div>
+          </div>
+
+          <!-- Filters -->
+          <div class="filter-bar">
+            <input type="text" id="search-bar" oninput="applyFilters()" placeholder="Search transactions..." class="search-input" />
+            <select id="type-filter" onchange="applyFilters()" class="select-input">
+              <option value="all">All Types</option>
+              <option value="revenue">Revenue (+)</option>
+              <option value="expense">Expense (-)</option>
+            </select>
+          </div>
+
+          <!-- Ledger Table -->
+          <div class="table-container">
+            <table class="ledger-table">
+              <thead>
+                <tr>
+                  <th width="20%">Date</th>
+                  <th width="45%">Description</th>
+                  <th width="15%">Type</th>
+                  <th width="20%">Amount</th>
+                </tr>
+              </thead>
+              <tbody id="ledger-rows">
+                <tr>
+                  <td colspan="4" style="text-align: center; padding: 1.5rem; color: #94a3b8;">Loading transactions...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>&copy; <span id="currentYear"></span> UCDS. &bull; <a href="index.html?force=desktop" style="color: #93c5fd; text-decoration: underline;">View Desktop</a></p>
+    </div>
+  </footer>
+
+  <script src="../../scripts/script.js"></script>
+  <script>
+    // GOOGLE SPREADSHEET CONFIGURATION
+    const SPREADSHEET_ID = '1-your-spreadsheet-id-here';
+    
+    // Mock Fallback Database
+    const MOCK_DATA = [
+      { date: 'June 20, 2026', description: 'Domain registration renewal (ucalgarydebate.com)', type: 'Expense', amount: -18.50 },
+      { date: 'June 15, 2026', description: 'Calgary Summer Cup Entry Fee Payments (Pre-regs)', type: 'Revenue', amount: 180.00 },
+      { date: 'April 28, 2026', description: 'SU Club Funding Disbursement', type: 'Revenue', amount: 500.00 },
+      { date: 'March 12, 2026', description: 'Internal BP Debate Tournament Pizza Expense', type: 'Expense', amount: -75.45 },
+      { date: 'February 15, 2026', description: 'UCDS Membership Fees Collection (Winter)', type: 'Revenue', amount: 220.00 },
+      { date: 'January 10, 2026', description: 'CUSID National Championships Registration Fees', type: 'Expense', amount: -320.00 }
+    ];
+
+    let transactions = [];
+
+    window.addEventListener('DOMContentLoaded', () => {
+      fetchLedgerData();
+    });
+
+    async function fetchLedgerData() {
+      const statusBadge = document.getElementById('connection-status');
+      
+      if (!SPREADSHEET_ID || SPREADSHEET_ID.includes('your-spreadsheet-id-here')) {
+        loadMockData();
+        return;
+      }
+
+      let url = '';
+      if (SPREADSHEET_ID.startsWith('http')) {
+        url = SPREADSHEET_ID;
+      } else {
+        url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json`;
+      }
+
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Network error');
+        
+        const text = await response.text();
+        const trimmed = text.trim();
+        
+        if (trimmed.startsWith('[') || trimmed.startsWith('{')) {
+          const data = JSON.parse(trimmed);
+          transactions = parseLedgerData(data);
+        } else {
+          const jsonString = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
+          const data = JSON.parse(jsonString);
+          transactions = parseGoogleSheetsJSON(data);
+        }
+        
+        statusBadge.className = 'status-badge status-connected';
+        statusBadge.innerHTML = '<span>Connected</span>';
+        renderLedger(transactions);
+      } catch (err) {
+        console.error('Error fetching Google Sheets:', err);
+        statusBadge.className = 'status-badge status-error';
+        statusBadge.innerHTML = '<span>Sync Error</span>';
+        loadMockData();
+      }
+    }
+
+    function parseLedgerData(data) {
+      if (Array.isArray(data)) {
+        return data.map(item => {
+          const keys = Object.keys(item);
+          const dateKey = keys.find(k => k.toLowerCase().includes('date')) || '';
+          const descKey = keys.find(k => k.toLowerCase().includes('desc') || k.toLowerCase().includes('trans') || k.toLowerCase().includes('item')) || '';
+          const typeKey = keys.find(k => k.toLowerCase().includes('type') || k.toLowerCase().includes('cat')) || '';
+          const amountKey = keys.find(k => k.toLowerCase().includes('amount') || k.toLowerCase().includes('value') || k.toLowerCase().includes('cost')) || '';
+          
+          const amountVal = amountKey ? Number(item[amountKey]) : 0;
+          let normType = 'Revenue';
+          const typeVal = typeKey ? String(item[typeKey]).toLowerCase() : '';
+          if (typeVal.includes('expense') || typeVal.includes('out') || typeVal.includes('spent') || amountVal < 0) {
+            normType = 'Expense';
+          }
+          
+          return {
+            date: dateKey ? String(item[dateKey]) : '',
+            description: descKey ? String(item[descKey]) : '',
+            type: normType,
+            amount: amountVal
+          };
+        }).filter(t => t.date || t.description || t.amount);
+      } else if (data && typeof data === 'object') {
+        return [data];
+      }
+      return [];
+    }
+
+    function parseGoogleSheetsJSON(data) {
+      const table = data.table;
+      const cols = table.cols.map(c => c.label ? c.label.trim().toLowerCase() : '');
+      
+      const dateIdx = cols.findIndex(c => c.includes('date'));
+      const descIdx = cols.findIndex(c => c.includes('desc') || c.includes('trans') || c.includes('item'));
+      const typeIdx = cols.findIndex(c => c.includes('type') || c.includes('cat'));
+      const amountIdx = cols.findIndex(c => c.includes('amount') || c.includes('value') || c.includes('cost') || c.includes('price'));
+      
+      const parsed = [];
+      table.rows.forEach(r => {
+        const cells = r.c;
+        if (!cells) return;
+        
+        const dateVal = dateIdx !== -1 && cells[dateIdx] ? (cells[dateIdx].f || cells[dateIdx].v || '') : '';
+        const descVal = descIdx !== -1 && cells[descIdx] ? (cells[descIdx].v || '') : '';
+        const typeVal = typeIdx !== -1 && cells[typeIdx] ? (cells[typeIdx].v || '') : '';
+        const amountVal = amountIdx !== -1 && cells[amountIdx] ? (cells[amountIdx].v || 0) : 0;
+        
+        if (!dateVal && !descVal && !amountVal) return;
+        
+        let normType = 'Revenue';
+        if (typeVal) {
+          const typeLower = String(typeVal).toLowerCase();
+          if (typeLower.includes('expense') || typeLower.includes('out') || typeLower.includes('spent') || typeLower.includes('debit')) {
+            normType = 'Expense';
+          }
+        } else if (Number(amountVal) < 0) {
+          normType = 'Expense';
+        }
+        
+        parsed.push({
+          date: String(dateVal),
+          description: String(descVal),
+          type: normType,
+          amount: Number(amountVal)
+        });
+      });
+      return parsed;
+    }
+
+    function loadMockData() {
+      const statusBadge = document.getElementById('connection-status');
+      if (statusBadge.className !== 'status-badge status-error') {
+        statusBadge.className = 'status-badge status-demo';
+        statusBadge.innerHTML = '<span>Demo Mode</span>';
+      }
+      document.getElementById('config-alert').style.display = 'block';
+      transactions = MOCK_DATA;
+      renderLedger(transactions);
+    }
+
+    function renderLedger(data) {
+      const tbody = document.getElementById('ledger-rows');
+      tbody.innerHTML = '';
+      
+      if (data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 1.5rem; color: #94a3b8;">No transactions found.</td></tr>`;
+        document.getElementById('net-position').innerText = '$0.00 CAD';
+        document.getElementById('ledger-stats').innerText = '0 transactions';
+        return;
+      }
+
+      let balance = 0;
+      data.forEach(t => {
+        balance += t.amount;
+        
+        const row = document.createElement('tr');
+        const isRevenue = t.type.toLowerCase() === 'revenue';
+        
+        row.innerHTML = `
+          <td style="color: #ffffff; font-weight: 600;">${t.date}</td>
+          <td>${t.description}</td>
+          <td>
+            <span style="font-weight: 700; color: ${isRevenue ? '#22c55e' : '#f87171'}">
+              ${t.type}
+            </span>
+          </td>
+          <td style="font-weight: bold; color: ${isRevenue ? '#22c55e' : '#f87171'}">
+            ${isRevenue ? '+' : ''}${t.amount.toFixed(2)} CAD
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+
+      document.getElementById('net-position').innerText = `${balance >= 0 ? '' : '-'}$${Math.abs(balance).toFixed(2)} CAD`;
+      document.getElementById('net-position').style.color = balance >= 0 ? '#22c55e' : '#f87171';
+      document.getElementById('ledger-stats').innerText = `${data.length} transactions`;
+    }
+
+    function applyFilters() {
+      const query = document.getElementById('search-bar').value.toLowerCase().trim();
+      const type = document.getElementById('type-filter').value;
+      
+      const filtered = transactions.filter(t => {
+        const matchesQuery = t.description.toLowerCase().includes(query) || t.date.toLowerCase().includes(query);
+        const matchesType = type === 'all' || t.type.toLowerCase() === type;
+        return matchesQuery && matchesType;
+      });
+      
+      renderLedger(filtered);
+    }
+  </script>
+</body>
+</html>

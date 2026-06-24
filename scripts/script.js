@@ -169,7 +169,7 @@ document.addEventListener("DOMContentLoaded", () => {
         fetch(nForm.getAttribute('action') || nForm.action, {
           method: 'POST',
           mode: 'no-cors',
-          body: new FormData(nForm)
+          body: new URLSearchParams(new FormData(nForm))
         })
         .then(() => {
           nSubmitBtn.innerText = "Subscribed!";

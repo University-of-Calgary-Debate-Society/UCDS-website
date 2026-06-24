@@ -30,7 +30,7 @@ function doPost(e) {
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
     
     // Set up headers if the sheet is completely empty
-    var headers = ["Timestamp", "Full Name", "Email", "Grade (2025-2026)", "Partner Name", "Partner Grade (2025-2026)", "Category", "Suggestions"];
+    var headers = ["Timestamp", "Full Name", "Email", "Grade (2025-2026)", "Partner Name", "Partner Email", "Partner Grade (2025-2026)", "Category", "Suggestions"];
     if (sheet.getLastRow() === 0) {
       sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
       sheet.getRange(1, 1, 1, headers.length).setFontWeight("bold");
@@ -44,6 +44,7 @@ function doPost(e) {
       p.email || "",
       p.grade || "",
       p.partnerName || "",
+      p.partnerEmail || "",
       p.partnerGrade || "",
       p.category || "",
       p.suggestions || ""
@@ -63,6 +64,7 @@ function doPost(e) {
                    " - Your Name: " + (p.fullName || "") + "\n" +
                    " - Your Grade: " + (p.grade || "") + "\n" +
                    " - Partner's Name: " + (p.partnerName || "") + "\n" +
+                   " - Partner's Email: " + (p.partnerEmail || "") + "\n" +
                    " - Partner's Grade: " + (p.partnerGrade || "") + "\n" +
                    " - Selected Category: " + (p.category || "") + "\n\n" +
                    "If you need to update any information or have questions, please reply to this email.\n\n" +
@@ -96,6 +98,10 @@ function doPost(e) {
                 '<tr>' +
                   '<td style="padding: 6px 0; font-weight: 600; color: #64748b;">Partner\'s Name:</td>' +
                   '<td style="padding: 6px 0; color: #0f172a;">' + (p.partnerName || "") + '</td>' +
+                '</tr>' +
+                '<tr>' +
+                  '<td style="padding: 6px 0; font-weight: 600; color: #64748b;">Partner\'s Email:</td>' +
+                  '<td style="padding: 6px 0; color: #0f172a;">' + (p.partnerEmail || "") + '</td>' +
                 '</tr>' +
                 '<tr>' +
                   '<td style="padding: 6px 0; font-weight: 600; color: #64748b;">Partner\'s Grade:</td>' +

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,7 +10,7 @@
   <link rel="icon" href="../../photos/logo.jpg" type="image/jpeg" />
   <link rel="stylesheet" href="../../css/styles.css" />
   <script>
-    (function() {
+    (function () {
       const isMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
       if (!isMobile) {
         window.location.replace("index.html");
@@ -23,11 +24,13 @@
       background: linear-gradient(180deg, rgba(11, 26, 58, 0.45) 0%, rgba(17, 40, 84, 0.75) 100%), url('../../photos/background5.jpg');
       background-size: cover;
       background-position: center;
-      background-attachment: scroll; /* better mobile scrolling performance */
+      background-attachment: scroll;
+      /* better mobile scrolling performance */
       padding: 4rem 0 3rem;
       text-align: center;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
+
     .hero-logo-image {
       max-height: 110px;
       width: auto;
@@ -35,6 +38,7 @@
       filter: drop-shadow(0 6px 15px rgba(0, 0, 0, 0.45));
       margin-bottom: 1rem;
     }
+
     .hero-title {
       font-size: 2.25rem;
       font-weight: 800;
@@ -43,6 +47,7 @@
       letter-spacing: -0.02em;
       text-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);
     }
+
     .hero-subtitle {
       max-width: 90%;
       margin: 0 auto;
@@ -51,6 +56,7 @@
       color: #cbd5e1;
       text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
     }
+
     .association-notice {
       display: inline-block;
       margin-top: 1.25rem;
@@ -62,6 +68,7 @@
       padding: 0.35rem 0.85rem;
       border-radius: 999px;
     }
+
     .card h3 {
       margin-top: 0;
       font-size: 1.3rem;
@@ -72,24 +79,28 @@
       font-weight: 700;
       text-align: center;
     }
+
     .grid-2col {
       display: grid;
       grid-template-columns: 1fr;
       gap: 1.5rem;
       margin-top: 1.5rem;
     }
+
     .schedule-grid {
       display: grid;
       grid-template-columns: 1fr;
       gap: 1.5rem;
       margin-top: 1.25rem;
     }
+
     .schedule-day {
       background: #f8fafc;
       padding: 1.25rem;
       border-radius: 0.75rem;
       border: 1px solid #e2e8f0;
     }
+
     .schedule-day h4 {
       margin-top: 0;
       font-size: 1.15rem;
@@ -98,6 +109,7 @@
       padding-bottom: 0.5rem;
       margin-bottom: 1rem;
     }
+
     .schedule-list {
       list-style: none;
       padding: 0;
@@ -105,21 +117,25 @@
       font-family: monospace;
       font-size: 0.85rem;
     }
+
     .schedule-list li {
       margin-bottom: 0.5rem;
       display: flex;
       justify-content: space-between;
     }
+
     .schedule-time {
       color: #2563eb;
       font-weight: bold;
       margin-right: 0.75rem;
       flex-shrink: 0;
     }
+
     .schedule-desc {
       text-align: right;
       color: #334155;
     }
+
     .cta-btn-black {
       display: inline-flex;
       align-items: center;
@@ -135,16 +151,19 @@
       width: 100%;
       box-sizing: border-box;
     }
+
     .cta-btn-black:hover {
       background-color: #ffffff;
       color: #000000;
       border-color: #ffffff;
     }
+
     .small-cta-btn {
       padding: 10px 20px;
       font-size: 0.9rem;
       margin-top: 0.75rem;
     }
+
     .inline-btn {
       display: inline-flex;
       padding: 4px 12px;
@@ -154,11 +173,13 @@
       margin-top: 0;
       width: auto;
     }
+
     .large-cta-btn {
       padding: 14px 28px;
       font-size: 1.15rem;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
     }
+
     .sub-section-title {
       color: #1e3a8a;
       margin-top: 0;
@@ -166,6 +187,7 @@
       margin-bottom: 0.5rem;
       font-weight: 700;
     }
+
     .eligibility-note {
       background: #eff6ff;
       border-left: 4px solid #2563eb;
@@ -176,26 +198,48 @@
       color: #1e3a8a;
       font-size: 0.9rem;
     }
+
     @keyframes float {
-      0% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-8px) rotate(3deg); }
-      100% { transform: translateY(0px) rotate(0deg); }
+      0% {
+        transform: translateY(0px) rotate(0deg);
+      }
+
+      50% {
+        transform: translateY(-8px) rotate(3deg);
+      }
+
+      100% {
+        transform: translateY(0px) rotate(0deg);
+      }
     }
+
     @keyframes float-reverse {
-      0% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(8px) rotate(-3deg); }
-      100% { transform: translateY(0px) rotate(0deg); }
+      0% {
+        transform: translateY(0px) rotate(0deg);
+      }
+
+      50% {
+        transform: translateY(8px) rotate(-3deg);
+      }
+
+      100% {
+        transform: translateY(0px) rotate(0deg);
+      }
     }
+
     .bg-art {
       position: absolute;
-      color: rgba(147, 197, 253, 0.04); /* slightly lower opacity on mobile for readability */
+      color: rgba(147, 197, 253, 0.04);
+      /* slightly lower opacity on mobile for readability */
       pointer-events: none;
       z-index: 0;
       animation: float 7s ease-in-out infinite;
     }
+
     .bg-art.reverse {
       animation: float-reverse 9s ease-in-out infinite;
     }
+
     .category-badge {
       display: inline-block;
       padding: 0.2rem 0.5rem;
@@ -208,11 +252,31 @@
       vertical-align: middle;
       margin: 0.15rem 0.15rem;
     }
-    .badge-jr-beg { color: #93c5fd; background: rgba(147, 197, 253, 0.15); }
-    .badge-jr-open { color: #60a5fa; background: rgba(96, 165, 250, 0.15); }
-    .badge-sr-beg { color: #fdba74; background: rgba(253, 186, 116, 0.15); }
-    .badge-sr-open { color: #fde047; background: rgba(253, 224, 71, 0.15); }
-    .badge-sr-any { color: #f43f5e; background: rgba(244, 63, 94, 0.15); }
+
+    .badge-jr-beg {
+      color: #93c5fd;
+      background: rgba(147, 197, 253, 0.15);
+    }
+
+    .badge-jr-open {
+      color: #60a5fa;
+      background: rgba(96, 165, 250, 0.15);
+    }
+
+    .badge-sr-beg {
+      color: #fdba74;
+      background: rgba(253, 186, 116, 0.15);
+    }
+
+    .badge-sr-open {
+      color: #fde047;
+      background: rgba(253, 224, 71, 0.15);
+    }
+
+    .badge-sr-any {
+      color: #f43f5e;
+      background: rgba(244, 63, 94, 0.15);
+    }
 
     .deadlines-grid {
       display: grid;
@@ -221,6 +285,7 @@
       margin-bottom: 2.5rem;
       text-align: left;
     }
+
     .deadline-item {
       background: rgba(17, 40, 84, 0.45);
       border: 1px solid rgba(255, 255, 255, 0.1);
@@ -230,6 +295,7 @@
     }
   </style>
 </head>
+
 <body class="events-body">
   <header class="site-header">
     <div class="container header-inner">
@@ -252,9 +318,17 @@
   <main>
     <!-- Banner Section -->
     <section class="calgary-summer-cup-hero" style="position: relative;">
-      <div class="bg-art-container" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; overflow: hidden; pointer-events: none; z-index: 0;">
-        <svg class="bg-art" style="top: 15%; left: 4%; width: 85px; height: 85px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        <svg class="bg-art reverse" style="top: 25%; right: 4%; width: 80px; height: 80px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="m14 13-5.5 5.5t-9-1.5M9.5 8.5l9 9M17 11l4.5-4.5M10.5 4.5 15 9"/><path d="m6 21 3-3"/></svg>
+      <div class="bg-art-container"
+        style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; overflow: hidden; pointer-events: none; z-index: 0;">
+        <svg class="bg-art" style="top: 15%; left: 4%; width: 85px; height: 85px;" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+        </svg>
+        <svg class="bg-art reverse" style="top: 25%; right: 4%; width: 80px; height: 80px;" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m14 13-5.5 5.5t-9-1.5M9.5 8.5l9 9M17 11l4.5-4.5M10.5 4.5 15 9" />
+          <path d="m6 21 3-3" />
+        </svg>
       </div>
       <div class="container" style="position: relative; z-index: 1;">
         <div class="animate-on-scroll fade-in" style="text-align: center;">
@@ -262,24 +336,36 @@
         </div>
         <h1 class="hero-title animate-on-scroll fade-in-left">Calgary Summer Cup</h1>
         <p class="hero-subtitle animate-on-scroll fade-in">
-          The University of Calgary Debate Society is pleased to welcome you to the Calgary Summer Cup 2026! This tournament will be held on July 25th online, over Discord.
+          The University of Calgary Debate Society is pleased to welcome you to the Calgary Summer Cup 2026! This
+          tournament will be held on July 25th online, over Discord.
         </p>
-        <span class="association-notice animate-on-scroll fade-in">This tournament is not associated with the ADSA.</span>
+        <span class="association-notice animate-on-scroll fade-in">This tournament is not associated with the
+          ADSA.</span>
       </div>
     </section>
 
     <!-- Schedule Section -->
     <section class="section" style="position: relative;">
-      <div class="bg-art-container" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; overflow: hidden; pointer-events: none; z-index: 0;">
-        <svg class="bg-art" style="top: 5%; left: 3%; width: 100px; height: 100px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16M6 22V10h12v12M12 6V2M8 4h8"/></svg>
-        <svg class="bg-art reverse" style="bottom: 8%; right: 3%; width: 95px; height: 95px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="m14 13-5.5 5.5t-9-1.5M9.5 8.5l9 9M17 11l4.5-4.5M10.5 4.5 15 9"/><path d="m6 21 3-3"/></svg>
+      <div class="bg-art-container"
+        style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; overflow: hidden; pointer-events: none; z-index: 0;">
+        <svg class="bg-art" style="top: 5%; left: 3%; width: 100px; height: 100px;" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 22h16M6 22V10h12v12M12 6V2M8 4h8" />
+        </svg>
+        <svg class="bg-art reverse" style="bottom: 8%; right: 3%; width: 95px; height: 95px;" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m14 13-5.5 5.5t-9-1.5M9.5 8.5l9 9M17 11l4.5-4.5M10.5 4.5 15 9" />
+          <path d="m6 21 3-3" />
+        </svg>
       </div>
       <div class="container" style="position: relative; z-index: 1;">
         <div class="section-header straddle animate-on-scroll fade-in-left">
-          <h2 class="title-box">Tentative Schedule</h2>
+          <h2 class="title-box">Schedule</h2>
         </div>
         <div class="card animate-on-scroll lift-out-shadow" style="padding: 1.25rem;">
-          <h3 style="color: #1e3a8a; margin-top: 0; text-align: center; font-size: 1.25rem; margin-bottom: 0.5rem; border-bottom: none; padding-bottom: 0;">Preliminary Schedule</h3>
+          <h3
+            style="color: #1e3a8a; margin-top: 0; text-align: center; font-size: 1.25rem; margin-bottom: 0.5rem; border-bottom: none; padding-bottom: 0;">
+            Schedule</h3>
           <div class="schedule-grid">
             <div class="schedule-day">
               <h4>Saturday, July 25</h4>
@@ -298,7 +384,8 @@
             <div class="schedule-day">
               <h4>Sunday, July 26</h4>
               <ul class="schedule-list">
-                <li><span class="schedule-time">9:30-10:00</span><span class="schedule-desc">Check-in / Break</span></li>
+                <li><span class="schedule-time">9:30-10:00</span><span class="schedule-desc">Check-in / Break</span>
+                </li>
                 <li><span class="schedule-time">10:00-11:30</span><span class="schedule-desc">Semi-Finals</span></li>
                 <li><span class="schedule-time">11:30-12:30</span><span class="schedule-desc">Lunch / Break</span></li>
                 <li><span class="schedule-time">12:30-12:45</span><span class="schedule-desc">Check-in</span></li>
@@ -313,25 +400,39 @@
 
     <!-- Format & Platforms Section -->
     <section class="section alt" style="position: relative;">
-      <div class="bg-art-container" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; overflow: hidden; pointer-events: none; z-index: 0;">
-        <svg class="bg-art" style="top: 15%; left: 6%; width: 95px; height: 95px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-        <svg class="bg-art reverse" style="bottom: 12%; right: 4%; width: 100px; height: 100px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16M6 22V10h12v12M12 6V2M8 4h8"/></svg>
+      <div class="bg-art-container"
+        style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; overflow: hidden; pointer-events: none; z-index: 0;">
+        <svg class="bg-art" style="top: 15%; left: 6%; width: 95px; height: 95px;" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+        </svg>
+        <svg class="bg-art reverse" style="bottom: 12%; right: 4%; width: 100px; height: 100px;" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 22h16M6 22V10h12v12M12 6V2M8 4h8" />
+        </svg>
       </div>
       <div class="container" style="position: relative; z-index: 1;">
         <div class="section-header straddle animate-on-scroll fade-in-left">
           <h2 class="title-box">Format & Platforms</h2>
         </div>
         <div class="grid-2col">
-          <article class="card animate-on-scroll lift-out-shadow" style="height: 100%; display: flex; flex-direction: column; padding: 1.5rem;">
+          <article class="card animate-on-scroll lift-out-shadow"
+            style="height: 100%; display: flex; flex-direction: column; padding: 1.5rem;">
             <h3>Tournament Format</h3>
             <p>
-              This tournament will consist of three in-rounds of British Parliamentary debate and one grand final. All in-rounds will be open adjudication, meaning you will be told your placement in the round immediately after the judge's deliberation. Speaker scores will not be revealed.
+              This tournament will consist of three in-rounds of British Parliamentary debate and one grand final. All
+              in-rounds will be open adjudication, meaning you will be told your placement in the round immediately
+              after the judge's deliberation. Speaker scores will not be revealed.
             </p>
           </article>
-          <article class="card animate-on-scroll lift-out-shadow" style="height: 100%; display: flex; flex-direction: column; padding: 1.5rem;">
+          <article class="card animate-on-scroll lift-out-shadow"
+            style="height: 100%; display: flex; flex-direction: column; padding: 1.5rem;">
             <h3>Online Platform</h3>
             <p>
-              The tournament will be held on a Discord server, the link to which will be sent out before the tournament. Please create a Discord account if you do not already have one, or have a parent create one for you to use if you are under the age of 13. Tournament staff will be able to help you navigate the platform if you are not familiar with it.
+              The tournament will be held on a Discord server, the link to which will be sent out before the tournament.
+              Please create a Discord account if you do not already have one, or have a parent create one for you to use
+              if you are under the age of 13. Tournament staff will be able to help you navigate the platform if you are
+              not familiar with it.
             </p>
           </article>
         </div>
@@ -340,50 +441,87 @@
 
     <!-- Eligibility & Rules Section -->
     <section class="section" style="position: relative;">
-      <div class="bg-art-container" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; overflow: hidden; pointer-events: none; z-index: 0;">
-        <svg class="bg-art reverse" style="top: 20%; right: 4%; width: 100px; height: 100px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        <svg class="bg-art" style="bottom: 8%; left: 3%; width: 90px; height: 90px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
+      <div class="bg-art-container"
+        style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; overflow: hidden; pointer-events: none; z-index: 0;">
+        <svg class="bg-art reverse" style="top: 20%; right: 4%; width: 100px; height: 100px;" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+        </svg>
+        <svg class="bg-art" style="bottom: 8%; left: 3%; width: 90px; height: 90px;" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+          <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" />
+        </svg>
       </div>
       <div class="container" style="position: relative; z-index: 1;">
         <div class="section-header straddle animate-on-scroll fade-in-left">
           <h2 class="title-box">Eligibility & Categories</h2>
         </div>
 
-        <div class="eligibility-scope-container animate-on-scroll fade-in" style="text-align: center; max-width: 100%; margin: 0 auto 2rem; background: rgba(37, 99, 235, 0.1); border: 1px solid rgba(37, 99, 235, 0.2); padding: 1rem 1.25rem; border-radius: 1.5rem;">
+        <div class="eligibility-scope-container animate-on-scroll fade-in"
+          style="text-align: center; max-width: 100%; margin: 0 auto 2rem; background: rgba(37, 99, 235, 0.1); border: 1px solid rgba(37, 99, 235, 0.2); padding: 1rem 1.25rem; border-radius: 1.5rem;">
           <p style="font-size: 0.95rem; color: #93c5fd; margin: 0; line-height: 1.4; text-align: center;">
-            <strong style="color: #ffffff;">Eligibility Scope:</strong> Open to all students enrolled in Grades 6-12 during the recently completed 2025-2026 academic year.
+            <strong style="color: #ffffff;">Eligibility Scope:</strong> Open to all students enrolled in Grades 6-12
+            during the recently completed 2025-2026 academic year.
           </p>
         </div>
 
         <div class="grid-2col animate-on-scroll fade-in" style="gap: 2rem; align-items: start; margin-bottom: 2rem;">
           <div style="border-left: 4px solid #3b82f6; padding-left: 1.25rem;">
-            <h4 class="sub-section-title" style="color: #60a5fa; font-size: 1.2rem; font-weight: 700; margin-bottom: 0.75rem;">Junior High Division (Grades 6-8)</h4>
-            <p style="line-height: 1.5; color: #cbd5e1; font-size: 0.9rem; margin-bottom: 1rem; text-align: left; max-width: 100%;">
-              Students in grades 6, 7, and 8 who did not compete in grade 7 are eligible for the <span class="category-badge badge-jr-beg">Junior Beginner</span> category, but may compete in the <span class="category-badge badge-jr-open">Junior Open</span> category if they wish. Other junior high students must compete in <span class="category-badge badge-jr-open">Junior Open</span>.
+            <h4 class="sub-section-title"
+              style="color: #60a5fa; font-size: 1.2rem; font-weight: 700; margin-bottom: 0.75rem;">Junior High Division
+              (Grades 6-8)</h4>
+            <p
+              style="line-height: 1.5; color: #cbd5e1; font-size: 0.9rem; margin-bottom: 1rem; text-align: left; max-width: 100%;">
+              Students in grades 6, 7, and 8 who did not compete in grade 7 are eligible for the <span
+                class="category-badge badge-jr-beg">Junior Beginner</span> category, but may compete in the <span
+                class="category-badge badge-jr-open">Junior Open</span> category if they wish. Other junior high
+              students must compete in <span class="category-badge badge-jr-open">Junior Open</span>.
             </p>
-            <p style="line-height: 1.5; color: #94a3b8; font-size: 0.85rem; margin-bottom: 0; text-align: left; max-width: 100%;">
+            <p
+              style="line-height: 1.5; color: #94a3b8; font-size: 0.85rem; margin-bottom: 0; text-align: left; max-width: 100%;">
               All junior high students will compete together in rounds, but awards and breaks will be separated.
             </p>
           </div>
           <div style="border-left: 4px solid #f97316; padding-left: 1.25rem;">
-            <h4 class="sub-section-title" style="color: #fdba74; font-size: 1.2rem; font-weight: 700; margin-bottom: 0.75rem;">Senior High Division (Grades 9-12)</h4>
-            <p style="line-height: 1.5; color: #cbd5e1; font-size: 0.9rem; margin-bottom: 1rem; text-align: left; max-width: 100%;">
-              Students in grades 9, 10, and 11 who did not compete in grade 10 are eligible for the <span class="category-badge badge-sr-beg">Senior Beginner</span> category, but may compete in the <span class="category-badge badge-sr-open">Senior Open</span> category if they wish. Other senior high students must compete in <span class="category-badge badge-sr-open">Senior Open</span>.
+            <h4 class="sub-section-title"
+              style="color: #fdba74; font-size: 1.2rem; font-weight: 700; margin-bottom: 0.75rem;">Senior High Division
+              (Grades 9-12)</h4>
+            <p
+              style="line-height: 1.5; color: #cbd5e1; font-size: 0.9rem; margin-bottom: 1rem; text-align: left; max-width: 100%;">
+              Students in grades 9, 10, and 11 who did not compete in grade 10 are eligible for the <span
+                class="category-badge badge-sr-beg">Senior Beginner</span> category, but may compete in the <span
+                class="category-badge badge-sr-open">Senior Open</span> category if they wish. Other senior high
+              students must compete in <span class="category-badge badge-sr-open">Senior Open</span>.
             </p>
-            <p style="line-height: 1.5; color: #94a3b8; font-size: 0.85rem; margin-bottom: 0; text-align: left; max-width: 100%;">
+            <p
+              style="line-height: 1.5; color: #94a3b8; font-size: 0.85rem; margin-bottom: 0; text-align: left; max-width: 100%;">
               All senior high students will compete together in rounds, but awards and breaks will be separated.
             </p>
           </div>
         </div>
 
-        <div class="hybrid-info-panel animate-on-scroll fade-in" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 1rem; padding: 1.5rem; display: flex; gap: 1rem; align-items: flex-start; text-align: left; margin-bottom: 1rem;">
-          <div style="flex-shrink: 0; background: rgba(147, 197, 253, 0.1); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #93c5fd;">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        <div class="hybrid-info-panel animate-on-scroll fade-in"
+          style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 1rem; padding: 1.5rem; display: flex; gap: 1rem; align-items: flex-start; text-align: left; margin-bottom: 1rem;">
+          <div
+            style="flex-shrink: 0; background: rgba(147, 197, 253, 0.1); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #93c5fd;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="16" x2="12" y2="12" />
+              <line x1="12" y1="8" x2="12.01" y2="8" />
+            </svg>
           </div>
           <div>
-            <h4 style="color: #f8fafc; margin-top: 0; font-size: 1.1rem; margin-bottom: 0.35rem; font-weight: 600; text-align: left;">Hybrid & Mixed-Grade</h4>
-            <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.5; margin: 0; text-align: left; max-width: 100%;">
-              Hybrid teams of debaters that completed different grades compete in the category of the most senior debater (e.g. grade 9 and 7 debates as <span class="category-badge badge-jr-open">Junior Open</span>). Teams with a junior high and high school student compete in <span class="category-badge badge-sr-any">Senior</span>.
+            <h4
+              style="color: #f8fafc; margin-top: 0; font-size: 1.1rem; margin-bottom: 0.35rem; font-weight: 600; text-align: left;">
+              Hybrid & Mixed-Grade</h4>
+            <p
+              style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.5; margin: 0; text-align: left; max-width: 100%;">
+              Hybrid teams of debaters that completed different grades compete in the category of the most senior
+              debater (e.g. grade 9 and 7 debates as <span class="category-badge badge-jr-open">Junior Open</span>).
+              Teams with a junior high and high school student compete in <span
+                class="category-badge badge-sr-any">Senior</span>.
             </p>
           </div>
         </div>
@@ -392,25 +530,38 @@
 
     <!-- Judging & Awards Section -->
     <section class="section alt" style="position: relative;">
-      <div class="bg-art-container" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; overflow: hidden; pointer-events: none; z-index: 0;">
-        <svg class="bg-art" style="top: 10%; right: 4%; width: 100px; height: 100px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34M12 2a5 5 0 0 0-5 5v3c0 2.76 2.24 5 5 5s5-2.24 5-5V7a5 5 0 0 0-5-5z"/></svg>
-        <svg class="bg-art reverse" style="bottom: 15%; left: 3%; width: 90px; height: 90px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="m14 13-5.5 5.5t-9-1.5M9.5 8.5l9 9M17 11l4.5-4.5M10.5 4.5 15 9"/><path d="m6 21 3-3"/></svg>
+      <div class="bg-art-container"
+        style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; overflow: hidden; pointer-events: none; z-index: 0;">
+        <svg class="bg-art" style="top: 10%; right: 4%; width: 100px; height: 100px;" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+          <path
+            d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34M12 2a5 5 0 0 0-5 5v3c0 2.76 2.24 5 5 5s5-2.24 5-5V7a5 5 0 0 0-5-5z" />
+        </svg>
+        <svg class="bg-art reverse" style="bottom: 15%; left: 3%; width: 90px; height: 90px;" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m14 13-5.5 5.5t-9-1.5M9.5 8.5l9 9M17 11l4.5-4.5M10.5 4.5 15 9" />
+          <path d="m6 21 3-3" />
+        </svg>
       </div>
       <div class="container" style="position: relative; z-index: 1;">
         <div class="section-header straddle animate-on-scroll fade-in-left">
           <h2 class="title-box">Judging & Awards</h2>
         </div>
         <div class="grid-2col">
-          <article class="card animate-on-scroll lift-out-shadow" style="height: 100%; display: flex; flex-direction: column; padding: 1.5rem;">
+          <article class="card animate-on-scroll lift-out-shadow"
+            style="height: 100%; display: flex; flex-direction: column; padding: 1.5rem;">
             <h3>Judging & Spectating</h3>
             <p>
-              Judging will be provided by experienced university debaters, allowing for quality judging and personalized feedback. Parents and other spectators are permitted if all debaters in the room are comfortable with it.
+              Judging will be provided by experienced university debaters, allowing for quality judging and personalized
+              feedback. Parents and other spectators are permitted if all debaters in the room are comfortable with it.
             </p>
           </article>
-          <article class="card animate-on-scroll lift-out-shadow" style="height: 100%; display: flex; flex-direction: column; padding: 1.5rem;">
+          <article class="card animate-on-scroll lift-out-shadow"
+            style="height: 100%; display: flex; flex-direction: column; padding: 1.5rem;">
             <h3>Awards Categories</h3>
             <p>
-              Awards will be given to teams and speakers in the following categories: Junior Beginner, Junior Open, Senior Beginner, Senior Open.
+              Awards will be given to teams and speakers in the following categories: Junior Beginner, Junior Open,
+              Senior Beginner, Senior Open.
             </p>
           </article>
         </div>
@@ -419,52 +570,88 @@
 
     <!-- Registration Section -->
     <section class="section" style="position: relative;">
-      <div class="bg-art-container" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; overflow: hidden; pointer-events: none; z-index: 0;">
-        <svg class="bg-art" style="top: 15%; left: 4%; width: 90px; height: 90px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-        <svg class="bg-art reverse" style="bottom: 8%; right: 4%; width: 100px; height: 100px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <div class="bg-art-container"
+        style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; overflow: hidden; pointer-events: none; z-index: 0;">
+        <svg class="bg-art" style="top: 15%; left: 4%; width: 90px; height: 90px;" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+          <polygon
+            points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+        </svg>
+        <svg class="bg-art reverse" style="bottom: 8%; right: 4%; width: 100px; height: 100px;" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+        </svg>
       </div>
       <div class="container" style="position: relative; z-index: 1;">
         <div class="section-header straddle animate-on-scroll fade-in-left">
           <h2 class="title-box">Registration</h2>
         </div>
-        
+
         <div class="animate-on-scroll fade-in" style="max-width: 100%; text-align: center;">
           <div class="deadlines-grid">
             <!-- Registration Card -->
             <div class="deadline-item">
               <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                <h3 style="font-size: 1.15rem; color: #f8fafc; margin: 0; border: none; padding: 0; text-align: left; font-weight: 600;">Registration Deadline</h3>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                  <line x1="16" y1="2" x2="16" y2="6" />
+                  <line x1="8" y1="2" x2="8" y2="6" />
+                  <line x1="3" y1="10" x2="21" y2="10" />
+                </svg>
+                <h3
+                  style="font-size: 1.15rem; color: #f8fafc; margin: 0; border: none; padding: 0; text-align: left; font-weight: 600;">
+                  Registration Deadline</h3>
               </div>
-              <p style="font-size: 1.75rem; font-weight: 800; color: #60a5fa; margin: 0.5rem 0; text-align: left;">July 18th, 2026</p>
-              <p style="font-size: 0.9rem; color: #cbd5e1; margin: 0; text-align: left; line-height: 1.4; max-width: 100%;">
-                Please complete the <a href="registration/" style="color: #60a5fa; text-decoration: underline; font-weight: 600;">registration form</a> by this date to participate.
+              <p style="font-size: 1.75rem; font-weight: 800; color: #60a5fa; margin: 0.5rem 0; text-align: left;">July
+                18th, 2026</p>
+              <p
+                style="font-size: 0.9rem; color: #cbd5e1; margin: 0; text-align: left; line-height: 1.4; max-width: 100%;">
+                Please complete the <a href="registration/"
+                  style="color: #60a5fa; text-decoration: underline; font-weight: 600;">registration form</a> by this
+                date to participate.
               </p>
             </div>
-            
+
             <!-- Fees Card -->
             <div class="deadline-item">
               <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fca5a5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                <h3 style="font-size: 1.15rem; color: #f8fafc; margin: 0; border: none; padding: 0; text-align: left; font-weight: 600;">Payment Deadline</h3>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fca5a5" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="1" x2="12" y2="23" />
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                </svg>
+                <h3
+                  style="font-size: 1.15rem; color: #f8fafc; margin: 0; border: none; padding: 0; text-align: left; font-weight: 600;">
+                  Payment Deadline</h3>
               </div>
-              <p style="font-size: 1.75rem; font-weight: 800; color: #fca5a5; margin: 0.5rem 0; text-align: left;">July 20th, 2026</p>
-              <p style="font-size: 0.9rem; color: #cbd5e1; margin: 0; text-align: left; line-height: 1.4; max-width: 100%;">
-                Fee is <strong>$30 per debater</strong>. Send e-transfer payments to <a href="mailto:ucds.debate@gmail.com" style="color: #60a5fa; text-decoration: underline;">ucds.debate@gmail.com</a>.
+              <p style="font-size: 1.75rem; font-weight: 800; color: #fca5a5; margin: 0.5rem 0; text-align: left;">July
+                20th, 2026</p>
+              <p
+                style="font-size: 0.9rem; color: #cbd5e1; margin: 0; text-align: left; line-height: 1.4; max-width: 100%;">
+                Fee is <strong>$30 per debater</strong>. Send e-transfer payments to <a
+                  href="mailto:ucds.debate@gmail.com"
+                  style="color: #60a5fa; text-decoration: underline;">ucds.debate@gmail.com</a>.
               </p>
             </div>
           </div>
-          
-          <div class="card animate-on-scroll lift-out-shadow" style="padding: 2rem 1.25rem; margin-bottom: 2.5rem; text-align: center;">
-            <h3 style="font-size: 1.5rem; color: #1e3a8a; margin-top: 0; margin-bottom: 1rem; font-weight: 700; border-bottom: none; padding-bottom: 0;">Ready to Register?</h3>
+
+          <div class="card animate-on-scroll lift-out-shadow"
+            style="padding: 2rem 1.25rem; margin-bottom: 2.5rem; text-align: center;">
+            <h3
+              style="font-size: 1.5rem; color: #1e3a8a; margin-top: 0; margin-bottom: 1rem; font-weight: 700; border-bottom: none; padding-bottom: 0;">
+              Ready to Register?</h3>
             <p style="font-size: 0.95rem; color: #334155; margin-bottom: 1.5rem;">
               Sign up today to secure your spot in the Calgary Summer Cup 2026.
             </p>
             <a href="registration/" class="cta-btn-black large-cta-btn">Register for Calgary Summer Cup</a>
           </div>
 
-          <p style="font-size: 0.9rem; color: #94a3b8; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 1.25rem; line-height: 1.5;">
-            If you have any questions or concerns, please do not hesitate to reach out to <a href="mailto:ucds.debate@gmail.com" style="color: #60a5fa; text-decoration: underline;">ucds.debate@gmail.com</a>.
+          <p
+            style="font-size: 0.9rem; color: #94a3b8; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 1.25rem; line-height: 1.5;">
+            If you have any questions or concerns, please do not hesitate to reach out to <a
+              href="mailto:ucds.debate@gmail.com"
+              style="color: #60a5fa; text-decoration: underline;">ucds.debate@gmail.com</a>.
           </p>
         </div>
       </div>
@@ -473,7 +660,9 @@
 
   <footer class="site-footer">
     <div class="container footer-inner">
-      <p>&copy; <span id="currentYear"></span> UCDS. All rights reserved. &bull; <a href="index.html?force=desktop" class="footer-desktop-link" style="color: #93c5fd; text-decoration: underline; margin-left: 0.5rem;">View Desktop Version</a></p>
+      <p>&copy; <span id="currentYear"></span> UCDS. All rights reserved. &bull; <a href="index.html?force=desktop"
+          class="footer-desktop-link" style="color: #93c5fd; text-decoration: underline; margin-left: 0.5rem;">View
+          Desktop Version</a></p>
       <div class="footer-socials">
         <a href="https://www.instagram.com/ucalgary.debate/" target="_blank" rel="noreferrer" aria-label="Instagram">
           <img src="../../photos/instagram_footer.png" alt="Instagram" class="footer-social-icon" />
@@ -495,4 +684,5 @@
   </footer>
   <script src="../../scripts/script.js"></script>
 </body>
+
 </html>

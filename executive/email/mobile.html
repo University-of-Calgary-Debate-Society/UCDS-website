@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta property="og:image" content="../../photos/logo_seo.png" />
+  <meta name="twitter:image" content="../../photos/logo_seo.png" />
+  <title>UCDS | Email Manager</title>
+  <link rel="icon" href="../../photos/logo.jpg" type="image/jpeg" />
+  <link rel="stylesheet" href="../../css/styles.css" />
+  <script>
+    // Session state protection
+    (function() {
+      if (sessionStorage.getItem('execLoggedIn') !== 'true') {
+        window.location.replace("../mobile.html");
+      }
+      
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('force') === 'mobile') {
+        return;
+      }
+      const isMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      if (!isMobile) {
+        window.location.replace("index.html" + window.location.search);
+      } else {
+        sessionStorage.removeItem('forceDesktop');
+      }
+    })();
+  </script>
+  <style>
+    .email-container {
+      background: #112854;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 1rem;
+      padding: 2rem 1.25rem;
+      color: #ffffff;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+      max-width: 500px;
+      margin: 2rem auto;
+    }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+      transition: color 0.2s ease;
+    }
+    .back-btn:hover {
+      color: #ffffff;
+    }
+    .exec-input {
+      width: 100%;
+      padding: 0.85rem 1.1rem;
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 999px;
+      color: #ffffff;
+      font-size: 0.95rem;
+      outline: none;
+      box-sizing: border-box;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .exec-input:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 8px rgba(37, 99, 235, 0.25);
+    }
+    .exec-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.85rem 2rem;
+      border-radius: 999px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      width: 100%;
+      box-sizing: border-box;
+      transition: transform 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
+      text-decoration: none;
+    }
+    .exec-btn-primary {
+      background: #2563eb;
+      color: #ffffff;
+    }
+    .exec-btn-danger {
+      background: #dc2626;
+      color: #ffffff;
+    }
+    .exec-btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #ffffff;
+    }
+    .exec-btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.18);
+    }
+    
+    /* Email Sections styling */
+    .email-section {
+      background: rgba(0, 0, 0, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+      text-align: left;
+    }
+    .email-form-group {
+      margin-bottom: 1rem;
+    }
+    .email-label {
+      display: block;
+      margin-bottom: 0.4rem;
+      font-weight: 700;
+      color: #e2e8f0;
+      font-size: 0.85rem;
+    }
+    .email-select {
+      width: 100%;
+      padding: 0.75rem 0.9rem;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      color: #ffffff;
+      font-size: 0.9rem;
+      outline: none;
+      margin-bottom: 0.85rem;
+    }
+    .email-textarea {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      color: #ffffff;
+      font-size: 0.9rem;
+      padding: 0.75rem 0.9rem;
+      outline: none;
+      font-family: Inter, sans-serif;
+      resize: vertical;
+    }
+    .email-textarea-mono {
+      font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 0.8rem;
+    }
+    .email-checkbox-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 0.85rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      margin-bottom: 0.85rem;
+    }
+    .email-checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      color: #cbd5e1;
+      font-size: 0.85rem;
+    }
+    .email-checkbox-item input {
+      width: 15px;
+      height: 15px;
+      cursor: pointer;
+    }
+    .preview-box {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 10px;
+      background: #ffffff;
+      height: 340px;
+    }
+    .preview-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: #ffffff;
+    }
+    .campaign-btn-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    .campaign-btn-row button {
+      flex: 1;
+      min-width: 100px;
+    }
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      margin-top: 1rem;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .exec-table {
+      width: 100%;
+      border-collapse: collapse;
+      color: #cbd5e1;
+      font-size: 0.85rem;
+      min-width: 480px;
+    }
+    .exec-table th {
+      background: rgba(0, 0, 0, 0.35);
+      padding: 10px;
+      text-align: left;
+      font-weight: 700;
+      color: #ffffff;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+    }
+    .exec-table td {
+      padding: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 6px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      border-radius: 999px;
+    }
+    .badge-pending {
+      background: rgba(234, 179, 8, 0.15);
+      color: #facc15;
+      border: 1px solid rgba(234, 179, 8, 0.3);
+    }
+    .badge-sent {
+      background: rgba(34, 197, 94, 0.15);
+      color: #4ade80;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+    .badge-failed {
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+  </style>
+</head>
+<body class="events-body">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="../../">
+        <img src="../../photos/logo.jpg" alt="University of Calgary Debate Society logo" class="logo-image" />
+        <span class="brand-text">UCDS</span>
+      </a>
+      <button class="menu-toggle" aria-label="Toggle navigation"><span class="hamburger"></span></button>
+      <nav class="site-nav">
+        <a href="../../">Home</a>
+        <a href="../../events/">Events</a>
+        <a href="../../blog/">Blog</a>
+        <a href="../../resources/">Resources</a>
+        <a href="../../connect/">Connect</a>
+        <a href="../../join/" class="nav-join-button">Join</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="container" style="padding: 0 10px;">
+        
+        <div class="email-container">
+          <a href="../mobile.html" class="back-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" style="width: 14px; height: 14px;">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+            Back to Dashboard
+          </a>
+
+          <h2 style="font-size: 1.75rem; color: #ffffff; margin: 0 0 0.5rem; font-weight: 800;">Email Manager</h2>
+          <p style="margin: 0 0 1.5rem; color: #94a3b8; font-size: 0.85rem; line-height: 1.4;">Compose drafts, select target lists, and schedule broadcasts in Edmonton time.</p>
+          
+          <div class="email-section">
+            <h4 style="color: #ffffff; margin: 0 0 1rem; font-size: 1.05rem; font-weight: 700;">1. Compose Draft</h4>
+            
+            <div class="email-form-group">
+              <label class="email-label" for="draft-select">Select Draft</label>
+              <select id="draft-select" class="email-select" onchange="onDraftSelectChange()">
+                <option value="new">-- Create New Draft --</option>
+                <option value="load_csc">-- Load Calgary Summer Cup Template --</option>
+              </select>
+            </div>
+            
+            <div class="email-form-group">
+              <label class="email-label" for="draft-subject">Subject</label>
+              <input type="text" id="draft-subject" class="exec-input" style="text-align: left; max-width: 100%; margin-bottom: 0; font-size: 0.9rem;" placeholder="Email Subject" />
+            </div>
+            
+            <div class="email-form-group">
+              <label class="email-label" for="draft-body">HTML Body</label>
+              <textarea id="draft-body" class="email-textarea email-textarea-mono" rows="8" placeholder="<p>Write your HTML here...</p>" oninput="debouncedUpdatePreview()"></textarea>
+            </div>
+            <div class="email-form-group">
+              <label class="email-label" for="draft-plain">Plain Text Fallback</label>
+              <textarea id="draft-plain" class="email-textarea" rows="3" placeholder="Plain text version..."></textarea>
+            </div>
+            
+            <div style="display: flex; gap: 15px; margin-bottom: 1.25rem; background: rgba(0,0,0,0.2); padding: 0.75rem 1rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); align-items: center;">
+              <label class="email-checkbox-item" style="color: #cbd5e1; font-size: 0.85rem; margin-bottom: 0; display: flex; align-items: center; gap: 8px;">
+                <input type="checkbox" id="include-header-checkbox" onchange="updatePreview()" />
+                <span>Header</span>
+              </label>
+              <label class="email-checkbox-item" style="color: #cbd5e1; font-size: 0.85rem; margin-bottom: 0; display: flex; align-items: center; gap: 8px;">
+                <input type="checkbox" id="include-footer-checkbox" onchange="updatePreview()" />
+                <span>Footer</span>
+              </label>
+            </div>
+
+            <div class="campaign-btn-row">
+              <button onclick="saveCampaignDraft()" class="exec-btn exec-btn-primary" style="padding: 0.6rem 1.25rem; font-size: 0.85rem; width: auto;">Save Draft</button>
+              <button id="delete-draft-btn" onclick="deleteCampaignDraft()" class="exec-btn exec-btn-danger" style="padding: 0.6rem 1.25rem; font-size: 0.85rem; width: auto; margin-top: 0; display: none;">Delete</button>
+            </div>
+            <div style="margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.08);">
+              <label class="email-label" for="test-email-input">Send a Test Email</label>
+              <div style="display: flex; gap: 8px;">
+                <input type="email" id="test-email-input" class="exec-input" value="ucds.debate@gmail.com" style="flex: 1; text-align: left; max-width: 100%; margin-bottom: 0; font-size: 0.85rem; padding: 0.6rem 1rem;" placeholder="test-recipient@example.com" />
+                <button onclick="sendTestEmail()" class="exec-btn exec-btn-primary" style="width: auto; padding: 0.6rem 1.25rem; font-size: 0.85rem; white-space: nowrap;">Send Test</button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="email-section">
+            <h4 style="color: #ffffff; margin: 0 0 1rem; font-size: 1.05rem; font-weight: 700;">2. Schedule Campaign</h4>
+            
+            <div class="email-form-group">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                <label class="email-label" style="margin-bottom: 0;">Target Lists</label>
+                <button onclick="loadMailingLists()" class="exec-btn exec-btn-secondary" style="width: auto; padding: 2px 8px; font-size: 0.7rem; margin: 0; border-radius: 4px;">Refresh</button>
+              </div>
+              <div id="mailing-lists-container" class="email-checkbox-group">
+                <p style="color: #94a3b8; font-size: 0.8rem; margin: 0;">Loading lists...</p>
+              </div>
+            </div>
+            
+            <div class="email-form-group">
+              <label class="email-label" for="schedule-datetime">Scheduled Time (Edmonton)</label>
+              <input type="datetime-local" id="schedule-datetime" class="exec-input" style="text-align: left; max-width: 100%; margin-bottom: 0; font-size: 0.9rem;" />
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-top: 0.5rem;">
+              <button onclick="scheduleCampaignSend()" class="exec-btn exec-btn-primary" style="flex: 1; padding: 0.75rem; font-size: 0.9rem;">Schedule Send</button>
+              <button onclick="sendCampaignImmediately()" class="exec-btn exec-btn-danger" style="flex: 1; padding: 0.75rem; font-size: 0.9rem; background: #ea580c; border: none; margin-top: 0;">Send Immediately</button>
+            </div>
+          </div>
+          
+          <div class="email-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+              <h4 style="color: #ffffff; margin: 0; font-size: 1.05rem; font-weight: 700;">3. Live HTML Preview</h4>
+              <button onclick="previewInNewTab()" class="exec-btn exec-btn-primary" style="width: auto; padding: 0.4rem 1rem; font-size: 0.8rem; margin: 0;">Preview in New Tab</button>
+            </div>
+            <div class="preview-box">
+              <iframe id="preview-frame" class="preview-iframe"></iframe>
+            </div>
+          </div>
+          
+          <div class="email-section">
+            <h4 style="color: #ffffff; margin: 0 0 1rem; font-size: 1.05rem; font-weight: 700;">4. Campaign Logs</h4>
+            <div class="table-container" style="margin-top: 0;">
+              <table class="exec-table">
+                <thead>
+                  <tr>
+                    <th>Subject</th>
+                    <th>Lists</th>
+                    <th>Time (Edmonton)</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="schedules-log-body">
+                  <tr>
+                    <td colspan="5" style="text-align: center; color: #94a3b8; padding: 15px;">Loading campaigns...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>&copy; <span id="currentYear"></span> UCDS. All rights reserved. &bull; <a href="index.html?force=desktop" class="footer-desktop-link" style="color: #93c5fd; text-decoration: underline; margin-left: 0.5rem;">View Desktop Version</a></p>
+    </div>
+  </footer>
+
+  <script>
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyUmdbEzfBZbHCCgaYRG5mseiRZ7dAba0o88CSH1ywOdTiWKkeZmufL48xBJoFPYZQm2Q/exec';
+
+    let cachedDrafts = [];
+    let previewDebounceTimer = null;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const now = new Date();
+      now.setMinutes(now.getMinutes() + 10);
+      
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      document.getElementById('schedule-datetime').value = `${year}-${month}-${day}T${hours}:${minutes}`;
+
+      loadDrafts();
+      loadMailingLists();
+      loadSchedules();
+      updatePreview();
+    });
+
+    async function callApi(action, payload = {}) {
+      const password = sessionStorage.getItem('execPassword');
+      if (!password) {
+        alert('Authentication lost. Please log out and log in again.');
+        return null;
+      }
+
+      const body = {
+        action: action,
+        password: password,
+        ...payload
+      };
+
+      try {
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          mode: 'cors',
+          headers: {
+            'Content-Type': 'text/plain;charset=utf-8'
+          },
+          body: JSON.stringify(body)
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        if (data.result === 'error') {
+          throw new Error(data.error || 'Unknown server error');
+        }
+        return data;
+      } catch (err) {
+        console.error('API Call Failed:', err);
+        alert(`API Error: ${err.message}`);
+        return null;
+      }
+    }
+
+    async function loadDrafts() {
+      const draftSelect = document.getElementById('draft-select');
+      const currentSelected = draftSelect.value;
+      
+      const data = await callApi('getDrafts');
+      if (data && data.drafts) {
+        cachedDrafts = data.drafts;
+        
+        draftSelect.innerHTML = '<option value="new">-- Create New Draft --</option>' +
+                                '<option value="load_csc">-- Load Calgary Summer Cup Template --</option>';
+        cachedDrafts.forEach(d => {
+          const opt = document.createElement('option');
+          opt.value = d.id;
+          opt.textContent = d.subject || `(No Subject) [${d.id}]`;
+          draftSelect.appendChild(opt);
+        });
+
+        draftSelect.value = currentSelected;
+        if (draftSelect.value !== currentSelected) {
+          draftSelect.value = 'new';
+          onDraftSelectChange();
+        }
+      }
+    }
+
+    async function loadMailingLists() {
+      const container = document.getElementById('mailing-lists-container');
+      container.innerHTML = '<p style="color: #94a3b8; font-size: 0.8rem; margin: 0;">Loading lists...</p>';
+
+      const data = await callApi('getMailingLists');
+      if (data && data.lists) {
+        container.innerHTML = '';
+        
+        // Master Select All
+        const selectAllLabel = document.createElement('label');
+        selectAllLabel.className = 'email-checkbox-item';
+        selectAllLabel.style.fontWeight = '700';
+        selectAllLabel.style.borderBottom = '1px solid rgba(255,255,255,0.08)';
+        selectAllLabel.style.paddingBottom = '4px';
+        selectAllLabel.style.marginBottom = '4px';
+        
+        const selectAllCb = document.createElement('input');
+        selectAllCb.type = 'checkbox';
+        selectAllCb.id = 'select-all-lists';
+        selectAllCb.onchange = function() {
+          const checkboxes = container.querySelectorAll('input[name="mailing_list"]');
+          checkboxes.forEach(cb => cb.checked = selectAllCb.checked);
+        };
+        
+        const selectAllText = document.createElement('span');
+        selectAllText.textContent = 'Select All Lists';
+        
+        selectAllLabel.appendChild(selectAllCb);
+        selectAllLabel.appendChild(selectAllText);
+        container.appendChild(selectAllLabel);
+
+        data.lists.forEach(list => {
+          const label = document.createElement('label');
+          label.className = 'email-checkbox-item';
+          
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.name = 'mailing_list';
+          checkbox.value = list.name;
+          checkbox.onchange = function() {
+            const allCbs = container.querySelectorAll('input[name="mailing_list"]');
+            const checkedCbs = container.querySelectorAll('input[name="mailing_list"]:checked');
+            selectAllCb.checked = (allCbs.length === checkedCbs.length);
+          };
+          
+          const span = document.createElement('span');
+          span.textContent = `${list.displayName} (${list.count})`;
+          
+          label.appendChild(checkbox);
+          label.appendChild(span);
+          container.appendChild(label);
+        });
+      }
+    }
+
+    async function loadSchedules() {
+      const body = document.getElementById('schedules-log-body');
+      body.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #94a3b8; padding: 15px;">Loading campaigns...</td></tr>';
+
+      const data = await callApi('getSchedules');
+      if (data && data.schedules) {
+        body.innerHTML = '';
+        if (data.schedules.length === 0) {
+          body.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #94a3b8; padding: 15px;">No campaigns scheduled yet.</td></tr>';
+          return;
+        }
+
+        data.schedules.reverse();
+
+        data.schedules.forEach(sched => {
+          const tr = document.createElement('tr');
+          
+          const tdSubject = document.createElement('td');
+          tdSubject.textContent = sched.draftSubject;
+          tdSubject.style.fontWeight = '600';
+          tr.appendChild(tdSubject);
+          
+          const tdLists = document.createElement('td');
+          tdLists.textContent = sched.lists.split(',').map(l => {
+            if (l === 'Subscribers') return 'General';
+            if (l === 'junior_high_subscribers') return 'Junior';
+            if (l === 'senior_high_subscribers') return 'Senior';
+            if (l === 'university_subscribers') return 'University';
+            if (l === 'high_school_coaches') return 'HS Coaches';
+            if (l === 'junior_high_coaches') return 'JH Coaches';
+            return l;
+          }).join(', ');
+          tr.appendChild(tdLists);
+          
+          const tdTime = document.createElement('td');
+          tdTime.textContent = sched.timeEdmonton;
+          tr.appendChild(tdTime);
+          
+          const tdStatus = document.createElement('td');
+          const statusLower = sched.status.toLowerCase();
+          let badgeClass = 'badge-pending';
+          if (statusLower.indexOf('sent') !== -1) badgeClass = 'badge-sent';
+          if (statusLower.indexOf('failed') !== -1) badgeClass = 'badge-failed';
+          
+          const statusText = sched.error ? `${sched.status} (⚠️)` : sched.status;
+          const badgeSpan = document.createElement('span');
+          badgeSpan.className = `badge ${badgeClass}`;
+          badgeSpan.textContent = statusText;
+          if (sched.error) {
+            badgeSpan.title = sched.error;
+          }
+          tdStatus.appendChild(badgeSpan);
+          tr.appendChild(tdStatus);
+          
+          const tdAction = document.createElement('td');
+          if (sched.status === 'Pending') {
+            const cancelBtn = document.createElement('button');
+            cancelBtn.textContent = 'Cancel';
+            cancelBtn.className = 'exec-btn exec-btn-danger';
+            cancelBtn.style.padding = '2px 5px';
+            cancelBtn.style.fontSize = '0.7rem';
+            cancelBtn.style.width = 'auto';
+            cancelBtn.style.marginTop = '0';
+            cancelBtn.onclick = () => cancelCampaignSend(sched.id);
+            tdAction.appendChild(cancelBtn);
+          } else {
+            tdAction.textContent = '—';
+            tdAction.style.textAlign = 'center';
+            tdAction.style.color = '#64748b';
+          }
+          tr.appendChild(tdAction);
+          
+          body.appendChild(tr);
+        });
+      }
+    }
+
+    async function onDraftSelectChange() {
+      const draftSelect = document.getElementById('draft-select');
+      const val = draftSelect.value;
+
+      if (val === 'new') {
+        document.getElementById('draft-subject').value = '';
+        document.getElementById('draft-body').value = '';
+        document.getElementById('draft-plain').value = '';
+        document.getElementById('include-header-checkbox').checked = false;
+        document.getElementById('include-footer-checkbox').checked = false;
+        document.getElementById('delete-draft-btn').style.display = 'none';
+      } else if (val === 'load_csc') {
+        try {
+          const response = await fetch('../draft-emails/email_template.html');
+          const html = await response.text();
+          document.getElementById('draft-subject').value = '🏆 Calgary Summer Cup 2026 - Register Now!';
+          document.getElementById('draft-body').value = html;
+          document.getElementById('draft-plain').value = 'The University of Calgary Debate Society is excited to invite you to the Calgary Summer Cup 2026! This tournament will be held online over Discord from Saturday, July 25th to Sunday, July 26th.';
+          document.getElementById('include-header-checkbox').checked = true;
+          document.getElementById('include-footer-checkbox').checked = true;
+          draftSelect.value = 'new';
+          document.getElementById('delete-draft-btn').style.display = 'none';
+        } catch (err) {
+          alert('Failed to load Calgary Summer Cup Template: ' + err.message);
+        }
+      } else {
+        const draft = cachedDrafts.find(d => d.id === val);
+        if (draft) {
+          document.getElementById('draft-subject').value = draft.subject || '';
+          document.getElementById('draft-body').value = draft.body || '';
+          document.getElementById('draft-plain').value = draft.plainText || '';
+          document.getElementById('include-header-checkbox').checked = draft.includeHeader !== false;
+          document.getElementById('include-footer-checkbox').checked = draft.includeFooter !== false;
+          document.getElementById('delete-draft-btn').style.display = 'inline-flex';
+        }
+      }
+      updatePreview();
+    }
+
+    function debouncedUpdatePreview() {
+      clearTimeout(previewDebounceTimer);
+      previewDebounceTimer = setTimeout(updatePreview, 300);
+    }
+
+    function previewInNewTab() {
+      const body = document.getElementById('draft-body').value || '<p style="color:#64748b;">(No email content written yet)</p>';
+      const includeHeader = document.getElementById('include-header-checkbox').checked;
+      const includeFooter = document.getElementById('include-footer-checkbox').checked;
+      const previewHtml = compileEmailTemplatePreview('Debaters', body, includeHeader, includeFooter);
+      
+      const newWindow = window.open();
+      if (newWindow) {
+        newWindow.document.open();
+        newWindow.document.write(previewHtml);
+        newWindow.document.close();
+      } else {
+        alert('Pop-up blocked! Please allow pop-ups for this site to preview in a new tab.');
+      }
+    }
+
+    function compileEmailTemplatePreview(recipientName, messageBody, includeHeader, includeFooter) {
+      if (!includeHeader && !includeFooter) {
+        return '<!DOCTYPE html>' +
+               '<html>' +
+               '<head>' +
+                 '<meta charset="utf-8">' +
+                 '<meta name="viewport" content="width=device-width, initial-scale=1.0">' +
+                 '<style>body { margin: 15px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; color: #334155; font-size: 13px; }</style>' +
+               '</head>' +
+               '<body>' +
+                 '<div>' + messageBody + '</div>' +
+                 '<hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 15px 0;">' +
+                 '<div style="text-align: center; font-size: 10px; color: #64748b; font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, Arial, sans-serif;">Unsubscribe</div>' +
+               '</body>' +
+               '</html>';
+      }
+
+      var headerHtml = '';
+      if (includeHeader) {
+        headerHtml = 
+          '<!-- Banner Header -->' +
+          '<table class="card-table" border="0" cellpadding="0" cellspacing="0" width="100%" style="background: linear-gradient(135deg, #0b1a3a 0%, #112854 100%); border-radius: 10px; overflow: hidden; margin-bottom: 12px;">' +
+            '<tr>' +
+              '<td align="center" style="padding: 15px; text-align: center;">' +
+                '<h3 style="margin: 0 0 3px; color: #ffffff; font-size: 15px; font-weight: 800; line-height: 1.2;">University of Calgary Debate Society</h3>' +
+                '<p style="margin: 0; color: #93c5fd; font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Newsletter</p>' +
+              '</td>' +
+            '</tr>' +
+          '</table>';
+      }
+
+      var footerHtml = '';
+      if (includeFooter) {
+        footerHtml = 
+          '<!-- Footer Card -->' +
+          '<table class="card-table" border="0" cellpadding="0" cellspacing="0" width="100%" style="text-align: center;">' +
+            '<tr>' +
+              '<td style="padding: 5px; font-size: 9px; color: #64748b; line-height: 1.3;">' +
+                'You received this email because you are subscribed to the UCDS newsletter list.<br>' +
+                '<a href="#" onclick="return false;" style="color: #2563eb; text-decoration: underline;">Unsubscribe</a>' +
+              '</td>' +
+            '</tr>' +
+          '</table>';
+      } else {
+        footerHtml = 
+          '<div style="text-align: center; margin-top: 10px; font-size: 10px;">' +
+            '<a href="#" onclick="return false;" style="color: #64748b; text-decoration: underline;">Unsubscribe</a>' +
+          '</div>';
+      }
+
+      return '<!DOCTYPE html>' +
+             '<html>' +
+             '<head>' +
+               '<meta charset="utf-8">' +
+               '<meta name="viewport" content="width=device-width, initial-scale=1.0">' +
+               '<style>' +
+                 'body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; background-color: #f8fafc; color: #334155; }' +
+                 '@media only screen and (max-width: 600px) {' +
+                   '.side-decor { display: none !important; }' +
+                   '.main-content-td { width: 100% !important; padding: 10px !important; }' +
+                   '.card-table { width: 100% !important; }' +
+                 '}' +
+               '</style>' +
+             '</head>' +
+             '<body>' +
+               '<table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding: 15px 0;">' +
+                 '<tr>' +
+                   '<!-- Center Main Card Column -->' +
+                   '<td class="main-content-td" width="100%" align="center" valign="top" style="padding: 10px;">' +
+                     
+                     headerHtml +
+                     
+                     '<!-- Main Content Card -->' +
+                     '<table class="card-table" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #ffffff; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 12px; text-align: left;">' +
+                       '<tr>' +
+                         '<td style="padding: 20px 15px; color: #334155; font-size: 13px; line-height: 1.5;">' +
+                           '<p style="margin: 0 0 12px; font-weight: 600; color: #0f172a;">Hi Debaters,</p>' +
+                           '<div>' + messageBody + '</div>' +
+                         '</td>' +
+                       '</tr>' +
+                     '</table>' +
+                     
+                     footerHtml +
+                     
+                   '</td>' +
+                 '</tr>' +
+               '</table>' +
+             '</body>' +
+             '</html>';
+    }
+
+    function updatePreview() {
+      const body = document.getElementById('draft-body').value || '<p style="color:#64748b;">(Write content to preview)</p>';
+      const frame = document.getElementById('preview-frame');
+      const includeHeader = document.getElementById('include-header-checkbox').checked;
+      const includeFooter = document.getElementById('include-footer-checkbox').checked;
+      frame.srcdoc = compileEmailTemplatePreview('Debaters', body, includeHeader, includeFooter);
+    }
+
+    async function saveCampaignDraft() {
+      const draftSelect = document.getElementById('draft-select');
+      const subject = document.getElementById('draft-subject').value.trim();
+      const body = document.getElementById('draft-body').value.trim();
+      const plain = document.getElementById('draft-plain').value.trim();
+      
+      if (!subject) {
+        alert('Subject is required.');
+        return;
+      }
+
+      const payload = {
+        subject: subject,
+        body: body,
+        plainText: plain,
+        includeHeader: document.getElementById('include-header-checkbox').checked,
+        includeFooter: document.getElementById('include-footer-checkbox').checked
+      };
+
+      if (draftSelect.value !== 'new') {
+        payload.id = draftSelect.value;
+      }
+
+      const res = await callApi('saveDraft', payload);
+      if (res && res.result === 'success') {
+        alert('Draft saved.');
+        if (draftSelect.value === 'new') {
+          draftSelect.value = res.id;
+        }
+        await loadDrafts();
+      }
+    }
+
+    async function deleteCampaignDraft() {
+      const draftSelect = document.getElementById('draft-select');
+      const val = draftSelect.value;
+      
+      if (val === 'new') return;
+      if (!confirm('Delete this draft?')) return;
+
+      const res = await callApi('deleteDraft', { id: val });
+      if (res && res.result === 'success') {
+        alert('Draft deleted.');
+        draftSelect.value = 'new';
+        onDraftSelectChange();
+        await loadDrafts();
+      }
+    }
+
+    async function scheduleCampaignSend() {
+      const draftSelect = document.getElementById('draft-select');
+      const draftId = draftSelect.value;
+      
+      if (draftId === 'new') {
+        alert('Please save the draft first.');
+        return;
+      }
+
+      const checkboxes = document.querySelectorAll('input[name="mailing_list"]:checked');
+      if (checkboxes.length === 0) {
+        alert('Please select a mailing list.');
+        return;
+      }
+      const lists = Array.from(checkboxes).map(cb => cb.value).join(',');
+
+      const datetimeInput = document.getElementById('schedule-datetime').value;
+      if (!datetimeInput) {
+        alert('Please select a send time.');
+        return;
+      }
+      
+      const formattedTime = datetimeInput.replace('T', ' ') + ':00';
+
+      const confirmMsg = `Schedule this campaign for ${formattedTime} (Edmonton time)?`;
+      if (!confirm(confirmMsg)) return;
+
+      const res = await callApi('scheduleSend', {
+        draftId: draftId,
+        lists: lists,
+        timeEdmonton: formattedTime
+      });
+
+      if (res && res.result === 'success') {
+        alert('Campaign scheduled.');
+        await loadSchedules();
+      }
+    }
+
+    async function cancelCampaignSend(scheduleId) {
+      if (!confirm('Cancel this pending send?')) return;
+
+      const res = await callApi('cancelSchedule', { id: scheduleId });
+      if (res && res.result === 'success') {
+        alert('Cancelled.');
+        await loadSchedules();
+      }
+    }
+
+    async function sendTestEmail() {
+      const subject = document.getElementById('draft-subject').value.trim();
+      const body = document.getElementById('draft-body').value.trim();
+      const plain = document.getElementById('draft-plain').value.trim();
+      const testEmail = document.getElementById('test-email-input').value.trim();
+      
+      if (!testEmail) {
+        alert('Please enter a recipient email address.');
+        return;
+      }
+      if (!subject || !body) {
+        alert('Please compose your email subject and body first.');
+        return;
+      }
+
+      const btn = document.querySelector('[onclick="sendTestEmail()"]');
+      const originalText = btn.textContent;
+      btn.textContent = 'Sending...';
+      btn.disabled = true;
+
+      const res = await callApi('sendTestEmail', {
+        subject: subject,
+        body: body,
+        plainText: plain,
+        testEmail: testEmail,
+        includeHeader: document.getElementById('include-header-checkbox').checked,
+        includeFooter: document.getElementById('include-footer-checkbox').checked
+      });
+
+      btn.textContent = originalText;
+      btn.disabled = false;
+
+      if (res && res.result === 'success') {
+        alert('Test email successfully dispatched to ' + testEmail + '!');
+      }
+    }
+
+    async function sendCampaignImmediately() {
+      const draftSelect = document.getElementById('draft-select');
+      const draftId = draftSelect.value;
+      
+      if (draftId === 'new') {
+        alert('Please save this draft first before sending the campaign.');
+        return;
+      }
+
+      const checkboxes = document.querySelectorAll('input[name="mailing_list"]:checked');
+      if (checkboxes.length === 0) {
+        alert('Please select at least one target mailing list.');
+        return;
+      }
+      const lists = Array.from(checkboxes).map(cb => cb.value).join(',');
+
+      const confirmMsg = `⚠️ WARNING: Send campaign IMMEDIATELY to: ${lists.split('_').join(' ')}?\nThis cannot be undone.`;
+      if (!confirm(confirmMsg)) return;
+
+      const btn = document.querySelector('[onclick="sendCampaignImmediately()"]');
+      const originalText = btn.textContent;
+      btn.textContent = 'Sending...';
+      btn.disabled = true;
+
+      const res = await callApi('sendImmediately', {
+        draftId: draftId,
+        lists: lists
+      });
+
+      btn.textContent = originalText;
+      btn.disabled = false;
+
+      if (res && res.result === 'success') {
+        alert(`Success! Campaign sent immediately to ${res.count} recipient(s).`);
+        await loadSchedules();
+      }
+    }
+  </script>
+</body>
+</html>

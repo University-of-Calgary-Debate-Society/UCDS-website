@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>University of Calgary Debate Society | System Debugger</title>
+  <link rel="icon" href="../photos/logo.jpg" type="image/jpeg" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <script>
+    // Session state protection
+    (function() {
+      if (sessionStorage.getItem('execLoggedIn') !== 'true') {
+        window.location.replace("index.html");
+      }
+    })();
+  </script>
+  <style>
+    .debug-container {
+      background: #112854;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 1.25rem;
+      padding: 3rem 2.5rem;
+      color: #ffffff;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+      max-width: 600px;
+      margin: 4rem auto;
+    }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      transition: color 0.2s ease;
+    }
+    .back-btn:hover {
+      color: #ffffff;
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+      text-align: left;
+    }
+    .input-label {
+      display: block;
+      font-weight: 600;
+      color: #cbd5e1;
+      margin-bottom: 0.6rem;
+      font-size: 0.95rem;
+    }
+    .select-input {
+      width: 100%;
+      padding: 0.85rem 1.2rem;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 999px;
+      color: #ffffff;
+      font-size: 1rem;
+      outline: none;
+      box-sizing: border-box;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .select-input:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 8px rgba(37, 99, 235, 0.25);
+    }
+    .text-input {
+      width: 100%;
+      padding: 0.85rem 1.2rem;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 999px;
+      color: #ffffff;
+      font-size: 1rem;
+      outline: none;
+      box-sizing: border-box;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .text-input:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 8px rgba(37, 99, 235, 0.25);
+    }
+    .btn-row {
+      margin-top: 2rem;
+    }
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.9rem 2.5rem;
+      border-radius: 999px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      font-size: 1rem;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .btn-primary {
+      background: #2563eb;
+      color: #ffffff;
+    }
+    .btn-primary:hover:not(:disabled) {
+      background: #3b82f6;
+      transform: translateY(-1px);
+      box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+    }
+    .btn-primary:disabled {
+      background: #475569;
+      color: #94a3b8;
+      cursor: not-allowed;
+    }
+    .log-box {
+      margin-top: 2rem;
+      padding: 1.25rem;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 0.85rem;
+      color: #10b981;
+      text-align: left;
+      overflow-x: auto;
+      max-height: 200px;
+      display: none;
+    }
+  </style>
+</head>
+<body class="events-body">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="../">
+        <img src="../photos/logo.jpg" alt="University of Calgary Debate Society logo" class="logo-image" />
+        <span class="brand-text">University of Calgary Debate Society</span>
+      </a>
+      <button class="menu-toggle" aria-label="Toggle navigation"><span class="hamburger"></span></button>
+      <nav class="site-nav">
+        <a href="../">Home</a>
+        <a href="../events/">Events</a>
+        <a href="../blog/">Blog</a>
+        <a href="../resources/">Resources</a>
+        <a href="../connect/">Connect</a>
+        <a href="../join/" class="nav-join-button">Join</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="container" style="padding: 0 10px;">
+        
+        <div class="debug-container">
+          <a href="index.html" class="back-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" style="width: 16px; height: 16px;">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+            Back to Executive Dashboard
+          </a>
+
+          <div style="margin-bottom: 2.5rem; text-align: center;">
+            <h1 style="font-size: 2.25rem; color: #ffffff; margin: 0 0 0.5rem; font-weight: 800; letter-spacing: -0.01em;">System Debugger</h1>
+            <p style="margin: 0; color: #94a3b8; font-size: 0.95rem; line-height: 1.5;">
+              Submit test dummy entries into subscription lists to verify data mapping, triggers, and list counts.
+            </p>
+          </div>
+
+          <div class="form-group">
+            <label class="input-label" for="dummy-type">Dummy Subscriber Type</label>
+            <select id="dummy-type" class="select-input" onchange="renderFields()">
+              <option value="hs_coach">High School Coach</option>
+              <option value="jh_coach">Junior High Coach</option>
+              <option value="hs_student">High School Student</option>
+              <option value="jh_student">Junior High Student</option>
+              <option value="ps_student">Post-Secondary Student</option>
+            </select>
+          </div>
+
+          <div id="dynamic-fields-container"></div>
+
+          <div class="btn-row">
+            <button id="submit-btn" onclick="submitDummy()" class="action-btn btn-primary">Submit Dummy Subscriber</button>
+          </div>
+
+          <div id="debug-log" class="log-box"></div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>&copy; <span id="currentYear"></span> UCDS. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="../scripts/script.js"></script>
+  <script>
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyUmdbEzfBZbHCCgaYRG5mseiRZ7dAba0o88CSH1ywOdTiWKkeZmufL48xBJoFPYZQm2Q/exec';
+
+    async function callApi(action, payload = {}) {
+      const password = sessionStorage.getItem('execPassword');
+      if (!password) {
+        alert('Authentication lost. Please log out on the main dashboard and log in again.');
+        return null;
+      }
+
+      const body = {
+        action: action,
+        password: password,
+        ...payload
+      };
+
+      try {
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          mode: 'cors',
+          headers: {
+            'Content-Type': 'text/plain;charset=utf-8'
+          },
+          body: JSON.stringify(body)
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        if (data.result === 'error') {
+          throw new Error(data.error || 'Unknown server error');
+        }
+        return data;
+      } catch (err) {
+        console.error('API Call Failed:', err);
+        alert(`API Error: ${err.message}`);
+        return null;
+      }
+    }
+
+    const FIELDS_CONFIG = {
+      hs_coach: [
+        { name: 'firstName', label: 'First Name', type: 'text', default: 'Dummy HS' },
+        { name: 'lastName', label: 'Last Name', type: 'text', default: 'Coach' },
+        { name: 'email', label: 'Email (leave empty to auto-generate)', type: 'text', default: '' },
+        { name: 'status', label: 'Status', type: 'select', options: ['Active', 'Unsubscribed'], default: 'Active' },
+        { name: 'school', label: 'School', type: 'text', default: 'Test School' },
+        { name: 'club', label: 'Club', type: 'text', default: 'Test Club' },
+        { name: 'phone', label: 'Phone', type: 'text', default: '555-0199' },
+        { name: 'address', label: 'Address', type: 'text', default: '123 Test St' },
+        { name: 'city', label: 'City', type: 'text', default: 'Calgary' },
+        { name: 'province', label: 'Province', type: 'text', default: 'AB' },
+        { name: 'postalCode', label: 'Postal Code', type: 'text', default: 'T2N 1N4' },
+        { name: 'notes', label: 'Notes', type: 'text', default: 'Automated dummy coach' }
+      ],
+      jh_coach: [
+        { name: 'firstName', label: 'First Name', type: 'text', default: 'Dummy JH' },
+        { name: 'lastName', label: 'Last Name', type: 'text', default: 'Coach' },
+        { name: 'email', label: 'Email (leave empty to auto-generate)', type: 'text', default: '' },
+        { name: 'status', label: 'Status', type: 'select', options: ['Active', 'Unsubscribed'], default: 'Active' },
+        { name: 'school', label: 'School', type: 'text', default: 'Test Middle School' },
+        { name: 'club', label: 'Club', type: 'text', default: 'Test Club' },
+        { name: 'phone', label: 'Phone', type: 'text', default: '555-0188' },
+        { name: 'address', label: 'Address', type: 'text', default: '456 Test Ave' },
+        { name: 'city', label: 'City', type: 'text', default: 'Calgary' },
+        { name: 'province', label: 'Province', type: 'text', default: 'AB' },
+        { name: 'postalCode', label: 'Postal Code', type: 'text', default: 'T3A 0G8' },
+        { name: 'notes', label: 'Notes', type: 'text', default: 'Automated dummy coach' }
+      ],
+      hs_student: [
+        { name: 'name', label: 'Name', type: 'text', default: 'Dummy HS Student' },
+        { name: 'email', label: 'Email (leave empty to auto-generate)', type: 'text', default: '' },
+        { name: 'status', label: 'Status', type: 'select', options: ['Active', 'Unsubscribed'], default: 'Active' },
+        { name: 'grade', label: 'Grade', type: 'text', default: '10' },
+        { name: 'coach', label: 'Coach', type: 'text', default: 'Coach Smith' },
+        { name: 'highSchool', label: 'High School', type: 'text', default: 'High School West' },
+        { name: 'dietary', label: 'Dietary Restrictions', type: 'text', default: 'None' }
+      ],
+      jh_student: [
+        { name: 'name', label: 'Name', type: 'text', default: 'Dummy JH Student' },
+        { name: 'email', label: 'Email (leave empty to auto-generate)', type: 'text', default: '' },
+        { name: 'status', label: 'Status', type: 'select', options: ['Active', 'Unsubscribed'], default: 'Active' },
+        { name: 'grade', label: 'Grade', type: 'text', default: '7' },
+        { name: 'coach', label: 'Coach', type: 'text', default: 'Coach Jones' },
+        { name: 'school', label: 'School', type: 'text', default: 'Junior High East' },
+        { name: 'dietary', label: 'Dietary Restrictions', type: 'text', default: 'Nut allergy' }
+      ],
+      ps_student: [
+        { name: 'name', label: 'Name', type: 'text', default: 'Dummy Uni Student' },
+        { name: 'email', label: 'Email (leave empty to auto-generate)', type: 'text', default: '' },
+        { name: 'status', label: 'Status', type: 'select', options: ['Active', 'Unsubscribed'], default: 'Active' },
+        { name: 'grade', label: 'Grade', type: 'text', default: '12' },
+        { name: 'institution', label: 'Institution', type: 'text', default: 'University of Calgary' },
+        { name: 'dietary', label: 'Dietary Restrictions', type: 'text', default: 'Gluten free' }
+      ]
+    };
+
+    function renderFields() {
+      const type = document.getElementById('dummy-type').value;
+      const container = document.getElementById('dynamic-fields-container');
+      container.innerHTML = '';
+      
+      const fields = FIELDS_CONFIG[type];
+      if (!fields) return;
+      
+      fields.forEach(field => {
+        const group = document.createElement('div');
+        group.className = 'form-group';
+        
+        const label = document.createElement('label');
+        label.className = 'input-label';
+        label.textContent = field.label;
+        group.appendChild(label);
+        
+        if (field.type === 'select') {
+          const select = document.createElement('select');
+          select.className = 'select-input';
+          select.dataset.field = field.name;
+          field.options.forEach(opt => {
+            const option = document.createElement('option');
+            option.value = opt;
+            option.textContent = opt;
+            if (opt === field.default) {
+              option.selected = true;
+            }
+            select.appendChild(option);
+          });
+          group.appendChild(select);
+        } else {
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.className = 'text-input';
+          input.dataset.field = field.name;
+          input.value = field.default;
+          group.appendChild(input);
+        }
+        
+        container.appendChild(group);
+      });
+    }
+
+    async function submitDummy() {
+      const typeSelect = document.getElementById('dummy-type');
+      const type = typeSelect.value;
+      const typeLabel = typeSelect.options[typeSelect.selectedIndex].text;
+      const btn = document.getElementById('submit-btn');
+      const logBox = document.getElementById('debug-log');
+
+      btn.disabled = true;
+      btn.textContent = 'Submitting dummy subscriber...';
+      logBox.style.display = 'none';
+
+      // Gather input values from dynamic fields
+      const payload = { type: type };
+      const container = document.getElementById('dynamic-fields-container');
+      const inputs = container.querySelectorAll('[data-field]');
+      inputs.forEach(input => {
+        payload[input.dataset.field] = input.value.trim();
+      });
+
+      const res = await callApi('createDummy', payload);
+
+      btn.disabled = false;
+      btn.textContent = 'Submit Dummy Subscriber';
+
+      if (res && res.result === 'success') {
+        logBox.style.display = 'block';
+        logBox.innerHTML = `> SUCCESS: Created ${typeLabel} dummy subscriber.<br>` +
+                           `> Target sheet: ${getMappedSheetName(type)}<br>` +
+                           `> Generated email: ${res.email}<br>` +
+                           `> Status: ${payload.status || 'Active'}`;
+      }
+    }
+
+    function getMappedSheetName(type) {
+      switch (type) {
+        case 'hs_coach': return 'high_school_coaches';
+        case 'jh_coach': return 'junior_high_coaches';
+        case 'hs_student': return 'senior_high_subscribers';
+        case 'jh_student': return 'junior_high_subscribers';
+        case 'ps_student': return 'university_subscribers';
+        default: return 'unknown';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderFields();
+    });
+  </script>
+</body>
+</html>

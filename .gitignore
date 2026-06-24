@@ -1,0 +1,7 @@
+# Local Environment Config (Contains sensitive credentials)
+email-scripts/.env
+
+# Python compilation files
+__pycache__/
+*.py[cod]
+*$py.class

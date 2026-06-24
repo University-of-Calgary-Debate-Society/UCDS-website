@@ -1,0 +1,264 @@
+// =========================================================================
+// SUBSCRIBERS DATABASE MODULE
+// =========================================================================
+
+/**
+ * Returns the Spreadsheet object for mailing lists.
+ * Falls back to the Active Spreadsheet if the configured ID is not found.
+ */
+function getMailingListSpreadsheet() {
+  if (MAILING_LIST_SPREADSHEET_ID && MAILING_LIST_SPREADSHEET_ID !== "YOUR_MAILING_LIST_SPREADSHEET_ID_HERE") {
+    try {
+      return SpreadsheetApp.openById(MAILING_LIST_SPREADSHEET_ID);
+    } catch(e) {
+      console.error("Could not open mailing list spreadsheet by ID: " + e.toString() + ". Falling back to active spreadsheet.");
+    }
+  }
+  return SpreadsheetApp.getActiveSpreadsheet();
+}
+
+/**
+ * Public endpoint to sign up a subscriber.
+ * Automatically segments them into: Subscribers, junior_high_subscribers,
+ * senior_high_subscribers, or university_subscribers based on their grade.
+ */
+function handleSubscribe(p) {
+  var email = p.email || "";
+  var name = p.fullName || p.name || "";
+  var gradeStr = p.grade || "";
+  
+  if (!email) {
+    return jsonResponse({ result: "error", error: "Email is required" });
+  }
+  
+  var spreadsheet = getMailingListSpreadsheet();
+  var sheetName = "Subscribers";
+  var headers = ["Timestamp", "Email", "Name", "Status"];
+  
+  // Segment based on completed grade
+  var gradeNum = null;
+  var match = gradeStr.match(/\d+/);
+  if (match) {
+    gradeNum = parseInt(match[0], 10);
+  } else if (!isNaN(gradeStr) && gradeStr.trim() !== "") {
+    gradeNum = parseInt(gradeStr, 10);
+  }
+  
+  if (gradeNum >= 6 && gradeNum <= 8) {
+    sheetName = "junior_high_subscribers";
+    headers = ["Timestamp", "Email", "Name", "Status", "Grade", "Coach", "School", "Dietary Restrictions"];
+  } else if (gradeNum >= 9 && gradeNum <= 11) {
+    sheetName = "senior_high_subscribers";
+    headers = ["Timestamp", "Email", "Name", "Status", "Grade", "Coach", "High School", "Dietary Restrictions"];
+  } else if (gradeNum === 12) {
+    sheetName = "university_subscribers";
+    headers = ["Timestamp", "Email", "Name", "Status", "Grade", "Institution", "Dietary Restrictions"];
+  }
+  
+  var sheet = getOrCreateSheet(spreadsheet, sheetName, headers);
+  var data = sheet.getDataRange().getValues();
+  var rowIndex = -1;
+  for (var i = 1; i < data.length; i++) {
+    if (data[i][1].toString().trim().toLowerCase() === email.trim().toLowerCase()) {
+      rowIndex = i + 1;
+      break;
+    }
+  }
+  
+  var rowValues = headers.map(function(header) {
+    var h = header.toLowerCase().replace(/\s+/g, "");
+    if (h === "timestamp") return new Date();
+    if (h === "email") return email;
+    if (h === "name") return name;
+    if (h === "status") return "Active";
+    if (h === "grade") return gradeStr;
+    if (h === "coach") return p.coach || "";
+    if (h === "school") return p.school || "";
+    if (h === "highschool") return p.highSchool || p.school || "";
+    if (h === "institution") return p.institution || p.school || "";
+    if (h === "dietaryrestrictions" || h === "dietary") return p.dietary || p.dietaryRestrictions || "";
+    return "";
+  });
+  
+  if (rowIndex !== -1) {
+    rowValues[0] = data[rowIndex - 1][0] || new Date();
+    sheet.getRange(rowIndex, 1, 1, rowValues.length).setValues([rowValues]);
+  } else {
+    sheet.appendRow(rowValues);
+  }
+  
+  return jsonResponse({ result: "success" });
+}
+
+/**
+ * Handle public Unsubscribe web requests
+ */
+function handleUnsubscribeRequest(p) {
+  var spreadsheet = getMailingListSpreadsheet();
+  var sheetNames = ["Subscribers", "junior_high_subscribers", "senior_high_subscribers", "university_subscribers", "high_school_coaches", "junior_high_coaches"];
+  
+  sheetNames.forEach(function(sheetName) {
+    var sheet = spreadsheet.getSheetByName(sheetName);
+    if (!sheet) return;
+    
+    var data = sheet.getDataRange().getValues();
+    if (data.length < 2) return;
+    
+    var headers = data[0].map(function(h) { return (h || "").toString().toLowerCase().trim(); });
+    var emailIdx = headers.indexOf("email");
+    var statusIdx = headers.indexOf("status");
+    
+    if (emailIdx === -1 || statusIdx === -1) return;
+    
+    for (var i = 1; i < data.length; i++) {
+      if (data[i][emailIdx].toString().trim().toLowerCase() === p.email.trim().toLowerCase()) {
+        sheet.getRange(i + 1, statusIdx + 1).setValue("Unsubscribed");
+      }
+    }
+  });
+  
+  var redirectUrl = "https://ucds.ca/connect/unsubscribe/?email=" + encodeURIComponent(p.email);
+  var html = '<!DOCTYPE html><html><head><script>window.top.location.href = "' + redirectUrl + '";</script></head><body>Redirecting to unsubscribe landing page...</body></html>';
+  return HtmlService.createHtmlOutput(html).setTitle("Redirecting...");
+}
+
+/**
+ * Handle public Resubscribe web requests
+ */
+function handleResubscribeRequest(p) {
+  var spreadsheet = getMailingListSpreadsheet();
+  var sheetNames = ["Subscribers", "junior_high_subscribers", "senior_high_subscribers", "university_subscribers", "high_school_coaches", "junior_high_coaches"];
+  var found = false;
+  
+  sheetNames.forEach(function(sheetName) {
+    var sheet = spreadsheet.getSheetByName(sheetName);
+    if (!sheet) return;
+    
+    var data = sheet.getDataRange().getValues();
+    if (data.length < 2) return;
+    
+    var headers = data[0].map(function(h) { return (h || "").toString().toLowerCase().trim(); });
+    var emailIdx = headers.indexOf("email");
+    var statusIdx = headers.indexOf("status");
+    
+    if (emailIdx === -1 || statusIdx === -1) return;
+    
+    for (var i = 1; i < data.length; i++) {
+      if (data[i][emailIdx].toString().trim().toLowerCase() === p.email.trim().toLowerCase()) {
+        sheet.getRange(i + 1, statusIdx + 1).setValue("Active");
+        found = true;
+      }
+    }
+  });
+  
+  if (!found) {
+    var sheet = getOrCreateSheet(spreadsheet, "Subscribers", ["Timestamp", "Email", "Name", "Status"]);
+    sheet.appendRow([new Date(), p.email, "", "Active"]);
+  }
+  
+  var html = '<!DOCTYPE html>' +
+             '<html>' +
+             '<head>' +
+               '<meta charset="utf-8">' +
+               '<meta name="viewport" content="width=device-width, initial-scale=1">' +
+               '<title>UCDS Mailing List | Resubscribed</title>' +
+               '<style>' +
+                 'body { font-family: -apple-system, sans-serif; background-color: #f8fafc; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }' +
+                 '.card { text-align: center; max-width: 500px; width: 90%; background: #ffffff; padding: 40px; border: 1px solid #e2e8f0; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }' +
+                 'h1 { color: #0f172a; margin-bottom: 16px; }' +
+                 'p { color: #475569; line-height: 1.6; margin-bottom: 32px; }' +
+                 '.btn { display: inline-block; padding: 12px 24px; background-color: #0f172a; color: #ffffff !important; text-decoration: none; border-radius: 999px; font-weight: 600; }' +
+               '</style>' +
+             '</head>' +
+             '<body>' +
+               '<div class="card">' +
+                 '<h1>Welcome Back!</h1>' +
+                 '<p>You have successfully resubscribed to the UCDS newsletter list.</p>' +
+                 '<a href="https://ucds.ca" class="btn">Go to Homepage</a>' +
+               '</div>' +
+             '</body>' +
+             '</html>';
+  return HtmlService.createHtmlOutput(html).setTitle("UCDS Resubscribe");
+}
+
+function handleCreateDummy(spreadsheet, p) {
+  var type = p.type;
+  var email = p.email || ("dummy_" + type + "_" + Math.floor(Math.random() * 10000) + "@example.com");
+  var timestamp = new Date();
+  var status = p.status || "Active";
+  
+  if (type === "hs_coach") {
+    var sheet = getOrCreateSheet(spreadsheet, "high_school_coaches", ["Timestamp", "First Name", "Last Name", "Email", "Status", "School", "Club", "Phone", "Address", "City", "Province", "Postal Code", "Notes"]);
+    sheet.appendRow([
+      timestamp, 
+      p.firstName !== undefined && p.firstName !== "" ? p.firstName : "Dummy HS", 
+      p.lastName !== undefined && p.lastName !== "" ? p.lastName : "Coach", 
+      email, 
+      status, 
+      p.school !== undefined && p.school !== "" ? p.school : "Test School", 
+      p.club !== undefined && p.club !== "" ? p.club : "Test Club", 
+      p.phone !== undefined && p.phone !== "" ? p.phone : "555-0199", 
+      p.address !== undefined && p.address !== "" ? p.address : "123 Test St", 
+      p.city !== undefined && p.city !== "" ? p.city : "Calgary", 
+      p.province !== undefined && p.province !== "" ? p.province : "AB", 
+      p.postalCode !== undefined && p.postalCode !== "" ? p.postalCode : "T2N 1N4", 
+      p.notes !== undefined && p.notes !== "" ? p.notes : "Automated dummy coach"
+    ]);
+  } else if (type === "jh_coach") {
+    var sheet = getOrCreateSheet(spreadsheet, "junior_high_coaches", ["Timestamp", "First Name", "Last Name", "Email", "Status", "School", "Club", "Phone", "Address", "City", "Province", "Postal Code", "Notes"]);
+    sheet.appendRow([
+      timestamp, 
+      p.firstName !== undefined && p.firstName !== "" ? p.firstName : "Dummy JH", 
+      p.lastName !== undefined && p.lastName !== "" ? p.lastName : "Coach", 
+      email, 
+      status, 
+      p.school !== undefined && p.school !== "" ? p.school : "Test Middle School", 
+      p.club !== undefined && p.club !== "" ? p.club : "Test Club", 
+      p.phone !== undefined && p.phone !== "" ? p.phone : "555-0188", 
+      p.address !== undefined && p.address !== "" ? p.address : "456 Test Ave", 
+      p.city !== undefined && p.city !== "" ? p.city : "Calgary", 
+      p.province !== undefined && p.province !== "" ? p.province : "AB", 
+      p.postalCode !== undefined && p.postalCode !== "" ? p.postalCode : "T3A 0G8", 
+      p.notes !== undefined && p.notes !== "" ? p.notes : "Automated dummy coach"
+    ]);
+  } else if (type === "hs_student") {
+    var sheet = getOrCreateSheet(spreadsheet, "senior_high_subscribers", ["Timestamp", "Email", "Name", "Status", "Grade", "Coach", "High School", "Dietary Restrictions"]);
+    sheet.appendRow([
+      timestamp, 
+      email, 
+      p.name !== undefined && p.name !== "" ? p.name : "Dummy HS Student", 
+      status, 
+      p.grade !== undefined && p.grade !== "" ? p.grade : "10", 
+      p.coach !== undefined && p.coach !== "" ? p.coach : "Coach Smith", 
+      p.highSchool !== undefined && p.highSchool !== "" ? p.highSchool : "High School West", 
+      p.dietary !== undefined && p.dietary !== "" ? p.dietary : "None"
+    ]);
+  } else if (type === "jh_student") {
+    var sheet = getOrCreateSheet(spreadsheet, "junior_high_subscribers", ["Timestamp", "Email", "Name", "Status", "Grade", "Coach", "School", "Dietary Restrictions"]);
+    sheet.appendRow([
+      timestamp, 
+      email, 
+      p.name !== undefined && p.name !== "" ? p.name : "Dummy JH Student", 
+      status, 
+      p.grade !== undefined && p.grade !== "" ? p.grade : "7", 
+      p.coach !== undefined && p.coach !== "" ? p.coach : "Coach Jones", 
+      p.school !== undefined && p.school !== "" ? p.school : "Junior High East", 
+      p.dietary !== undefined && p.dietary !== "" ? p.dietary : "Nut allergy"
+    ]);
+  } else if (type === "ps_student") {
+    var sheet = getOrCreateSheet(spreadsheet, "university_subscribers", ["Timestamp", "Email", "Name", "Status", "Grade", "Institution", "Dietary Restrictions"]);
+    sheet.appendRow([
+      timestamp, 
+      email, 
+      p.name !== undefined && p.name !== "" ? p.name : "Dummy Uni Student", 
+      status, 
+      p.grade !== undefined && p.grade !== "" ? p.grade : "12", 
+      p.institution !== undefined && p.institution !== "" ? p.institution : "University of Calgary", 
+      p.dietary !== undefined && p.dietary !== "" ? p.dietary : "Gluten free"
+    ]);
+  } else {
+    return jsonResponse({ result: "error", error: "Invalid dummy type" });
+  }
+  
+  return jsonResponse({ result: "success", email: email });
+}

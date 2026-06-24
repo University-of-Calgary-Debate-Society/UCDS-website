@@ -1,0 +1,506 @@
+// =========================================================================
+// CAMPAIGN MANAGEMENT & QUEUING OPERATIONS
+// =========================================================================
+
+function handleGetDrafts(spreadsheet) {
+  var sheet = getOrCreateSheet(spreadsheet, "drafts", ["id", "subject", "body", "plainText", "created", "includeHeader", "includeFooter"]);
+  var data = sheet.getDataRange().getValues();
+  var drafts = [];
+  for (var i = 1; i < data.length; i++) {
+    drafts.push({
+      id: data[i][0],
+      subject: data[i][1],
+      body: data[i][2],
+      plainText: data[i][3],
+      created: data[i][4],
+      includeHeader: data[i].length > 5 ? (data[i][5] !== false && data[i][5] !== "false" && data[i][5] !== 0) : true,
+      includeFooter: data[i].length > 6 ? (data[i][6] !== false && data[i][6] !== "false" && data[i][6] !== 0) : true
+    });
+  }
+  return jsonResponse({ result: "success", drafts: drafts });
+}
+
+function handleSaveDraft(spreadsheet, p) {
+  var sheet = getOrCreateSheet(spreadsheet, "drafts", ["id", "subject", "body", "plainText", "created", "includeHeader", "includeFooter"]);
+  var id = p.id;
+  var subject = p.subject || "";
+  var body = p.body || "";
+  var plainText = p.plainText || "";
+  var includeHeader = p.includeHeader !== undefined ? p.includeHeader : true;
+  var includeFooter = p.includeFooter !== undefined ? p.includeFooter : true;
+  var headers = ["id", "subject", "body", "plainText", "created", "includeHeader", "includeFooter"];
+  
+  var lastCol = sheet.getLastColumn();
+  var currentHeaders = sheet.getRange(1, 1, 1, lastCol).getValues()[0].map(function(h) { return h.toString().trim(); });
+  if (currentHeaders.indexOf("includeHeader") === -1) {
+    sheet.getRange(1, lastCol + 1).setValue("includeHeader").setFontWeight("bold");
+    sheet.getRange(1, lastCol + 2).setValue("includeFooter").setFontWeight("bold");
+  }
+  
+  if (id) {
+    var updated = updateRowById(sheet, 0, id, {
+      subject: subject,
+      body: body,
+      plainText: plainText,
+      includeHeader: includeHeader,
+      includeFooter: includeFooter
+    }, headers);
+    if (updated) {
+      return jsonResponse({ result: "success", id: id });
+    } else {
+      return jsonResponse({ result: "error", error: "Draft not found with ID: " + id });
+    }
+  } else {
+    var newId = "d_" + new Date().getTime() + "_" + Math.floor(Math.random() * 1000);
+    sheet.appendRow([newId, subject, body, plainText, new Date(), includeHeader, includeFooter]);
+    return jsonResponse({ result: "success", id: newId });
+  }
+}
+
+function handleDeleteDraft(spreadsheet, p) {
+  var sheet = getOrCreateSheet(spreadsheet, "drafts", ["id", "subject", "body", "plainText", "created"]);
+  var id = p.id;
+  if (!id) return jsonResponse({ result: "error", error: "Missing draft ID" });
+  
+  var deleted = deleteRowById(sheet, 0, id);
+  if (deleted) {
+    return jsonResponse({ result: "success" });
+  } else {
+    return jsonResponse({ result: "error", error: "Draft not found with ID: " + id });
+  }
+}
+
+function handleGetMailingLists(spreadsheet) {
+  var sheetNames = ["Subscribers", "junior_high_subscribers", "senior_high_subscribers", "university_subscribers", "high_school_coaches", "junior_high_coaches"];
+  var displayNames = {
+    "Subscribers": "General Mailing List",
+    "junior_high_subscribers": "Junior High",
+    "senior_high_subscribers": "Senior High",
+    "university_subscribers": "University / Post-Sec",
+    "high_school_coaches": "High School Coaches",
+    "junior_high_coaches": "Junior High Coaches"
+  };
+  var coachHeaders = ["Timestamp", "First Name", "Last Name", "Email", "Status", "School", "Club", "Phone", "Address", "City", "Province", "Postal Code", "Notes"];
+  
+  var lists = [];
+  sheetNames.forEach(function(name) {
+    var sheet;
+    if (name === "high_school_coaches" || name === "junior_high_coaches") {
+      sheet = getOrCreateSheet(spreadsheet, name, coachHeaders);
+    } else {
+      sheet = spreadsheet.getSheetByName(name);
+    }
+    
+    var count = 0;
+    if (sheet) {
+      var data = sheet.getDataRange().getValues();
+      if (data.length > 1) {
+        var headers = data[0].map(function(h) { return (h || "").toString().toLowerCase().trim(); });
+        var statusIdx = headers.indexOf("status");
+        if (statusIdx !== -1) {
+          for (var row = 1; row < data.length; row++) {
+            if (data[row][statusIdx].toString().trim().toLowerCase() === "active") {
+              count++;
+            }
+          }
+        }
+      }
+    }
+    lists.push({
+      name: name,
+      displayName: displayNames[name] || name,
+      count: count
+    });
+  });
+  return jsonResponse({ result: "success", lists: lists });
+}
+
+function handleScheduleSend(spreadsheet, p) {
+  var sheet = getOrCreateSheet(spreadsheet, "schedules", ["id", "draftId", "lists", "timeEdmonton", "status", "error"]);
+  var draftId = p.draftId;
+  var lists = p.lists; 
+  var timeEdmonton = p.timeEdmonton; 
+  
+  if (!draftId || !lists || !timeEdmonton) {
+    return jsonResponse({ result: "error", error: "Missing scheduling parameters" });
+  }
+  
+  var newId = "s_" + new Date().getTime() + "_" + Math.floor(Math.random() * 1000);
+  sheet.appendRow([newId, draftId, lists, timeEdmonton, "Pending", ""]);
+  return jsonResponse({ result: "success", id: newId });
+}
+
+function handleCancelSchedule(spreadsheet, p) {
+  var sheet = getOrCreateSheet(spreadsheet, "schedules", ["id", "draftId", "lists", "timeEdmonton", "status", "error"]);
+  var id = p.id;
+  if (!id) return jsonResponse({ result: "error", error: "Missing schedule ID" });
+  
+  var deleted = deleteRowById(sheet, 0, id);
+  if (deleted) {
+    return jsonResponse({ result: "success" });
+  } else {
+    return jsonResponse({ result: "error", error: "Schedule not found with ID: " + id });
+  }
+}
+
+function handleGetSchedules(spreadsheet) {
+  var schedSheet = getOrCreateSheet(spreadsheet, "schedules", ["id", "draftId", "lists", "timeEdmonton", "status", "error"]);
+  var draftSheet = getOrCreateSheet(spreadsheet, "drafts", ["id", "subject", "body", "plainText", "created"]);
+  
+  var schedData = schedSheet.getDataRange().getValues();
+  var draftData = draftSheet.getDataRange().getValues();
+  
+  var draftMap = {};
+  for (var j = 1; j < draftData.length; j++) {
+    draftMap[draftData[j][0]] = draftData[j][1]; 
+  }
+  
+  var schedules = [];
+  for (var i = 1; i < schedData.length; i++) {
+    var draftId = schedData[i][1];
+    schedules.push({
+      id: schedData[i][0],
+      draftId: draftId,
+      draftSubject: draftMap[draftId] || "(Deleted Draft)",
+      lists: schedData[i][2],
+      timeEdmonton: schedData[i][3],
+      status: schedData[i][4],
+      error: schedData[i][5]
+    });
+  }
+  return jsonResponse({ result: "success", schedules: schedules });
+}
+
+function handleGetPendingSends(spreadsheet) {
+  var schedSheet = getOrCreateSheet(spreadsheet, "schedules", ["id", "draftId", "lists", "timeEdmonton", "status", "error"]);
+  var draftSheet = getOrCreateSheet(spreadsheet, "drafts", ["id", "subject", "body", "plainText", "created"]);
+  
+  var schedData = schedSheet.getDataRange().getValues();
+  var draftData = draftSheet.getDataRange().getValues();
+  
+  var draftMap = {};
+  for (var j = 1; j < draftData.length; j++) {
+    draftMap[draftData[j][0]] = {
+      subject: draftData[j][1],
+      body: draftData[j][2],
+      plainText: draftData[j][3],
+      includeHeader: draftData[j].length > 5 ? (draftData[j][5] !== false && draftData[j][5] !== "false" && draftData[j][5] !== 0) : true,
+      includeFooter: draftData[j].length > 6 ? (draftData[j][6] !== false && draftData[j][6] !== "false" && draftData[j][6] !== 0) : true
+    };
+  }
+  
+  var nowEdmonton = Utilities.formatDate(new Date(), "America/Edmonton", "yyyy-MM-dd HH:mm:ss");
+  var pending = [];
+  
+  for (var i = 1; i < schedData.length; i++) {
+    var status = schedData[i][4];
+    var timeEdmonton = schedData[i][3];
+    
+    if (status === "Pending" && timeEdmonton <= nowEdmonton) {
+      var id = schedData[i][0];
+      var draftId = schedData[i][1];
+      var targetListsStr = schedData[i][2];
+      var draftInfo = draftMap[draftId];
+      
+      if (!draftInfo) {
+        schedSheet.getRange(i + 1, 5).setValue("Failed");
+        schedSheet.getRange(i + 1, 6).setValue("Error: Draft was deleted before sending.");
+        continue;
+      }
+      
+      var targetLists = targetListsStr.split(",");
+      var recipientMap = {};
+      
+      targetLists.forEach(function(sheetName) {
+        var sheet = spreadsheet.getSheetByName(sheetName.trim());
+        if (!sheet) return;
+        
+        var sheetData = sheet.getDataRange().getValues();
+        if (sheetData.length < 2) return;
+        
+        var headers = sheetData[0].map(function(h) { return (h || "").toString().toLowerCase().trim(); });
+        var emailIdx = headers.indexOf("email");
+        var nameIdx = headers.indexOf("name");
+        var firstNameIdx = headers.indexOf("first name") !== -1 ? headers.indexOf("first name") : headers.indexOf("first_name");
+        var lastNameIdx = headers.indexOf("last name") !== -1 ? headers.indexOf("last name") : headers.indexOf("last_name");
+        var statusIdx = headers.indexOf("status");
+        
+        if (emailIdx === -1) return;
+        
+        for (var row = 1; row < sheetData.length; row++) {
+          var email = sheetData[row][emailIdx].toString().trim();
+          var name = "";
+          if (nameIdx !== -1) {
+            name = sheetData[row][nameIdx].toString().trim();
+          } else if (firstNameIdx !== -1 || lastNameIdx !== -1) {
+            var first = firstNameIdx !== -1 ? sheetData[row][firstNameIdx].toString().trim() : "";
+            var last = lastNameIdx !== -1 ? sheetData[row][lastNameIdx].toString().trim() : "";
+            name = (first + " " + last).trim();
+          }
+          
+          var rowStatus = statusIdx !== -1 ? sheetData[row][statusIdx].toString().trim() : "Active";
+          
+          if (email && rowStatus.toLowerCase() === "active") {
+            recipientMap[email.toLowerCase()] = {
+              email: email,
+              name: name || "there"
+            };
+          }
+        }
+      });
+      
+      var recipients = [];
+      for (var emailKey in recipientMap) {
+        recipients.push(recipientMap[emailKey]);
+      }
+      
+      var baseUnsubscribeLink = WEB_APP_URL + "?action=unsubscribe&email=";
+      var includeHeader = draftInfo.includeHeader !== false;
+      var includeFooter = draftInfo.includeFooter !== false;
+      var templateHtml = compileEmailTemplate("{{name}}", draftInfo.body, "{{unsubscribe_link}}", includeHeader, includeFooter);
+      
+      pending.push({
+        scheduleId: id,
+        subject: draftInfo.subject,
+        templateHtml: templateHtml,
+        plainText: draftInfo.plainText,
+        baseUnsubscribeLink: baseUnsubscribeLink,
+        recipients: recipients
+      });
+    }
+  }
+  return jsonResponse({ result: "success", pending: pending });
+}
+
+function handleMarkSent(spreadsheet, p) {
+  var sheet = getOrCreateSheet(spreadsheet, "schedules", ["id", "draftId", "lists", "timeEdmonton", "status", "error"]);
+  var id = p.id;
+  var status = p.status || "Sent";
+  var errorMsg = p.error || "";
+  var headers = ["id", "draftId", "lists", "timeEdmonton", "status", "error"];
+  
+  if (!id) return jsonResponse({ result: "error", error: "Missing schedule ID" });
+  
+  var updated = updateRowById(sheet, 0, id, {
+    status: status,
+    error: errorMsg
+  }, headers);
+  
+  if (updated) {
+    return jsonResponse({ result: "success" });
+  } else {
+    return jsonResponse({ result: "error", error: "Schedule not found with ID: " + id });
+  }
+}
+
+// =========================================================================
+// ORIGINAL SHEET MENU NEWSLETTER DISPATCH
+// =========================================================================
+function onOpen() {
+  var ui = SpreadsheetApp.getUi();
+  ui.createMenu('UCDS Tools')
+      .addItem('Send Newsletter', 'promptNewsletter')
+      .addToUi();
+}
+
+function promptNewsletter() {
+  var ui = SpreadsheetApp.getUi();
+  var subjectPrompt = ui.prompt('Send Newsletter', 'Enter Email Subject:', ui.ButtonSet.OK_CANCEL);
+  if (subjectPrompt.getSelectedButton() !== ui.Button.OK) return;
+  var subject = subjectPrompt.getResponseText().trim();
+  if (!subject) {
+    ui.alert("Subject cannot be empty!");
+    return;
+  }
+
+  var bodyPrompt = ui.prompt('Send Newsletter', 'Enter HTML Body/Message:', ui.ButtonSet.OK_CANCEL);
+  if (bodyPrompt.getSelectedButton() !== ui.Button.OK) return;
+  var bodyContent = bodyPrompt.getResponseText().trim();
+  if (!bodyContent) {
+    ui.alert("Email content cannot be empty!");
+    return;
+  }
+
+  var confirm = ui.alert('Confirm Send', 'Are you sure you want to send this newsletter to all active subscribers across all sheets?', ui.ButtonSet.YES_NO);
+  if (confirm === ui.Button.YES) {
+    sendNewsletter(subject, bodyContent);
+    ui.alert("Newsletter dispatched successfully!");
+  }
+}
+
+function sendNewsletter(subject, messageBody) {
+  var spreadsheet = getMailingListSpreadsheet();
+  var sheetNames = ["Subscribers", "junior_high_subscribers", "senior_high_subscribers", "university_subscribers", "high_school_coaches", "junior_high_coaches"];
+  var sentEmails = {};
+  
+  sheetNames.forEach(function(sheetName) {
+    var sheet = spreadsheet.getSheetByName(sheetName);
+    if (!sheet) return;
+    
+    var data = sheet.getDataRange().getValues();
+    if (data.length < 2) return;
+    
+    var headers = data[0].map(function(h) { return (h || "").toString().toLowerCase().trim(); });
+    var emailIdx = headers.indexOf("email");
+    var nameIdx = headers.indexOf("name");
+    var firstNameIdx = headers.indexOf("first name") !== -1 ? headers.indexOf("first name") : headers.indexOf("first_name");
+    var lastNameIdx = headers.indexOf("last name") !== -1 ? headers.indexOf("last name") : headers.indexOf("last_name");
+    var statusIdx = headers.indexOf("status");
+    
+    if (emailIdx === -1) return;
+    
+    for (var i = 1; i < data.length; i++) {
+      var email = data[i][emailIdx].toString().trim();
+      var name = "";
+      if (nameIdx !== -1) {
+        name = data[i][nameIdx].toString().trim();
+      } else if (firstNameIdx !== -1 || lastNameIdx !== -1) {
+        var first = firstNameIdx !== -1 ? data[i][firstNameIdx].toString().trim() : "";
+        var last = lastNameIdx !== -1 ? data[i][lastNameIdx].toString().trim() : "";
+        name = (first + " " + last).trim();
+      }
+      
+      var status = statusIdx !== -1 ? data[i][statusIdx].toString().trim() : "Active";
+      
+      if (email && status === "Active" && !sentEmails[email.toLowerCase()]) {
+        sentEmails[email.toLowerCase()] = true;
+        
+        var unsubscribeLink = WEB_APP_URL + "?action=unsubscribe&email=" + encodeURIComponent(email);
+        var personalizedBody = "Hi " + (name || "there") + ",\n\n" + messageBody + 
+                               "\n\n---\nTo unsubscribe, click here: " + unsubscribeLink;
+        var htmlBody = compileEmailTemplate(name, messageBody, unsubscribeLink);
+        
+        try {
+          MailApp.sendEmail({
+            to: email,
+            subject: subject,
+            body: personalizedBody,
+            htmlBody: htmlBody
+          });
+        } catch (err) {
+          console.error("Failed to mail " + email + ": " + err.toString());
+        }
+      }
+    }
+  });
+}
+
+function handleSendTestEmail(spreadsheet, p) {
+  var subject = p.subject || "(No Subject)";
+  var body = p.body || "";
+  var plainText = p.plainText || "";
+  var testEmail = p.testEmail || "ucds.debate@gmail.com";
+  var includeHeader = p.includeHeader !== false && p.includeHeader !== "false" && p.includeHeader !== 0;
+  var includeFooter = p.includeFooter !== false && p.includeFooter !== "false" && p.includeFooter !== 0;
+  
+  var unsubscribeLink = WEB_APP_URL + "?action=unsubscribe&email=" + encodeURIComponent(testEmail);
+  var htmlBody = compileEmailTemplate("Test Recipient", body, unsubscribeLink, includeHeader, includeFooter);
+  var textBody = "Hi Test Recipient,\n\n" + (plainText || body.replace(/<[^>]*>/g, '')) + "\n\n---\nTo unsubscribe, click here: " + unsubscribeLink;
+  
+  try {
+    MailApp.sendEmail({
+      to: testEmail,
+      subject: "[TEST] " + subject,
+      body: textBody,
+      htmlBody: htmlBody
+    });
+    return jsonResponse({ result: "success" });
+  } catch (err) {
+    return jsonResponse({ result: "error", error: "Failed to send test email: " + err.toString() });
+  }
+}
+
+function handleSendImmediately(spreadsheet, p) {
+  var draftId = p.draftId;
+  var listsStr = p.lists;
+  
+  if (!draftId || !listsStr) {
+    return jsonResponse({ result: "error", error: "Missing parameters for immediate send" });
+  }
+  
+  // Load draft
+  var draftSheet = getOrCreateSheet(spreadsheet, "drafts", ["id", "subject", "body", "plainText", "created", "includeHeader", "includeFooter"]);
+  var draftData = draftSheet.getDataRange().getValues();
+  var draftInfo = null;
+  for (var j = 1; j < draftData.length; j++) {
+    if (draftData[j][0] === draftId) {
+      draftInfo = {
+        subject: draftData[j][1],
+        body: draftData[j][2],
+        plainText: draftData[j][3],
+        includeHeader: draftData[j].length > 5 ? (draftData[j][5] !== false && draftData[j][5] !== "false" && draftData[j][5] !== 0) : true,
+        includeFooter: draftData[j].length > 6 ? (draftData[j][6] !== false && draftData[j][6] !== "false" && draftData[j][6] !== 0) : true
+      };
+      break;
+    }
+  }
+  
+  if (!draftInfo) {
+    return jsonResponse({ result: "error", error: "Draft not found" });
+  }
+  
+  var lists = listsStr.split(",");
+  var sentEmails = {};
+  var sentCount = 0;
+  
+  lists.forEach(function(sheetName) {
+    var sheet = spreadsheet.getSheetByName(sheetName.trim());
+    if (!sheet) return;
+    
+    var data = sheet.getDataRange().getValues();
+    if (data.length < 2) return;
+    
+    var headers = data[0].map(function(h) { return (h || "").toString().toLowerCase().trim(); });
+    var emailIdx = headers.indexOf("email");
+    var nameIdx = headers.indexOf("name");
+    var firstNameIdx = headers.indexOf("first name") !== -1 ? headers.indexOf("first name") : headers.indexOf("first_name");
+    var lastNameIdx = headers.indexOf("last name") !== -1 ? headers.indexOf("last name") : headers.indexOf("last_name");
+    var statusIdx = headers.indexOf("status");
+    
+    if (emailIdx === -1) return;
+    
+    for (var i = 1; i < data.length; i++) {
+      var email = data[i][emailIdx].toString().trim();
+      var name = "";
+      if (nameIdx !== -1) {
+        name = data[i][nameIdx].toString().trim();
+      } else if (firstNameIdx !== -1 || lastNameIdx !== -1) {
+        var first = firstNameIdx !== -1 ? data[i][firstNameIdx].toString().trim() : "";
+        var last = lastNameIdx !== -1 ? data[i][lastNameIdx].toString().trim() : "";
+        name = (first + " " + last).trim();
+      }
+      
+      var status = statusIdx !== -1 ? data[i][statusIdx].toString().trim() : "Active";
+      
+      if (email && status.toLowerCase() === "active" && !sentEmails[email.toLowerCase()]) {
+        sentEmails[email.toLowerCase()] = true;
+        
+        var unsubscribeLink = WEB_APP_URL + "?action=unsubscribe&email=" + encodeURIComponent(email);
+        var personalizedBody = "Hi " + (name || "there") + ",\n\n" + (draftInfo.plainText || draftInfo.body.replace(/<[^>]*>/g, '')) + 
+                               "\n\n---\nTo unsubscribe, click here: " + unsubscribeLink;
+        var htmlBody = compileEmailTemplate(name, draftInfo.body, unsubscribeLink, draftInfo.includeHeader, draftInfo.includeFooter);
+        
+        try {
+          MailApp.sendEmail({
+            to: email,
+            subject: draftInfo.subject,
+            body: personalizedBody,
+            htmlBody: htmlBody
+          });
+          sentCount++;
+        } catch (err) {
+          console.error("Failed to mail " + email + ": " + err.toString());
+        }
+      }
+    }
+  });
+  
+  // Log this campaign in schedules sheet as completed
+  var schedSheet = getOrCreateSheet(spreadsheet, "schedules", ["id", "draftId", "lists", "timeEdmonton", "status", "error"]);
+  var newId = "s_imm_" + new Date().getTime() + "_" + Math.floor(Math.random() * 1000);
+  var timeEdmonton = Utilities.formatDate(new Date(), "America/Edmonton", "yyyy-MM-dd HH:mm:ss");
+  schedSheet.appendRow([newId, draftId, listsStr, timeEdmonton, "Sent", "Immediate send to " + sentCount + " recipient(s) via script."]);
+  
+  return jsonResponse({ result: "success", count: sentCount });
+}
+
