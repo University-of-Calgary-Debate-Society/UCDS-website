@@ -133,6 +133,28 @@
         width: 100%;
       }
     }
+    .email-input-field {
+      width: 100%;
+      max-width: 320px;
+      padding: 0.85rem 1.25rem;
+      border-radius: 999px;
+      border: 1.5px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.05);
+      color: #ffffff;
+      font-size: 1rem;
+      font-family: inherit;
+      outline: none;
+      margin: 1.5rem auto;
+      display: block;
+      text-align: center;
+      transition: all 0.2s ease;
+      box-sizing: border-box;
+    }
+    .email-input-field:focus {
+      border-color: #60a5fa;
+      background: rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 15px rgba(96, 165, 250, 0.25);
+    }
   </style>
 </head>
 <body class="events-body">
@@ -203,7 +225,7 @@
     const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyUmdbEzfBZbHCCgaYRG5mseiRZ7dAba0o88CSH1ywOdTiWKkeZmufL48xBJoFPYZQm2Q/exec';
 
     const urlParams = new URLSearchParams(window.location.search);
-    const email = urlParams.get('email') || '';
+    let email = urlParams.get('email') || '';
     const isResubscribed = urlParams.get('resubscribed') === 'true';
 
     const statusIcon = document.getElementById('status-icon');
@@ -237,6 +259,27 @@
       
       btnGroup.style.display = 'flex';
       confirmBtn.style.display = 'inline-flex';
+      confirmBtn.textContent = 'Confirm Unsubscribe';
+      cancelBtn.style.display = 'inline-flex';
+      cancelBtn.textContent = 'Cancel';
+      cancelBtn.href = '../../';
+      resubscribeBtn.style.display = 'none';
+    }
+
+    function showInputState() {
+      statusIcon.textContent = '?';
+      statusIcon.className = 'unsubscribe-icon';
+      statusIcon.style.borderColor = '#eab308';
+      statusIcon.style.color = '#eab308';
+      statusIcon.style.background = 'rgba(234, 179, 8, 0.15)';
+      
+      statusTitle.textContent = 'Unsubscribe';
+      statusText.innerHTML = `Please enter your email address to unsubscribe from our newsletter:<br><br>
+        <input type="email" id="email-input" class="email-input-field" placeholder="your.email@example.com" />`;
+      
+      btnGroup.style.display = 'flex';
+      confirmBtn.style.display = 'inline-flex';
+      confirmBtn.textContent = 'Unsubscribe';
       cancelBtn.style.display = 'inline-flex';
       cancelBtn.textContent = 'Cancel';
       cancelBtn.href = '../../';
@@ -297,25 +340,36 @@
     } else if (email) {
       showConfirmState();
     } else {
-      showError('No email address was specified. If you want to unsubscribe, please click the unsubscribe link in your newsletter email.');
+      showInputState();
     }
 
     confirmBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      if (!email) return;
+      let targetEmail = email;
+      if (!targetEmail) {
+        const inputEl = document.getElementById('email-input');
+        if (inputEl) {
+          targetEmail = inputEl.value.trim();
+        }
+      }
+      if (!targetEmail || !targetEmail.includes('@')) {
+        alert('Please enter a valid email address.');
+        return;
+      }
 
-      showLoading(`Removing <span class="unsubscribe-email">${escapeHtml(email)}</span> from our mailing list...`);
+      showLoading(`Removing <span class="unsubscribe-email">${escapeHtml(targetEmail)}</span> from our mailing list...`);
 
-      fetch(`${WEB_APP_URL}?action=unsubscribe&email=${encodeURIComponent(email)}&ajax=true`, {
+      fetch(`${WEB_APP_URL}?action=unsubscribe&email=${encodeURIComponent(targetEmail)}&ajax=true`, {
         method: 'GET',
         mode: 'no-cors'
       })
       .then(() => {
         showSuccess(
           'Unsubscribed',
-          `The email address <span class="unsubscribe-email">${escapeHtml(email)}</span> has been successfully removed from our newsletter list. We're sorry to see you go!`,
+          `The email address <span class="unsubscribe-email">${escapeHtml(targetEmail)}</span> has been successfully removed from our newsletter list. We're sorry to see you go!`,
           true
         );
+        email = targetEmail;
       })
       .catch((err) => {
         console.error(err);

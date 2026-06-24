@@ -80,15 +80,14 @@ function handleGetMailingLists(spreadsheet) {
     "high_school_coaches": "High School Coaches",
     "junior_high_coaches": "Junior High Coaches"
   };
-  var coachHeaders = ["Timestamp", "First Name", "Last Name", "Email", "Status", "School", "Club", "Phone", "Address", "City", "Province", "Postal Code", "Notes"];
   
   var lists = [];
   sheetNames.forEach(function(name) {
     var sheet;
-    if (name === "high_school_coaches" || name === "junior_high_coaches") {
-      sheet = getOrCreateSheet(spreadsheet, name, coachHeaders);
+    if (name === "junior_high_subscribers" || name === "senior_high_subscribers") {
+      sheet = ensureSheetHeadersMigrated(spreadsheet, name, SCHOOL_HEADERS);
     } else {
-      sheet = spreadsheet.getSheetByName(name);
+      sheet = ensureSheetHeadersMigrated(spreadsheet, name, BASE_HEADERS);
     }
     
     var count = 0;
@@ -254,7 +253,7 @@ function handleGetPendingSends(spreadsheet) {
         recipients.push(recipientMap[emailKey]);
       }
       
-      var baseUnsubscribeLink = WEB_APP_URL + "?action=unsubscribe&email=";
+      var baseUnsubscribeLink = WEBSITE_UNSUBSCRIBE_URL + "?email=";
       var includeHeader = draftInfo.includeHeader !== false;
       var includeFooter = draftInfo.includeFooter !== false;
       var templateHtml = compileEmailTemplate("{{name}}", draftInfo.body, "{{unsubscribe_link}}", includeHeader, includeFooter);
@@ -342,47 +341,40 @@ function sendNewsletter(subject, messageBody) {
     
     var headers = data[0].map(function(h) { return (h || "").toString().toLowerCase().trim(); });
     var emailIdx = headers.indexOf("email");
-    var nameIdx = headers.indexOf("name");
-    var firstNameIdx = headers.indexOf("first name") !== -1 ? headers.indexOf("first name") : headers.indexOf("first_name");
-    var lastNameIdx = headers.indexOf("last name") !== -1 ? headers.indexOf("last name") : headers.indexOf("last_name");
     var statusIdx = headers.indexOf("status");
     
     if (emailIdx === -1) return;
     
     for (var i = 1; i < data.length; i++) {
       var email = data[i][emailIdx].toString().trim();
-      var name = "";
-      if (nameIdx !== -1) {
-        name = data[i][nameIdx].toString().trim();
-      } else if (firstNameIdx !== -1 || lastNameIdx !== -1) {
-        var first = firstNameIdx !== -1 ? data[i][firstNameIdx].toString().trim() : "";
-        var last = lastNameIdx !== -1 ? data[i][lastNameIdx].toString().trim() : "";
-        name = (first + " " + last).trim();
-      }
-      
       var status = statusIdx !== -1 ? data[i][statusIdx].toString().trim() : "Active";
       
       if (email && status === "Active" && !sentEmails[email.toLowerCase()]) {
         sentEmails[email.toLowerCase()] = true;
-        
-        var unsubscribeLink = WEB_APP_URL + "?action=unsubscribe&email=" + encodeURIComponent(email);
-        var personalizedBody = "Hi " + (name || "there") + ",\n\n" + messageBody + 
-                               "\n\n---\nTo unsubscribe, click here: " + unsubscribeLink;
-        var htmlBody = compileEmailTemplate(name, messageBody, unsubscribeLink);
-        
-        try {
-          MailApp.sendEmail({
-            to: email,
-            subject: subject,
-            body: personalizedBody,
-            htmlBody: htmlBody
-          });
-        } catch (err) {
-          console.error("Failed to mail " + email + ": " + err.toString());
-        }
       }
     }
   });
+
+  var bccList = Object.keys(sentEmails);
+  if (bccList.length > 0) {
+    var senderEmail = Session.getActiveUser().getEmail() || "ucdebate@ucalgary.ca";
+    var unsubscribeLink = WEBSITE_UNSUBSCRIBE_URL;
+    var plainBody = "Hi there,\n\n" + messageBody + 
+                    "\n\n---\nTo unsubscribe, click here: " + unsubscribeLink;
+    var htmlBody = compileEmailTemplate("there", messageBody, unsubscribeLink);
+    
+    try {
+      MailApp.sendEmail({
+        to: senderEmail,
+        bcc: bccList.join(","),
+        subject: subject,
+        body: plainBody,
+        htmlBody: htmlBody
+      });
+    } catch (err) {
+      console.error("Failed to mail newsletter: " + err.toString());
+    }
+  }
 }
 
 function handleSendTestEmail(spreadsheet, p) {
@@ -393,7 +385,7 @@ function handleSendTestEmail(spreadsheet, p) {
   var includeHeader = p.includeHeader !== false && p.includeHeader !== "false" && p.includeHeader !== 0;
   var includeFooter = p.includeFooter !== false && p.includeFooter !== "false" && p.includeFooter !== 0;
   
-  var unsubscribeLink = WEB_APP_URL + "?action=unsubscribe&email=" + encodeURIComponent(testEmail);
+  var unsubscribeLink = WEBSITE_UNSUBSCRIBE_URL + "?email=" + encodeURIComponent(testEmail);
   var htmlBody = compileEmailTemplate("Test Recipient", body, unsubscribeLink, includeHeader, includeFooter);
   var textBody = "Hi Test Recipient,\n\n" + (plainText || body.replace(/<[^>]*>/g, '')) + "\n\n---\nTo unsubscribe, click here: " + unsubscribeLink;
   
@@ -441,7 +433,6 @@ function handleSendImmediately(spreadsheet, p) {
   
   var lists = listsStr.split(",");
   var sentEmails = {};
-  var sentCount = 0;
   
   lists.forEach(function(sheetName) {
     var sheet = spreadsheet.getSheetByName(sheetName.trim());
@@ -452,48 +443,44 @@ function handleSendImmediately(spreadsheet, p) {
     
     var headers = data[0].map(function(h) { return (h || "").toString().toLowerCase().trim(); });
     var emailIdx = headers.indexOf("email");
-    var nameIdx = headers.indexOf("name");
-    var firstNameIdx = headers.indexOf("first name") !== -1 ? headers.indexOf("first name") : headers.indexOf("first_name");
-    var lastNameIdx = headers.indexOf("last name") !== -1 ? headers.indexOf("last name") : headers.indexOf("last_name");
     var statusIdx = headers.indexOf("status");
     
     if (emailIdx === -1) return;
     
     for (var i = 1; i < data.length; i++) {
       var email = data[i][emailIdx].toString().trim();
-      var name = "";
-      if (nameIdx !== -1) {
-        name = data[i][nameIdx].toString().trim();
-      } else if (firstNameIdx !== -1 || lastNameIdx !== -1) {
-        var first = firstNameIdx !== -1 ? data[i][firstNameIdx].toString().trim() : "";
-        var last = lastNameIdx !== -1 ? data[i][lastNameIdx].toString().trim() : "";
-        name = (first + " " + last).trim();
-      }
-      
       var status = statusIdx !== -1 ? data[i][statusIdx].toString().trim() : "Active";
       
       if (email && status.toLowerCase() === "active" && !sentEmails[email.toLowerCase()]) {
         sentEmails[email.toLowerCase()] = true;
-        
-        var unsubscribeLink = WEB_APP_URL + "?action=unsubscribe&email=" + encodeURIComponent(email);
-        var personalizedBody = "Hi " + (name || "there") + ",\n\n" + (draftInfo.plainText || draftInfo.body.replace(/<[^>]*>/g, '')) + 
-                               "\n\n---\nTo unsubscribe, click here: " + unsubscribeLink;
-        var htmlBody = compileEmailTemplate(name, draftInfo.body, unsubscribeLink, draftInfo.includeHeader, draftInfo.includeFooter);
-        
-        try {
-          MailApp.sendEmail({
-            to: email,
-            subject: draftInfo.subject,
-            body: personalizedBody,
-            htmlBody: htmlBody
-          });
-          sentCount++;
-        } catch (err) {
-          console.error("Failed to mail " + email + ": " + err.toString());
-        }
       }
     }
   });
+
+  var bccList = Object.keys(sentEmails);
+  var sentCount = 0;
+  
+  if (bccList.length > 0) {
+    var senderEmail = Session.getActiveUser().getEmail() || "ucdebate@ucalgary.ca";
+    var unsubscribeLink = WEBSITE_UNSUBSCRIBE_URL;
+    var plainBody = "Hi there,\n\n" + (draftInfo.plainText || draftInfo.body.replace(/<[^>]*>/g, '')) + 
+                    "\n\n---\nTo unsubscribe, click here: " + unsubscribeLink;
+    var htmlBody = compileEmailTemplate("there", draftInfo.body, unsubscribeLink, draftInfo.includeHeader, draftInfo.includeFooter);
+    
+    try {
+      MailApp.sendEmail({
+        to: senderEmail,
+        bcc: bccList.join(","),
+        subject: draftInfo.subject,
+        body: plainBody,
+        htmlBody: htmlBody
+      });
+      sentCount = bccList.length;
+    } catch (err) {
+      console.error("Failed to mail campaign: " + err.toString());
+      return jsonResponse({ result: "error", error: "Failed to send email campaign: " + err.toString() });
+    }
+  }
   
   // Log this campaign in schedules sheet as completed
   var schedSheet = getOrCreateSheet(spreadsheet, "schedules", ["id", "draftId", "lists", "timeEdmonton", "status", "error"]);

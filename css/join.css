@@ -1,0 +1,62 @@
+/* Join Page Specific Styles */
+
+.join-body .site-header {
+  position: relative;
+}
+
+.join-body .card {
+  box-shadow: 8px 8px 0px #204a99;
+  transition: opacity 0.8s ease-out, transform 1s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 1s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.join-body .card:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: 12px 12px 0px #3b82f6;
+}
+
+.special-join-button {
+  font-size: 1.5rem !important;
+  padding: 1.25rem 3.5rem !important;
+  transition: background-color 0.4s ease, box-shadow 0.4s ease, color 0.4s ease !important;
+  position: relative;
+  z-index: 102;
+  will-change: transform;
+}
+
+.special-join-button:hover {
+  background-color: #60a5fa !important;
+  box-shadow: 0 0 50px 20px rgba(96, 165, 250, 0.75) !important;
+  color: #ffffff !important;
+}
+
+#member-card {
+  position: relative;
+  z-index: 102;
+}
+
+/* Background Audio Mute Toggle */
+.mute-container {
+  text-align: center;
+  padding-top: 2rem;
+  position: relative;
+  z-index: 100;
+}
+
+.mute-toggle-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #f6f6f6;
+  color: #000000;
+  padding: 0.5rem 1.25rem;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid #d1d5db;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transition: background-color 0.2s ease;
+}
+
+.mute-toggle-label:hover {
+  background: #e5e7eb;
+}

@@ -77,6 +77,13 @@ function doPost(e) {
     if (p.action === "createDummy") {
       return handleCreateDummy(spreadsheet, p);
     }
+    if (p.action === "promoteStudents") {
+      return jsonResponse({ result: "success", info: promoteStudents() });
+    }
+    if (p.action === "setupTrigger") {
+      createAugustTrigger();
+      return jsonResponse({ result: "success", message: "August promotion trigger configured." });
+    }
     
     return jsonResponse({ result: "error", error: "Invalid action" });
   } catch (error) {

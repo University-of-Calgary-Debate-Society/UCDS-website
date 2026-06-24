@@ -1,0 +1,22 @@
+/* Blog Page Specific Styles */
+
+.blog-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.blog-meta {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.blog-date {
+  display: inline-block;
+  background: #e0f2fe;
+  color: #2563eb;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}

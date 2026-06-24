@@ -196,13 +196,14 @@
               </p>
               
               <div style="text-align: center; margin-bottom: 20px;">
-                <a href="https://buy.stripe.com/3cIeVf6OM99mg1D0LefEk01" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 14px; background: #635bff; color: #ffffff; border: none; border-radius: 6px; font-size: 1rem; font-weight: 700; text-decoration: none; cursor: pointer; transition: background 0.2s ease; box-shadow: 0 4px 12px rgba(99, 91, 255, 0.3);">
+                <a id="stripe-checkout-btn" href="https://buy.stripe.com/3cIeVf6OM99mg1D0LefEk01" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 14px; background: #635bff; color: #ffffff; border: none; border-radius: 6px; font-size: 1rem; font-weight: 700; text-decoration: none; cursor: pointer; transition: background 0.2s ease; box-shadow: 0 4px 12px rgba(99, 91, 255, 0.3);">
                   <span>Pay with</span>
                   <svg viewBox="0 0 40 16" fill="currentColor" style="height: 1.25rem; width: auto; vertical-align: middle;">
                     <path d="M40 7.82c0-2.65-1.28-4.28-3.64-4.28-2.52 0-3.83 1.88-3.83 4.36 0 2.82 1.4 4.3 3.83 4.3 1.18 0 2.22-.29 2.9-.7V9.38c-.66.31-1.47.53-2.3.53-1.14 0-1.85-.48-2.04-1.36h6.24c.05-.42.1-.95.1-1.44zM36.43 6.8c.04-.74.57-1.28 1.39-1.28.75 0 1.27.52 1.3 1.28h-2.69zm-11.83-.81c-.91 0-1.52.48-1.84.83l-.1-1H19.5v8.16l2.4-.5v-3.73c.33.3.88.7 1.72.7 1.9 0 3.39-1.39 3.39-4.08 0-2.83-1.51-4.08-3.39-4.08zm-.53 6.22c-.78 0-1.18-.4-1.18-1.24v-.7c0-.85.4-1.24 1.18-1.24.82 0 1.31.7 1.31 2.12-.01 1.45-.5 2.18-1.31 2.18zm-8.8-6.22c-.85 0-1.36.4-1.64.7l-.1-.54H10.4v8.16l2.4-.5V9.45c0-1.73.58-2.28 1.6-2.28.25 0 .48.03.65.1V5.9c-.24-.05-.52-.08-.75-.08zm-7.63.15h2.4v8.16h-2.4zm0-2.62h2.4V4.92h-2.4zm-3.1 3.52c-.6-.26-1.5-.46-2.14-.46-1.07 0-1.58.46-1.58 1 0 .7 1 .8 2.65 1.2 1.98.5 3.33 1.1 3.33 3.03 0 2.37-2.02 3.08-4.33 3.08-1.07 0-2.2-.25-3.05-.73V10.1c.84.46 1.83.74 2.82.74.88 0 1.23-.29 1.23-.74 0-.66-.65-.77-2.05-1.1-1.85-.45-3.92-.85-3.92-3.08 0-2.12 1.85-3.06 4.14-3.06.94 0 1.92.2 2.7.54v2.54z"/>
                   </svg>
                 </a>
               </div>
+
               
               <ul style="font-size: 0.9rem; color: #94a3b8; padding-left: 20px; line-height: 1.6; margin: 0;">
                 <li>After successful payment, your spot will be secured automatically.</li>
@@ -295,19 +296,27 @@
       });
     }
 
+    const STRIPE_LINKS = {
+      30: 'https://buy.stripe.com/placeholder-30-cad',
+      60: 'https://buy.stripe.com/3cIeVf6OM99mg1D0LefEk01'
+    };
+
     function updateFeeAmount(value) {
       const amountSpan = document.getElementById('fee-amount');
       const labelSpan = document.getElementById('fee-label');
       const etransferText = document.getElementById('etransfer-amount-text');
+      const stripeBtn = document.getElementById('stripe-checkout-btn');
       
       if (value === 30) {
         if (amountSpan) amountSpan.innerText = '$30.00 CAD';
         if (labelSpan) labelSpan.innerText = 'Tournament Fee (Individual)';
         if (etransferText) etransferText.innerHTML = 'Please send an Interac E-Transfer of <strong>$30.00 CAD</strong> to the following address:';
+        if (stripeBtn) stripeBtn.href = STRIPE_LINKS[30];
       } else {
         if (amountSpan) amountSpan.innerText = '$60.00 CAD';
         if (labelSpan) labelSpan.innerText = 'Tournament Fee (Team of 2)';
         if (etransferText) etransferText.innerHTML = 'Please send an Interac E-Transfer of <strong>$60.00 CAD</strong> to the following address:';
+        if (stripeBtn) stripeBtn.href = STRIPE_LINKS[60];
       }
     }
   </script>

@@ -2,6 +2,36 @@
 // SUBSCRIBERS DATABASE MODULE
 // =========================================================================
 
+// New Global Headers definitions
+var BASE_HEADERS = [
+  "timestamp", "Status", "Name", "First Name", "Last Name", 
+  "Email", "School/Institution", "Club", "Phone", "Address", 
+  "Country", "Province/State", "City", "Postal Code", 
+  "Dietary Restriction", "Discord", "Notes"
+];
+
+var SCHOOL_HEADERS = [
+  "timestamp", "Status", "Name", "First Name", "Last Name", 
+  "Email", "School/Institution", "Club", "Phone", "Address", 
+  "Country", "Province/State", "City", "Postal Code", 
+  "Dietary Restriction", "Discord", "Notes", "grade 2025-2026"
+];
+
+/**
+ * Helper to find the index of a header name case-insensitively and ignoring whitespace/special characters.
+ */
+function getHeaderIndex(headers, target) {
+  if (!headers || !target) return -1;
+  var cleanTarget = target.toLowerCase().replace(/\s+/g, "").replace(/[^a-z0-9]/g, "");
+  for (var i = 0; i < headers.length; i++) {
+    var h = (headers[i] || "").toString().toLowerCase().replace(/\s+/g, "").replace(/[^a-z0-9]/g, "");
+    if (h === cleanTarget) {
+      return i;
+    }
+  }
+  return -1;
+}
+
 /**
  * Returns the Spreadsheet object for mailing lists.
  * Falls back to the Active Spreadsheet if the configured ID is not found.
@@ -17,6 +47,313 @@ function getMailingListSpreadsheet() {
   return SpreadsheetApp.getActiveSpreadsheet();
 }
 
+// Helper to determine the academic start year for a given date
+// e.g. March 2024 (school year 2023-2024) -> returns 2023
+// August 2024 (school year 2024-2025) -> returns 2024
+function getAcademicYear(date) {
+  var d = new Date(date);
+  var year = d.getFullYear();
+  var month = d.getMonth(); // 0-indexed: 0 = Jan, 7 = Aug
+  if (month < 7) { // Before August
+    return year - 1;
+  }
+  return year;
+}
+
+// Calculates grade in the target 2025-2026 academic year (represented by 2025)
+function calculateGradeFor2025_2026(submittedGradeStr, timestamp) {
+  if (!submittedGradeStr) return "";
+  var gradeNum = parseInt(submittedGradeStr, 10);
+  if (isNaN(gradeNum)) {
+    var match = submittedGradeStr.toString().match(/\d+/);
+    if (match) {
+      gradeNum = parseInt(match[0], 10);
+    } else {
+      return submittedGradeStr; // return original string if no numbers found
+    }
+  }
+  
+  var timestampDate = new Date(timestamp);
+  var subYear = getAcademicYear(timestampDate);
+  var targetYear = 2025; // Academic year 2025-2026 starts in 2025
+  var yearsPassed = targetYear - subYear;
+  
+  return gradeNum + yearsPassed;
+}
+
+// Calculates current grade for the current academic year at submission time
+function calculateCurrentGradeFromSubmission(submittedGradeStr, timestamp) {
+  if (!submittedGradeStr) return null;
+  var gradeNum = parseInt(submittedGradeStr, 10);
+  if (isNaN(gradeNum)) {
+    var match = submittedGradeStr.toString().match(/\d+/);
+    if (match) {
+      gradeNum = parseInt(match[0], 10);
+    } else {
+      return null;
+    }
+  }
+  
+  var timestampDate = new Date(timestamp);
+  var subYear = getAcademicYear(timestampDate);
+  var currentDate = new Date();
+  var curYear = getAcademicYear(currentDate);
+  var yearsPassed = curYear - subYear;
+  
+  return gradeNum + yearsPassed;
+}
+
+// Calculates current grade based on a Grade 2025-2026 value
+function calculateCurrentGradeFromGrade2025(grade2025Str) {
+  if (!grade2025Str) return null;
+  var gradeNum = parseInt(grade2025Str, 10);
+  if (isNaN(gradeNum)) {
+    var match = grade2025Str.toString().match(/\d+/);
+    if (match) {
+      gradeNum = parseInt(match[0], 10);
+    } else {
+      return null;
+    }
+  }
+  
+  var currentDate = new Date();
+  var curYear = getAcademicYear(currentDate);
+  var targetYear = 2025; // column represents grade in 2025-2026 academic year
+  var yearsPassed = curYear - targetYear;
+  
+  return gradeNum + yearsPassed;
+}
+
+// Check if a person is already in the sheet based on Name, Email, or Phone
+function findDuplicateRow(sheet, headers, email, phone, fullName, firstName, lastName) {
+  var data = sheet.getDataRange().getValues();
+  if (data.length < 2) return -1;
+  
+  var emailCol = getHeaderIndex(headers, "email");
+  var phoneCol = getHeaderIndex(headers, "phone");
+  var nameCol = getHeaderIndex(headers, "name");
+  var firstNameCol = getHeaderIndex(headers, "firstname");
+  var lastNameCol = getHeaderIndex(headers, "lastname");
+  
+  var cleanEmail = (email || "").toString().trim().toLowerCase();
+  var cleanPhone = (phone || "").toString().trim().replace(/[^0-9]/g, "");
+  var cleanName = (fullName || "").toString().trim().toLowerCase();
+  var cleanFirst = (firstName || "").toString().trim().toLowerCase();
+  var cleanLast = (lastName || "").toString().trim().toLowerCase();
+  
+  if (!cleanName && (cleanFirst || cleanLast)) {
+    cleanName = (cleanFirst + " " + cleanLast).trim();
+  }
+
+  for (var i = 1; i < data.length; i++) {
+    var rowEmail = (emailCol !== -1 && data[i][emailCol] !== undefined) ? data[i][emailCol].toString().trim().toLowerCase() : "";
+    var rowPhone = (phoneCol !== -1 && data[i][phoneCol] !== undefined) ? data[i][phoneCol].toString().trim().replace(/[^0-9]/g, "") : "";
+    var rowName = (nameCol !== -1 && data[i][nameCol] !== undefined) ? data[i][nameCol].toString().trim().toLowerCase() : "";
+    var rowFirst = (firstNameCol !== -1 && data[i][firstNameCol] !== undefined) ? data[i][firstNameCol].toString().trim().toLowerCase() : "";
+    var rowLast = (lastNameCol !== -1 && data[i][lastNameCol] !== undefined) ? data[i][lastNameCol].toString().trim().toLowerCase() : "";
+    
+    if (!rowName && (rowFirst || rowLast)) {
+      rowName = (rowFirst + " " + rowLast).trim();
+    }
+    
+    if (cleanEmail && rowEmail === cleanEmail) {
+      return i + 1;
+    }
+    if (cleanPhone && cleanPhone.length >= 7 && rowPhone === cleanPhone) {
+      return i + 1;
+    }
+    if (cleanName && rowName === cleanName) {
+      return i + 1;
+    }
+  }
+  return -1;
+}
+
+// Maps input parameters object to headers array
+function mapParamsToRow(headers, p) {
+  var timestamp = p.timestamp ? new Date(p.timestamp) : new Date();
+  var status = p.status || "Active";
+  var email = p.email || "";
+  var firstName = p.firstName || "";
+  var lastName = p.lastName || "";
+  
+  var name = p.fullName || p.name || "";
+  if (!name && (firstName || lastName)) {
+    name = (firstName + " " + lastName).trim();
+  }
+  
+  var schoolInstitution = p.school || p.institution || p.schoolInstitution || "";
+  var club = p.club || "";
+  var phone = p.phone || "";
+  var address = p.address || "";
+  var country = p.country || "";
+  var provinceState = p.province || p.state || p.provinceState || "";
+  var city = p.city || "";
+  var postalCode = p.postalCode || p.zipCode || p.postal || "";
+  var dietary = p.dietary || p.dietaryRestriction || p.dietaryRestrictions || "";
+  var discord = p.discord || "";
+  var notes = p.notes || "";
+  var gradeVal = p.grade || "";
+  
+  return headers.map(function(header) {
+    var h = header.toLowerCase().replace(/\s+/g, "").replace(/[^a-z0-9]/g, "");
+    if (h === "timestamp") return timestamp;
+    if (h === "status") return status;
+    if (h === "name") return name;
+    if (h === "firstname") return firstName;
+    if (h === "lastname") return lastName;
+    if (h === "email") return email;
+    if (h === "schoolinstitution") return schoolInstitution;
+    if (h === "club") return club;
+    if (h === "phone") return phone;
+    if (h === "address") return address;
+    if (h === "country") return country;
+    if (h === "provincestate") return provinceState;
+    if (h === "city") return city;
+    if (h === "postalcode") return postalCode;
+    if (h === "dietaryrestriction") return dietary;
+    if (h === "discord") return discord;
+    if (h === "notes") return notes;
+    
+    if (h === "grade20252026") {
+      if (gradeVal) {
+        var calculatedGrade = calculateGradeFor2025_2026(gradeVal, timestamp);
+        return calculatedGrade !== null ? calculatedGrade.toString() : gradeVal;
+      }
+      if (p.grade2025_2026) return p.grade2025_2026.toString();
+      return "";
+    }
+    return "";
+  });
+}
+
+// Helper to convert rowValues to an object representing parameters
+function rowToObj(headers, rowValues) {
+  var p = {};
+  headers.forEach(function(header, idx) {
+    var val = rowValues[idx];
+    if (val === undefined) val = "";
+    
+    var h = header.toLowerCase().replace(/\s+/g, "").replace(/[^a-z0-9]/g, "");
+    if (h === "timestamp") p.timestamp = val;
+    else if (h === "status") p.status = val;
+    else if (h === "name") p.name = val;
+    else if (h === "firstname") p.firstName = val;
+    else if (h === "lastname") p.lastName = val;
+    else if (h === "email") p.email = val;
+    else if (h === "schoolinstitution") p.school = val;
+    else if (h === "club") p.club = val;
+    else if (h === "phone") p.phone = val;
+    else if (h === "address") p.address = val;
+    else if (h === "country") p.country = val;
+    else if (h === "provincestate") p.province = val;
+    else if (h === "city") p.city = val;
+    else if (h === "postalcode") p.postalCode = val;
+    else if (h === "dietaryrestriction") p.dietary = val;
+    else if (h === "discord") p.discord = val;
+    else if (h === "notes") p.notes = val;
+    else if (h === "grade20252026") p.grade2025_2026 = val;
+  });
+  return p;
+}
+
+// Main logic to Add or Update subscriber in a sheet
+function addOrUpdateSubscriber(sheet, headers, p, isSchoolSheet) {
+  var email = p.email || "";
+  var phone = p.phone || "";
+  var fullName = p.fullName || p.name || "";
+  var firstName = p.firstName || "";
+  var lastName = p.lastName || "";
+  
+  if (!fullName && (firstName || lastName)) {
+    fullName = (firstName + " " + lastName).trim();
+  }
+  
+  var rowIndex = findDuplicateRow(sheet, headers, email, phone, fullName, firstName, lastName);
+  var rowValues = mapParamsToRow(headers, p);
+  
+  if (rowIndex !== -1) {
+    var existingRowValues = sheet.getRange(rowIndex, 1, 1, headers.length).getValues()[0];
+    var updatedValues = rowValues.map(function(newVal, idx) {
+      var existingVal = existingRowValues[idx];
+      
+      if (newVal === "" || newVal === null || newVal === undefined) {
+        return existingVal;
+      }
+      
+      var headerName = headers[idx].toLowerCase().replace(/\s+/g, "").replace(/[^a-z0-9]/g, "");
+      if (headerName === "timestamp") {
+        return existingVal || newVal;
+      }
+      
+      return newVal;
+    });
+    
+    sheet.getRange(rowIndex, 1, 1, headers.length).setValues([updatedValues]);
+    return rowIndex;
+  } else {
+    sheet.appendRow(rowValues);
+    return sheet.getLastRow();
+  }
+}
+
+// Checks if headers are correct and migrates columns if they changed
+function ensureSheetHeadersMigrated(spreadsheet, name, newHeaders) {
+  var sheet = spreadsheet.getSheetByName(name);
+  if (!sheet) {
+    sheet = spreadsheet.insertSheet(name);
+    sheet.appendRow(newHeaders);
+    sheet.getRange(1, 1, 1, newHeaders.length).setFontWeight("bold");
+    sheet.setFrozenRows(1);
+    return sheet;
+  }
+  
+  var data = sheet.getDataRange().getValues();
+  if (data.length === 0 || data[0].length === 0) {
+    sheet.appendRow(newHeaders);
+    sheet.getRange(1, 1, 1, newHeaders.length).setFontWeight("bold");
+    sheet.setFrozenRows(1);
+    return sheet;
+  }
+  
+  var currentHeaders = data[0].map(function(h) { return (h || "").toString().trim(); });
+  
+  var headersMatch = currentHeaders.length === newHeaders.length && currentHeaders.every(function(val, index) {
+    return val === newHeaders[index];
+  });
+  
+  if (headersMatch) {
+    return sheet;
+  }
+  
+  console.log("Migrating sheet '" + name + "' to new header structure...");
+  
+  var migratedRows = [];
+  for (var i = 1; i < data.length; i++) {
+    var p = rowToObj(currentHeaders, data[i]);
+    
+    var gradeIdx = currentHeaders.map(function(h) { return h.toLowerCase().replace(/\s+/g, ""); }).indexOf("grade");
+    if (gradeIdx !== -1 && data[i][gradeIdx] !== undefined && data[i][gradeIdx] !== "") {
+      p.grade = data[i][gradeIdx];
+    }
+    
+    var newRow = mapParamsToRow(newHeaders, p);
+    migratedRows.push(newRow);
+  }
+  
+  sheet.clear();
+  sheet.appendRow(newHeaders);
+  sheet.getRange(1, 1, 1, newHeaders.length).setFontWeight("bold");
+  sheet.setFrozenRows(1);
+  
+  if (migratedRows.length > 0) {
+    sheet.getRange(2, 1, migratedRows.length, newHeaders.length).setValues(migratedRows);
+  }
+  
+  console.log("Migration complete for sheet '" + name + "'. Processed " + migratedRows.length + " row(s).");
+  return sheet;
+}
+
 /**
  * Public endpoint to sign up a subscriber.
  * Automatically segments them into: Subscribers, junior_high_subscribers,
@@ -24,8 +361,6 @@ function getMailingListSpreadsheet() {
  */
 function handleSubscribe(p) {
   var email = p.email || "";
-  var name = p.fullName || p.name || "";
-  var gradeStr = p.grade || "";
   
   if (!email) {
     return jsonResponse({ result: "error", error: "Email is required" });
@@ -33,59 +368,29 @@ function handleSubscribe(p) {
   
   var spreadsheet = getMailingListSpreadsheet();
   var sheetName = "Subscribers";
-  var headers = ["Timestamp", "Email", "Name", "Status"];
+  var headers = BASE_HEADERS;
   
-  // Segment based on completed grade
-  var gradeNum = null;
-  var match = gradeStr.match(/\d+/);
-  if (match) {
-    gradeNum = parseInt(match[0], 10);
-  } else if (!isNaN(gradeStr) && gradeStr.trim() !== "") {
-    gradeNum = parseInt(gradeStr, 10);
-  }
-  
-  if (gradeNum >= 6 && gradeNum <= 8) {
-    sheetName = "junior_high_subscribers";
-    headers = ["Timestamp", "Email", "Name", "Status", "Grade", "Coach", "School", "Dietary Restrictions"];
-  } else if (gradeNum >= 9 && gradeNum <= 11) {
-    sheetName = "senior_high_subscribers";
-    headers = ["Timestamp", "Email", "Name", "Status", "Grade", "Coach", "High School", "Dietary Restrictions"];
-  } else if (gradeNum === 12) {
-    sheetName = "university_subscribers";
-    headers = ["Timestamp", "Email", "Name", "Status", "Grade", "Institution", "Dietary Restrictions"];
-  }
-  
-  var sheet = getOrCreateSheet(spreadsheet, sheetName, headers);
-  var data = sheet.getDataRange().getValues();
-  var rowIndex = -1;
-  for (var i = 1; i < data.length; i++) {
-    if (data[i][1].toString().trim().toLowerCase() === email.trim().toLowerCase()) {
-      rowIndex = i + 1;
-      break;
+  var gradeStr = p.grade || "";
+  if (gradeStr !== "") {
+    var timestamp = new Date();
+    var currentGrade = calculateCurrentGradeFromSubmission(gradeStr, timestamp);
+    
+    if (currentGrade !== null) {
+      if (currentGrade >= 6 && currentGrade <= 9) {
+        sheetName = "junior_high_subscribers";
+        headers = SCHOOL_HEADERS;
+      } else if (currentGrade >= 10 && currentGrade <= 12) {
+        sheetName = "senior_high_subscribers";
+        headers = SCHOOL_HEADERS;
+      } else if (currentGrade >= 13) {
+        sheetName = "university_subscribers";
+        headers = BASE_HEADERS;
+      }
     }
   }
   
-  var rowValues = headers.map(function(header) {
-    var h = header.toLowerCase().replace(/\s+/g, "");
-    if (h === "timestamp") return new Date();
-    if (h === "email") return email;
-    if (h === "name") return name;
-    if (h === "status") return "Active";
-    if (h === "grade") return gradeStr;
-    if (h === "coach") return p.coach || "";
-    if (h === "school") return p.school || "";
-    if (h === "highschool") return p.highSchool || p.school || "";
-    if (h === "institution") return p.institution || p.school || "";
-    if (h === "dietaryrestrictions" || h === "dietary") return p.dietary || p.dietaryRestrictions || "";
-    return "";
-  });
-  
-  if (rowIndex !== -1) {
-    rowValues[0] = data[rowIndex - 1][0] || new Date();
-    sheet.getRange(rowIndex, 1, 1, rowValues.length).setValues([rowValues]);
-  } else {
-    sheet.appendRow(rowValues);
-  }
+  var sheet = ensureSheetHeadersMigrated(spreadsheet, sheetName, headers);
+  addOrUpdateSubscriber(sheet, headers, p, (headers === SCHOOL_HEADERS));
   
   return jsonResponse({ result: "success" });
 }
@@ -117,9 +422,13 @@ function handleUnsubscribeRequest(p) {
     }
   });
   
-  var redirectUrl = "https://ucds.ca/connect/unsubscribe/?email=" + encodeURIComponent(p.email);
-  var html = '<!DOCTYPE html><html><head><script>window.top.location.href = "' + redirectUrl + '";</script></head><body>Redirecting to unsubscribe landing page...</body></html>';
-  return HtmlService.createHtmlOutput(html).setTitle("Redirecting...");
+  if (p.ajax === "true") {
+    return jsonResponse({ result: "success" });
+  } else {
+    var redirectUrl = "https://ucds.ca/connect/unsubscribe/?email=" + encodeURIComponent(p.email);
+    var html = '<!DOCTYPE html><html><head><script>window.top.location.href = "' + redirectUrl + '";</script></head><body>Redirecting to unsubscribe landing page...</body></html>';
+    return HtmlService.createHtmlOutput(html).setTitle("Redirecting...");
+  }
 }
 
 /**
@@ -152,113 +461,149 @@ function handleResubscribeRequest(p) {
   });
   
   if (!found) {
-    var sheet = getOrCreateSheet(spreadsheet, "Subscribers", ["Timestamp", "Email", "Name", "Status"]);
-    sheet.appendRow([new Date(), p.email, "", "Active"]);
+    var sheet = ensureSheetHeadersMigrated(spreadsheet, "Subscribers", BASE_HEADERS);
+    addOrUpdateSubscriber(sheet, BASE_HEADERS, { email: p.email, status: "Active" }, false);
   }
   
-  var html = '<!DOCTYPE html>' +
-             '<html>' +
-             '<head>' +
-               '<meta charset="utf-8">' +
-               '<meta name="viewport" content="width=device-width, initial-scale=1">' +
-               '<title>UCDS Mailing List | Resubscribed</title>' +
-               '<style>' +
-                 'body { font-family: -apple-system, sans-serif; background-color: #f8fafc; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }' +
-                 '.card { text-align: center; max-width: 500px; width: 90%; background: #ffffff; padding: 40px; border: 1px solid #e2e8f0; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }' +
-                 'h1 { color: #0f172a; margin-bottom: 16px; }' +
-                 'p { color: #475569; line-height: 1.6; margin-bottom: 32px; }' +
-                 '.btn { display: inline-block; padding: 12px 24px; background-color: #0f172a; color: #ffffff !important; text-decoration: none; border-radius: 999px; font-weight: 600; }' +
-               '</style>' +
-             '</head>' +
-             '<body>' +
-               '<div class="card">' +
-                 '<h1>Welcome Back!</h1>' +
-                 '<p>You have successfully resubscribed to the UCDS newsletter list.</p>' +
-                 '<a href="https://ucds.ca" class="btn">Go to Homepage</a>' +
-               '</div>' +
-             '</body>' +
-             '</html>';
-  return HtmlService.createHtmlOutput(html).setTitle("UCDS Resubscribe");
+  if (p.ajax === "true") {
+    return jsonResponse({ result: "success" });
+  } else {
+    var redirectUrl = "https://ucds.ca/connect/unsubscribe/?email=" + encodeURIComponent(p.email) + "&resubscribed=true";
+    var html = '<!DOCTYPE html><html><head><script>window.top.location.href = "' + redirectUrl + '";</script></head><body>Redirecting to landing page...</body></html>';
+    return HtmlService.createHtmlOutput(html).setTitle("Redirecting...");
+  }
 }
 
 function handleCreateDummy(spreadsheet, p) {
   var type = p.type;
   var email = p.email || ("dummy_" + type + "_" + Math.floor(Math.random() * 10000) + "@example.com");
-  var timestamp = new Date();
   var status = p.status || "Active";
   
+  var sheetName = "";
+  var headers = BASE_HEADERS;
+  var isSchool = false;
+  
   if (type === "hs_coach") {
-    var sheet = getOrCreateSheet(spreadsheet, "high_school_coaches", ["Timestamp", "First Name", "Last Name", "Email", "Status", "School", "Club", "Phone", "Address", "City", "Province", "Postal Code", "Notes"]);
-    sheet.appendRow([
-      timestamp, 
-      p.firstName !== undefined && p.firstName !== "" ? p.firstName : "Dummy HS", 
-      p.lastName !== undefined && p.lastName !== "" ? p.lastName : "Coach", 
-      email, 
-      status, 
-      p.school !== undefined && p.school !== "" ? p.school : "Test School", 
-      p.club !== undefined && p.club !== "" ? p.club : "Test Club", 
-      p.phone !== undefined && p.phone !== "" ? p.phone : "555-0199", 
-      p.address !== undefined && p.address !== "" ? p.address : "123 Test St", 
-      p.city !== undefined && p.city !== "" ? p.city : "Calgary", 
-      p.province !== undefined && p.province !== "" ? p.province : "AB", 
-      p.postalCode !== undefined && p.postalCode !== "" ? p.postalCode : "T2N 1N4", 
-      p.notes !== undefined && p.notes !== "" ? p.notes : "Automated dummy coach"
-    ]);
+    sheetName = "high_school_coaches";
   } else if (type === "jh_coach") {
-    var sheet = getOrCreateSheet(spreadsheet, "junior_high_coaches", ["Timestamp", "First Name", "Last Name", "Email", "Status", "School", "Club", "Phone", "Address", "City", "Province", "Postal Code", "Notes"]);
-    sheet.appendRow([
-      timestamp, 
-      p.firstName !== undefined && p.firstName !== "" ? p.firstName : "Dummy JH", 
-      p.lastName !== undefined && p.lastName !== "" ? p.lastName : "Coach", 
-      email, 
-      status, 
-      p.school !== undefined && p.school !== "" ? p.school : "Test Middle School", 
-      p.club !== undefined && p.club !== "" ? p.club : "Test Club", 
-      p.phone !== undefined && p.phone !== "" ? p.phone : "555-0188", 
-      p.address !== undefined && p.address !== "" ? p.address : "456 Test Ave", 
-      p.city !== undefined && p.city !== "" ? p.city : "Calgary", 
-      p.province !== undefined && p.province !== "" ? p.province : "AB", 
-      p.postalCode !== undefined && p.postalCode !== "" ? p.postalCode : "T3A 0G8", 
-      p.notes !== undefined && p.notes !== "" ? p.notes : "Automated dummy coach"
-    ]);
+    sheetName = "junior_high_coaches";
   } else if (type === "hs_student") {
-    var sheet = getOrCreateSheet(spreadsheet, "senior_high_subscribers", ["Timestamp", "Email", "Name", "Status", "Grade", "Coach", "High School", "Dietary Restrictions"]);
-    sheet.appendRow([
-      timestamp, 
-      email, 
-      p.name !== undefined && p.name !== "" ? p.name : "Dummy HS Student", 
-      status, 
-      p.grade !== undefined && p.grade !== "" ? p.grade : "10", 
-      p.coach !== undefined && p.coach !== "" ? p.coach : "Coach Smith", 
-      p.highSchool !== undefined && p.highSchool !== "" ? p.highSchool : "High School West", 
-      p.dietary !== undefined && p.dietary !== "" ? p.dietary : "None"
-    ]);
+    sheetName = "senior_high_subscribers";
+    headers = SCHOOL_HEADERS;
+    isSchool = true;
+    if (!p.grade) p.grade = "10";
   } else if (type === "jh_student") {
-    var sheet = getOrCreateSheet(spreadsheet, "junior_high_subscribers", ["Timestamp", "Email", "Name", "Status", "Grade", "Coach", "School", "Dietary Restrictions"]);
-    sheet.appendRow([
-      timestamp, 
-      email, 
-      p.name !== undefined && p.name !== "" ? p.name : "Dummy JH Student", 
-      status, 
-      p.grade !== undefined && p.grade !== "" ? p.grade : "7", 
-      p.coach !== undefined && p.coach !== "" ? p.coach : "Coach Jones", 
-      p.school !== undefined && p.school !== "" ? p.school : "Junior High East", 
-      p.dietary !== undefined && p.dietary !== "" ? p.dietary : "Nut allergy"
-    ]);
+    sheetName = "junior_high_subscribers";
+    headers = SCHOOL_HEADERS;
+    isSchool = true;
+    if (!p.grade) p.grade = "7";
   } else if (type === "ps_student") {
-    var sheet = getOrCreateSheet(spreadsheet, "university_subscribers", ["Timestamp", "Email", "Name", "Status", "Grade", "Institution", "Dietary Restrictions"]);
-    sheet.appendRow([
-      timestamp, 
-      email, 
-      p.name !== undefined && p.name !== "" ? p.name : "Dummy Uni Student", 
-      status, 
-      p.grade !== undefined && p.grade !== "" ? p.grade : "12", 
-      p.institution !== undefined && p.institution !== "" ? p.institution : "University of Calgary", 
-      p.dietary !== undefined && p.dietary !== "" ? p.dietary : "Gluten free"
-    ]);
+    sheetName = "university_subscribers";
+    if (!p.grade) p.grade = "13";
   } else {
     return jsonResponse({ result: "error", error: "Invalid dummy type" });
   }
   
+  var sheet = ensureSheetHeadersMigrated(spreadsheet, sheetName, headers);
+  
+  var dummyParams = {
+    timestamp: new Date(),
+    status: status,
+    email: email,
+    firstName: p.firstName || "Dummy",
+    lastName: p.lastName || "User",
+    school: p.school || "Test School",
+    club: p.club || "Test Club",
+    phone: p.phone || "555-0199",
+    address: p.address || "123 Test St",
+    city: p.city || "Calgary",
+    province: p.province || "AB",
+    postalCode: p.postalCode || "T2N 1N4",
+    notes: p.notes || "Automated dummy user",
+    grade: p.grade || "",
+    dietary: p.dietary || "None",
+    discord: p.discord || "dummy#1234",
+    country: p.country || "Canada"
+  };
+  
+  addOrUpdateSubscriber(sheet, headers, dummyParams, isSchool);
   return jsonResponse({ result: "success", email: email });
+}
+
+// Student Promotion Script
+function promoteStudents() {
+  var spreadsheet = getMailingListSpreadsheet();
+  
+  var jhSheet = ensureSheetHeadersMigrated(spreadsheet, "junior_high_subscribers", SCHOOL_HEADERS);
+  var shSheet = ensureSheetHeadersMigrated(spreadsheet, "senior_high_subscribers", SCHOOL_HEADERS);
+  var psSheet = ensureSheetHeadersMigrated(spreadsheet, "university_subscribers", BASE_HEADERS);
+  
+  var jhData = jhSheet.getDataRange().getValues();
+  var jhHeaders = jhData[0];
+  var jhGradeCol = getHeaderIndex(jhHeaders, "grade20252026");
+  
+  var movedJHCount = 0;
+  var movedSHCount = 0;
+  
+  // Process junior high sheet (grades 6, 7, 8, 9 -> 10 is senior high)
+  for (var i = jhData.length - 1; i >= 1; i--) {
+    var rowValues = jhData[i];
+    var gradeVal = jhGradeCol !== -1 ? rowValues[jhGradeCol] : "";
+    
+    if (gradeVal) {
+      var currentGrade = calculateCurrentGradeFromGrade2025(gradeVal);
+      if (currentGrade !== null && currentGrade >= 10) {
+        var p = rowToObj(jhHeaders, rowValues);
+        
+        if (currentGrade >= 13) {
+          // Graduated directly to post-sec
+          addOrUpdateSubscriber(psSheet, BASE_HEADERS, p, false);
+        } else {
+          // Promoted to senior high
+          addOrUpdateSubscriber(shSheet, SCHOOL_HEADERS, p, true);
+        }
+        jhSheet.deleteRow(i + 1);
+        movedJHCount++;
+      }
+    }
+  }
+  
+  // Process senior high sheet (grades 10, 11, 12 -> 13 is post-sec)
+  var shData = shSheet.getDataRange().getValues();
+  var shHeaders = shData[0];
+  var shGradeCol = getHeaderIndex(shHeaders, "grade20252026");
+  
+  for (var i = shData.length - 1; i >= 1; i--) {
+    var rowValues = shData[i];
+    var gradeVal = shGradeCol !== -1 ? rowValues[shGradeCol] : "";
+    
+    if (gradeVal) {
+      var currentGrade = calculateCurrentGradeFromGrade2025(gradeVal);
+      if (currentGrade !== null && currentGrade >= 13) {
+        var p = rowToObj(shHeaders, rowValues);
+        addOrUpdateSubscriber(psSheet, BASE_HEADERS, p, false);
+        shSheet.deleteRow(i + 1);
+        movedSHCount++;
+      }
+    }
+  }
+  
+  return "Promoted " + movedJHCount + " junior high student(s) and graduated " + movedSHCount + " senior high student(s).";
+}
+
+// August automated trigger setup
+function createAugustTrigger() {
+  var triggers = ScriptApp.getProjectTriggers();
+  for (var i = 0; i < triggers.length; i++) {
+    if (triggers[i].getHandlerFunction() === "promoteStudents") {
+      return; 
+    }
+  }
+  
+  ScriptApp.newTrigger("promoteStudents")
+           .timeBased()
+           .onMonth(ScriptApp.Month.AUGUST)
+           .onDayOfMonth(1)
+           .atHour(2)
+           .create();
 }

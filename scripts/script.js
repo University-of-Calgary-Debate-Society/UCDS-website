@@ -801,6 +801,195 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Scroll-reactive animations for Calgary landmarks & Goofy Rex Mascot
+  function initScrollAnimations() {
+    const aboutSection = document.getElementById('about');
+    const missionSection = document.getElementById('mission');
+    const rexContainer = document.getElementById('rexMascotContainer');
+    
+    if (!aboutSection && !missionSection && !rexContainer) return;
+
+    let ticking = false;
+
+    function handleScroll() {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          updateAnimationStates();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }
+
+    function updateAnimationStates() {
+      // Respect the global disable animations setting
+      const isAnimationsDisabled = localStorage.getItem('animationsDisabled') === 'true' || document.body.classList.contains('no-animations');
+      
+      if (isAnimationsDisabled) {
+        resetAnimations();
+        return;
+      }
+
+      const viewportHeight = window.innerHeight;
+      const scrollY = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight;
+      const totalScrollable = docHeight - viewportHeight;
+
+      // 1. About Us Section Scroll Progress
+      if (aboutSection) {
+        const rect = aboutSection.getBoundingClientRect();
+        const totalHeight = rect.height + viewportHeight;
+        const currentDistance = viewportHeight - rect.top;
+        let progress = currentDistance / totalHeight;
+        progress = Math.max(0, Math.min(1, progress));
+
+        // Parallax background SVG
+        const bgDecor = aboutSection.querySelector('.section-bg-decor');
+        if (bgDecor) {
+          const yOffset = (progress - 0.5) * 80;
+          bgDecor.style.transform = `translateY(calc(-50% + ${yOffset}px))`;
+        }
+
+        // Parallax Rocky Mountains
+        const mtnBack = aboutSection.querySelectorAll('.mtn-back');
+        const mtnMiddle = aboutSection.querySelectorAll('.mtn-middle');
+        const mtnFront = aboutSection.querySelectorAll('.mtn-front');
+        
+        mtnBack.forEach(el => {
+          el.style.transform = `translateX(${(progress - 0.5) * -18}px)`;
+        });
+        mtnMiddle.forEach(el => {
+          el.style.transform = `translateX(${(progress - 0.5) * 40}px)`;
+        });
+        mtnFront.forEach(el => {
+          el.style.transform = `translateX(${(progress - 0.5) * -65}px)`;
+        });
+
+        // Calgary Tower Elevator
+        const elevator = aboutSection.querySelectorAll('.tower-elevator');
+        elevator.forEach(el => {
+          const elevatorY = (1 - progress) * 130;
+          el.style.transform = `translateY(${elevatorY}px)`;
+        });
+      }
+
+      // 2. Mission Section Scroll Progress
+      if (missionSection) {
+        const rect = missionSection.getBoundingClientRect();
+        const totalHeight = rect.height + viewportHeight;
+        const currentDistance = viewportHeight - rect.top;
+        let progress = currentDistance / totalHeight;
+        progress = Math.max(0, Math.min(1, progress));
+
+        // Parallax background SVG
+        const bgDecor = missionSection.querySelector('.section-bg-decor');
+        if (bgDecor) {
+          const yOffset = (progress - 0.5) * 80;
+          bgDecor.style.transform = `translateY(calc(-50% + ${yOffset}px))`;
+        }
+
+        // Float speech bubbles & shadows
+        for (let i = 1; i <= 4; i++) {
+          const bubble = missionSection.querySelectorAll(`.bubble-${i}`);
+          const shadow = missionSection.querySelectorAll(`.bubble-shadow-${i}`);
+          
+          const startPhase = (i - 1) * 0.08;
+          const endPhase = startPhase + 0.18;
+          
+          let bubbleProgress = (progress - startPhase) / (endPhase - startPhase);
+          bubbleProgress = Math.max(0, Math.min(1, bubbleProgress));
+          
+          const bubbleY = 80 - (bubbleProgress * 180);
+          const scale = bubbleProgress < 0.1 ? bubbleProgress * 10 : 1;
+          const opacity = bubbleProgress < 0.15 ? (bubbleProgress / 0.15) : 1;
+
+          bubble.forEach(el => {
+            el.style.transform = `translateY(${bubbleY}px) scale(${scale})`;
+            el.style.transformOrigin = '200px 200px';
+            el.style.opacity = opacity;
+          });
+
+          shadow.forEach(el => {
+            const shadowX = (bubbleProgress * 30);
+            el.style.transform = `translate(${shadowX}px, ${bubbleY * 0.5}px) scale(${scale})`;
+            el.style.transformOrigin = '200px 200px';
+            el.style.opacity = opacity * 0.25;
+          });
+        }
+      }
+
+      // 3. Goofy Rex Footer Mascot Scroll Trigger
+      if (rexContainer) {
+        const remainingScroll = totalScrollable - scrollY;
+        
+        // Rex rises up within 200px of bottom of the page
+        if (remainingScroll < 200) {
+          rexContainer.classList.add('active');
+          
+          // Animate Rex's goofy mouth opening/closing and arm waving based on scroll ticks
+          const rexHead = rexContainer.querySelectorAll('.rex-goofy-head');
+          const rexJaw = rexContainer.querySelectorAll('.rex-lower-jaw');
+          const rexArm = rexContainer.querySelectorAll('.rex-silly-arm');
+          
+          const tick = scrollY * 0.05;
+          const jawAngle = Math.max(0, Math.sin(tick) * 12); // mouth opens down
+          const headAngle = -2 + Math.sin(tick * 0.5) * 5; // nod head
+          const armAngle = Math.sin(tick * 2.5) * 15; // wave arm rapidly
+          
+          rexJaw.forEach(el => {
+            el.style.transform = `rotate(${jawAngle}deg)`;
+          });
+          rexHead.forEach(el => {
+            el.style.transform = `rotate(${headAngle}deg)`;
+          });
+          rexArm.forEach(el => {
+            el.style.transform = `rotate(${armAngle}deg)`;
+          });
+        } else {
+          rexContainer.classList.remove('active');
+        }
+      }
+    }
+
+    function resetAnimations() {
+      if (aboutSection) {
+        aboutSection.querySelectorAll('.mtn-back, .mtn-middle, .mtn-front, .tower-elevator').forEach(el => {
+          el.style.transform = '';
+        });
+        const bgDecor = aboutSection.querySelector('.section-bg-decor');
+        if (bgDecor) bgDecor.style.transform = '';
+      }
+      if (missionSection) {
+        missionSection.querySelectorAll('.iso-bubble, .iso-shadow').forEach(el => {
+          el.style.transform = '';
+          el.style.opacity = '';
+        });
+        const bgDecor = missionSection.querySelector('.section-bg-decor');
+        if (bgDecor) bgDecor.style.transform = '';
+      }
+      if (rexContainer) {
+        rexContainer.classList.remove('active');
+        rexContainer.querySelectorAll('.rex-goofy-head, .rex-lower-jaw, .rex-silly-arm').forEach(el => {
+          el.style.transform = '';
+        });
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    updateAnimationStates();
+    
+    // Wire into existing animation toggle button logic
+    const toggleBtn = document.getElementById('toggleAnimationsBtn');
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', () => {
+        setTimeout(updateAnimationStates, 50); // let preference apply
+      });
+    }
+  }
+
+  // Initialize scroll animations
+  initScrollAnimations();
+
   // Development Warning Banner
   const devWarning = document.createElement('div');
   devWarning.className = 'dev-warning';
