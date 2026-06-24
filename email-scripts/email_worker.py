@@ -124,9 +124,7 @@ def process_pending_schedules(api_url, admin_password, sender_email, app_passwor
                 seen_emails.add(email)
                 unique_recipients.append(r)
         
-        bcc_emails = [r.get("email").strip() for r in unique_recipients]
-        
-        if not bcc_emails:
+        if not unique_recipients:
             print("No active recipients. Marking campaign as sent.")
             mark_campaign_sent(api_url, admin_password, schedule_id, "Sent", "No active subscribers found in target mailing list.")
             try:
@@ -135,36 +133,35 @@ def process_pending_schedules(api_url, admin_password, sender_email, app_passwor
                 pass
             continue
             
-        print(f"Sending campaign to {len(bcc_emails)} unique recipient(s) via BCC...")
+        print(f"Sending individually to {len(unique_recipients)} unique recipient(s)...")
         
-        # Clean base unsubscribe link by stripping query parameters if any
-        unsub_link = base_unsub_link
-        if "?" in unsub_link:
-            unsub_link = unsub_link.split("?")[0]
+        # Clean base unsubscribe link by stripping any existing query parameters
+        base_unsub = base_unsub_link.split("?")[0] if "?" in base_unsub_link else base_unsub_link
+        
+        for r in unique_recipients:
+            recipient_email = r.get("email", "").strip()
+            recipient_name  = r.get("name") or "there"
+            unsub_link = base_unsub + "?email=" + urllib.parse.quote(recipient_email, safe="")
             
-        html_content = template_html.replace("{{name}}", "there").replace("{{unsubscribe_link}}", unsub_link)
-        plain_content = plain_text_template.replace("{{name}}", "there").replace("{{unsubscribe_link}}", unsub_link)
-        
-        msg = MIMEMultipart("alternative")
-        msg["Subject"] = subject
-        msg["From"] = sender_email
-        msg["To"] = sender_email
-        
-        part1 = MIMEText(plain_content, "plain")
-        part2 = MIMEText(html_content, "html")
-        msg.attach(part1)
-        msg.attach(part2)
-        
-        try:
-            # Envelope recipients include the sender themselves plus all the BCC recipients
-            envelope_recipients = [sender_email] + bcc_emails
-            smtp_server.sendmail(sender_email, envelope_recipients, msg.as_string())
-            success_count = len(bcc_emails)
-            print("  BCC Email sent successfully!")
-        except Exception as e:
-            print(f"  Failed sending campaign: {e}")
-            fail_count = len(bcc_emails)
-            errors.append(str(e))
+            html_content  = template_html.replace("{{name}}", recipient_name).replace("{{unsubscribe_link}}", unsub_link)
+            plain_content = plain_text_template.replace("{{name}}", recipient_name).replace("{{unsubscribe_link}}", unsub_link)
+            
+            msg = MIMEMultipart("alternative")
+            msg["Subject"] = subject
+            msg["From"]    = sender_email
+            msg["To"]      = recipient_email
+            
+            msg.attach(MIMEText(plain_content, "plain"))
+            msg.attach(MIMEText(html_content, "html"))
+            
+            try:
+                smtp_server.sendmail(sender_email, [recipient_email], msg.as_string())
+                success_count += 1
+                print(f"  Sent to {recipient_email}")
+            except Exception as e:
+                fail_count += 1
+                errors.append(f"{recipient_email}: {str(e)}")
+                print(f"  FAILED to send to {recipient_email}: {e}")
             
         try:
             smtp_server.quit()
@@ -174,12 +171,12 @@ def process_pending_schedules(api_url, admin_password, sender_email, app_passwor
         print("-"*70)
         print(f"Campaign Complete. Success: {success_count}, Failed: {fail_count}")
         
-        if fail_count > 0:
+        if success_count == 0 and fail_count > 0:
             status = "Failed"
-            summary_err = f"SMTP dispatch failed: {errors[0]}" if errors else "Unknown dispatch error."
+            summary_err = f"All sends failed. First error: {errors[0]}" if errors else "Unknown dispatch error."
         else:
             status = "Sent"
-            summary_err = ""
+            summary_err = f"Sent to {success_count} recipient(s)." + (f" Failures: {fail_count}" if fail_count > 0 else "")
             
         mark_campaign_sent(api_url, admin_password, schedule_id, status, summary_err)
 
