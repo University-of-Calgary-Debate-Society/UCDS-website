@@ -783,6 +783,8 @@
       const isSubscribed = document.getElementById("subscribeDebate").checked;
       if (isSubscribed) {
         const mailingListUrl = "https://script.google.com/macros/s/AKfycbyUmdbEzfBZbHCCgaYRG5mseiRZ7dAba0o88CSH1ywOdTiWKkeZmufL48xBJoFPYZQm2Q/exec";
+        
+        // Subscribe the submitter
         const mailingParams = new URLSearchParams();
         mailingParams.append("email", email);
         mailingParams.append("fullName", document.getElementById("fullName").value.trim());
@@ -793,8 +795,28 @@
             method: "POST",
             mode: "no-cors",
             body: mailingParams
-          }).catch(err => console.error("Mailing list subscription error:", err))
+          }).catch(err => console.error("Mailing list subscription error (submitter):", err))
         );
+
+        // Subscribe the partner
+        const partnerName = document.getElementById("partnerName").value.trim();
+        const partnerEmailVal = document.getElementById("partnerEmail").value.trim();
+        const partnerGradeVal = document.getElementById("partnerGrade").value;
+
+        if (partnerEmailVal) {
+          const partnerMailingParams = new URLSearchParams();
+          partnerMailingParams.append("email", partnerEmailVal);
+          partnerMailingParams.append("fullName", partnerName);
+          partnerMailingParams.append("grade", partnerGradeVal);
+
+          submissions.push(
+            fetch(mailingListUrl, {
+              method: "POST",
+              mode: "no-cors",
+              body: partnerMailingParams
+            }).catch(err => console.error("Mailing list subscription error (partner):", err))
+          );
+        }
       }
 
       Promise.all(submissions)
