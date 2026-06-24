@@ -5,18 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta property="og:image" content="./photos/logo_seo.png" />
   <meta name="twitter:image" content="./photos/logo_seo.png" />
-  <title>University of Calgary Debate Society | Events</title>
+  <title>University of Calgary Debate Society | Resources (Mobile)</title>
   <link rel="icon" href="../photos/logo.jpg" type="image/jpeg" />
-  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <script>
+    (function() {
+      const isMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      if (!isMobile) {
+        window.location.replace("index.html");
+      } else {
+        sessionStorage.removeItem('forceDesktop');
+      }
+    })();
+  </script>
 </head>
-<body class="events-body">
+<body>
   <header class="site-header">
     <div class="container header-inner">
       <a class="brand" href="../">
         <img src="../photos/logo.jpg" alt="University of Calgary Debate Society logo" class="logo-image" />
-        <span class="brand-text">University of Calgary Debate Society</span>
+        <span class="brand-text">UCDS</span>
       </a>
-      <nav>
+      <button class="menu-toggle" aria-label="Toggle navigation"><span class="hamburger"></span></button>
+      <nav class="site-nav">
         <a href="../">Home</a>
         <a href="../events/">Events</a>
         <a href="../blog/">Blog</a>
@@ -28,27 +39,14 @@
   </header>
 
   <main>
-    <section class="events-page-banner"></section>
-
     <section class="section">
       <div class="container">
         <div class="section-header">
-          <h1>Upcoming UCDS events.</h1>
+          <h2>Resources</h2>
         </div>
-        <p class="section-copy">Stay informed about our latest workshops, meetups, and community gatherings. Check back often for new event announcements.</p>
-        <div class="cards feature-grid">
-          <article class="card animate-on-scroll lift-out-shadow">
-            <h3>Community Meetup</h3>
-            <p>Join members for a discussion on our latest initiatives and volunteer opportunities.</p>
-          </article>
-          <article class="card animate-on-scroll lift-out-shadow">
-            <h3>Workshop Series</h3>
-            <p>Learn skills, collaborate with peers, and contribute to hands-on projects.</p>
-          </article>
-          <article class="card animate-on-scroll lift-out-shadow">
-            <h3>Open House</h3>
-            <p>Visit our space, meet the team, and see how UCDS supports community growth.</p>
-          </article>
+        <p>Here you will find a collection of resources for debating, judging, and improving your skills.</p>
+        <div class="resources-list">
+            <p>More resources coming soon.</p>
         </div>
       </div>
     </section>
@@ -56,26 +54,27 @@
 
   <footer class="site-footer">
     <div class="container footer-inner">
-      <p>&copy; <span id="currentYear"></span> UCDS. All rights reserved.</p>
+      <p>&copy; <span id="currentYear"></span> UCDS. All rights reserved. &bull; <a href="index.html?force=desktop" class="footer-desktop-link" style="color: #93c5fd; text-decoration: underline; margin-left: 0.5rem;">View Desktop Version</a></p>
       <div class="footer-socials">
         <a href="https://www.instagram.com/ucalgary.debate/" target="_blank" rel="noreferrer" aria-label="Instagram">
-          <img src="./photos/instagram_footer.png" alt="Instagram" class="footer-social-icon" />
+          <img src="../photos/instagram_footer.png" alt="Instagram" class="footer-social-icon" />
         </a>
         <a href="https://www.facebook.com/DebateUofC/" target="_blank" rel="noreferrer" aria-label="Facebook">
-          <img src="./photos/facebook_footer.png" alt="Facebook" class="footer-social-icon" />
+          <img src="../photos/facebook_footer.png" alt="Facebook" class="footer-social-icon" />
         </a>
         <a href="https://linktr.ee/ucds.debate" target="_blank" rel="noreferrer" aria-label="Linktree">
-          <img src="./photos/linktree_footer.png" alt="Linktree" class="footer-social-icon" />
+          <img src="../photos/linktree_footer.png" alt="Linktree" class="footer-social-icon" />
         </a>
         <a href="https://x.com/UCDebate" target="_blank" rel="noreferrer" aria-label="X (Twitter)">
-          <img src="./photos/x_footer.png" alt="X (Twitter)" class="footer-social-icon" />
+          <img src="../photos/x_footer.png" alt="X (Twitter)" class="footer-social-icon" />
         </a>
         <a href="https://discord.gg/5TAG3c8TwC" target="_blank" rel="noreferrer" aria-label="Discord">
-          <img src="./photos/discord_footer.png" alt="Discord" class="footer-social-icon" />
+          <img src="../photos/discord_footer.png" alt="Discord" class="footer-social-icon" />
         </a>
       </div>
     </div>
   </footer>
-  <script src="../script.js"></script>
+
+  <script src="../scripts/script.js"></script>
 </body>
 </html>

@@ -5,19 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta property="og:image" content="./photos/logo_seo.png" />
   <meta name="twitter:image" content="./photos/logo_seo.png" />
-  <title>University of Calgary Debate Society | Blog</title>
-  <link rel="icon" href="../photos/logo.jpg" type="image/jpeg" />
+  <title>University of Calgary Debate Society | Blog (Mobile)</title>
+  <link class="favicon" rel="icon" href="../photos/logo.jpg" type="image/jpeg" />
   <link rel="stylesheet" href="../css/styles.css" />
   <script>
     (function() {
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('force') === 'desktop') {
-        sessionStorage.setItem('forceDesktop', 'true');
-      }
-      const forceDesktop = sessionStorage.getItem('forceDesktop') === 'true';
       const isMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-      if (isMobile && !forceDesktop) {
-        window.location.replace("mobile.html");
+      if (!isMobile) {
+        window.location.replace("index.html");
+      } else {
+        sessionStorage.removeItem('forceDesktop');
       }
     })();
   </script>
@@ -27,7 +24,7 @@
     <div class="container header-inner">
       <a class="brand" href="../">
         <img src="../photos/logo.jpg" alt="University of Calgary Debate Society logo" class="logo-image" />
-        <span class="brand-text">University of Calgary Debate Society</span>
+        <span class="brand-text">UCDS</span>
       </a>
       <button class="menu-toggle" aria-label="Toggle navigation"><span class="hamburger"></span></button>
       <nav class="site-nav">
@@ -55,7 +52,7 @@
 
   <footer class="site-footer">
     <div class="container footer-inner">
-      <p>&copy; <span id="currentYear"></span> UCDS. All rights reserved.</p>
+      <p>&copy; <span id="currentYear"></span> UCDS. All rights reserved. &bull; <a href="index.html?force=desktop" class="footer-desktop-link" style="color: #93c5fd; text-decoration: underline; margin-left: 0.5rem;">View Desktop Version</a></p>
       <div class="footer-socials">
         <a href="https://www.instagram.com/ucalgary.debate/" target="_blank" rel="noreferrer" aria-label="Instagram">
           <img src="../photos/instagram_footer.png" alt="Instagram" class="footer-social-icon" />

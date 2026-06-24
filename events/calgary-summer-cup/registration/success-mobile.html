@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta property="og:image" content="../../../photos/logo_seo.png" />
+  <meta name="twitter:image" content="../../../photos/logo_seo.png" />
+  <title>UCDS | You're Registered!</title>
+  <link rel="icon" href="../../../photos/logo.jpg" type="image/jpeg" />
+  <link rel="stylesheet" href="../../../css/styles.css" />
+  <script>
+    (function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('force') === 'mobile') {
+        return;
+      }
+      const isMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      if (!isMobile) {
+        window.location.replace("success.html");
+      } else {
+        sessionStorage.removeItem('forceDesktop');
+      }
+    })();
+  </script>
+  <style>
+    .form-card {
+      background: #112854;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 1rem;
+      padding: 2.5rem 1.5rem;
+      color: #ffffff;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      max-width: 500px;
+      margin: 2rem auto;
+    }
+    .success-icon-wrapper {
+      margin-bottom: 1.5rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 4.5rem;
+      height: 4.5rem;
+      border-radius: 50%;
+      background: rgba(34, 197, 94, 0.15);
+      border: 2px solid #22c55e;
+      color: #22c55e;
+    }
+    .success-icon-wrapper svg {
+      width: 2.25rem;
+      height: 2.25rem;
+    }
+    .success-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 2rem;
+      width: 100%;
+    }
+    .success-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.95rem 1.5rem;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      text-align: center;
+      box-sizing: border-box;
+      transition: transform 180ms ease, background-color 180ms ease, box-shadow 180ms ease, border-color 180ms ease, color 180ms ease;
+    }
+    .success-btn-primary {
+      background: #2563eb;
+      color: #ffffff;
+      border: none;
+    }
+    .success-btn-primary:active {
+      background: #3b82f6;
+    }
+    .success-btn-secondary {
+      background: transparent;
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+    .success-btn-secondary:active {
+      background: rgba(255, 255, 255, 0.1);
+    }
+  </style>
+</head>
+<body class="events-body">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="../../../">
+        <img src="../../../photos/logo.jpg" alt="University of Calgary Debate Society logo" class="logo-image" />
+        <span class="brand-text">UCDS</span>
+      </a>
+      <button class="menu-toggle" aria-label="Toggle navigation"><span class="hamburger"></span></button>
+      <nav class="site-nav">
+        <a href="../../../">Home</a>
+        <a href="../../../events/">Events</a>
+        <a href="../../../blog/">Blog</a>
+        <a href="../../../resources/">Resources</a>
+        <a href="../../../connect/">Connect</a>
+        <a href="../../../join/" class="nav-join-button">Join</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="container">
+        
+        <div class="form-card">
+          <!-- Calgary Cup Logo -->
+          <div style="text-align: center; margin-bottom: 1.5rem;">
+            <img src="../../../photos/calgary_summer_cup_logo.png" alt="Calgary Summer Cup Logo" style="max-height: 100px; width: auto; filter: drop-shadow(0 5px 12px rgba(0,0,0,0.25));" />
+          </div>
+
+          <!-- Checkmark SVG Icon -->
+          <div class="success-icon-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+
+          <h1 style="font-size: 2.25rem; background: linear-gradient(135deg, #86efac 0%, #22c55e 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin: 0 0 1rem; font-weight: 800; line-height: 1.2;">
+            You're Registered!
+          </h1>
+          
+          <p style="font-size: 1.05rem; color: #cbd5e1; margin: 0 auto 1.5rem; line-height: 1.5;">
+            You should receive an email shortly to confirm your registration!
+          </p>
+
+          <div class="success-actions">
+            <a href="../../../" class="success-btn success-btn-primary">Back to Homepage</a>
+            <a href="../" class="success-btn success-btn-secondary">Calgary Summer Cup</a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>&copy; <span id="currentYear"></span> UCDS. All rights reserved. &bull; <a href="success.html?force=desktop" class="footer-desktop-link" style="color: #93c5fd; text-decoration: underline; margin-left: 0.5rem;">View Desktop Version</a></p>
+      <div class="footer-socials">
+        <a href="https://www.instagram.com/ucalgary.debate/" target="_blank" rel="noreferrer" aria-label="Instagram">
+          <img src="../../../photos/instagram_footer.png" alt="Instagram" class="footer-social-icon" />
+        </a>
+        <a href="https://www.facebook.com/DebateUofC/" target="_blank" rel="noreferrer" aria-label="Facebook">
+          <img src="../../../photos/facebook_footer.png" alt="Facebook" class="footer-social-icon" />
+        </a>
+        <a href="https://linktr.ee/ucds.debate" target="_blank" rel="noreferrer" aria-label="Linktree">
+          <img src="../../../photos/linktree_footer.png" alt="Linktree" class="footer-social-icon" />
+        </a>
+        <a href="https://x.com/UCDebate" target="_blank" rel="noreferrer" aria-label="X (Twitter)">
+          <img src="../../../photos/x_footer.png" alt="X (Twitter)" class="footer-social-icon" />
+        </a>
+        <a href="https://discord.gg/5TAG3c8TwC" target="_blank" rel="noreferrer" aria-label="Discord">
+          <img src="../../../photos/discord_footer.png" alt="Discord" class="footer-social-icon" />
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../../../scripts/script.js"></script>
+</body>
+</html>

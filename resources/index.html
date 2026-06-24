@@ -7,22 +7,36 @@
   <meta name="twitter:image" content="./photos/logo_seo.png" />
   <title>University of Calgary Debate Society | Resources</title>
   <link rel="icon" href="../photos/logo.jpg" type="image/jpeg" />
-  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <script>
+    (function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('force') === 'desktop') {
+        sessionStorage.setItem('forceDesktop', 'true');
+      }
+      const forceDesktop = sessionStorage.getItem('forceDesktop') === 'true';
+      const isMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      if (isMobile && !forceDesktop) {
+        window.location.replace("mobile.html");
+      }
+    })();
+  </script>
 </head>
 <body>
   <header class="site-header">
     <div class="container header-inner">
-      <a class="brand" href="/">
+      <a class="brand" href="../">
         <img src="../photos/logo.jpg" alt="University of Calgary Debate Society logo" class="logo-image" />
         <span class="brand-text">University of Calgary Debate Society</span>
       </a>
-      <nav>
-        <a href="/">Home</a>
-        <a href="../events">Events</a>
-        <a href="../blog">Blog</a>
-        <a href="../resources">Resources</a>
-        <a href="../connect">Connect</a>
-        <a href="../join" class="nav-join-button">Join</a>
+      <button class="menu-toggle" aria-label="Toggle navigation"><span class="hamburger"></span></button>
+      <nav class="site-nav">
+        <a href="../">Home</a>
+        <a href="../events/">Events</a>
+        <a href="../blog/">Blog</a>
+        <a href="../resources/">Resources</a>
+        <a href="../connect/">Connect</a>
+        <a href="../join/" class="nav-join-button">Join</a>
       </nav>
     </div>
   </header>
@@ -64,6 +78,6 @@
     </div>
   </footer>
 
-  <script src="../script.js"></script>
+  <script src="../scripts/script.js"></script>
 </body>
 </html>

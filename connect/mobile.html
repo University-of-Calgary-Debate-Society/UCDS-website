@@ -3,14 +3,11 @@
 <head>
   <script>
     (function() {
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('force') === 'desktop') {
-        sessionStorage.setItem('forceDesktop', 'true');
-      }
-      const forceDesktop = sessionStorage.getItem('forceDesktop') === 'true';
       const isMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-      if (isMobile && !forceDesktop) {
-        window.location.replace("mobile.html" + window.location.hash);
+      if (!isMobile) {
+        window.location.replace("index.html" + window.location.hash);
+      } else {
+        sessionStorage.removeItem('forceDesktop');
       }
     })();
   </script>
@@ -351,7 +348,7 @@
 
   <footer class="site-footer">
     <div class="container footer-inner">
-      <p>&copy; <span id="currentYear"></span> UCDS. All rights reserved.</p>
+      <p>&copy; <span id="currentYear"></span> UCDS. All rights reserved. &bull; <a href="index.html?force=desktop" class="footer-desktop-link" style="color: #93c5fd; text-decoration: underline; margin-left: 0.5rem;">View Desktop Version</a></p>
       <div class="footer-socials">
         <a href="https://www.instagram.com/ucalgary.debate/" target="_blank" rel="noreferrer" aria-label="Instagram">
           <img src="../photos/instagram_footer.png" alt="Instagram" class="footer-social-icon" />

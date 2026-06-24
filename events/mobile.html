@@ -5,81 +5,78 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta property="og:image" content="./photos/logo_seo.png" />
   <meta name="twitter:image" content="./photos/logo_seo.png" />
-  <title>University of Calgary Debate Society | Events</title>
+  <title>University of Calgary Debate Society | Events (Mobile)</title>
   <link rel="icon" href="../photos/logo.jpg" type="image/jpeg" />
   <link rel="stylesheet" href="../css/styles.css" />
   <script>
     (function() {
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('force') === 'desktop') {
-        sessionStorage.setItem('forceDesktop', 'true');
-      }
-      const forceDesktop = sessionStorage.getItem('forceDesktop') === 'true';
       const isMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-      if (isMobile && !forceDesktop) {
-        window.location.replace("mobile.html");
+      if (!isMobile) {
+        window.location.replace("index.html");
+      } else {
+        sessionStorage.removeItem('forceDesktop');
       }
     })();
   </script>
   <style>
-    /* Calgary Summer Cup Featured Section */
+    /* Calgary Summer Cup Featured Section (Mobile) */
     .featured-tournament {
       background: linear-gradient(135deg, rgba(17, 40, 84, 0.6) 0%, rgba(10, 21, 46, 0.7) 100%);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 1.5rem;
-      padding: 3rem;
-      backdrop-filter: blur(12px);
-      margin-top: 2rem;
+      border-radius: 1.25rem;
+      padding: 1.75rem;
+      backdrop-filter: blur(10px);
+      margin-top: 1.5rem;
       position: relative;
       overflow: hidden;
       text-align: left;
     }
     .featured-grid-layout {
       display: grid;
-      grid-template-columns: 1fr 1.2fr;
-      gap: 3rem;
+      grid-template-columns: 1fr;
+      gap: 1.75rem;
       align-items: center;
     }
     .cup-illustration-wrapper {
       position: relative;
       width: 100%;
-      height: 320px;
+      height: 200px;
       display: flex;
       align-items: center;
       justify-content: center;
     }
     .calgary-cup-main {
-      width: 140px;
-      height: 140px;
-      filter: drop-shadow(0 10px 25px rgba(253, 224, 71, 0.25));
+      width: 100px;
+      height: 100px;
+      filter: drop-shadow(0 8px 20px rgba(253, 224, 71, 0.25));
       animation: cup-glow 6s ease-in-out infinite alternate;
       z-index: 2;
     }
     .surrounding-icon {
       position: absolute;
       color: rgba(147, 197, 253, 0.6);
-      width: 44px;
-      height: 44px;
+      width: 32px;
+      height: 32px;
       z-index: 1;
       pointer-events: none;
       animation: float-icon 8s ease-in-out infinite;
-      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.3));
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
     }
     /* Surrounding icons positions */
-    .icon-speech-bubble { top: 15%; left: 15%; animation-delay: 0s; }
-    .icon-gavel { top: 12%; right: 15%; animation-delay: 2s; }
-    .icon-book { bottom: 15%; left: 18%; animation-delay: 4s; }
-    .icon-star { bottom: 15%; right: 18%; animation-delay: 6s; }
-    .icon-podium { top: 48%; left: 5%; animation-delay: 1s; }
-    .icon-cap { top: 45%; right: 5%; animation-delay: 3s; }
+    .icon-speech-bubble { top: 15%; left: 20%; animation-delay: 0s; }
+    .icon-gavel { top: 10%; right: 20%; animation-delay: 2s; }
+    .icon-book { bottom: 15%; left: 22%; animation-delay: 4s; }
+    .icon-star { bottom: 15%; right: 22%; animation-delay: 6s; }
+    .icon-podium { top: 45%; left: 8%; animation-delay: 1s; }
+    .icon-cap { top: 40%; right: 8%; animation-delay: 3s; }
 
     @keyframes cup-glow {
-      0% { transform: translateY(0) scale(1); filter: drop-shadow(0 10px 20px rgba(253, 224, 71, 0.2)); }
-      100% { transform: translateY(-8px) scale(1.03); filter: drop-shadow(0 15px 30px rgba(253, 224, 71, 0.35)); }
+      0% { transform: translateY(0) scale(1); filter: drop-shadow(0 8px 15px rgba(253, 224, 71, 0.2)); }
+      100% { transform: translateY(-6px) scale(1.03); filter: drop-shadow(0 12px 25px rgba(253, 224, 71, 0.35)); }
     }
     @keyframes float-icon {
       0% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-12px) rotate(8deg); }
+      50% { transform: translateY(-10px) rotate(6deg); }
       100% { transform: translateY(0px) rotate(0deg); }
     }
     
@@ -90,33 +87,33 @@
       display: inline-block;
       background: rgba(96, 165, 250, 0.15);
       color: #60a5fa;
-      padding: 0.35rem 0.85rem;
+      padding: 0.3rem 0.75rem;
       border-radius: 9999px;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      margin-bottom: 1rem;
+      margin-bottom: 0.75rem;
       border: 1px solid rgba(96, 165, 250, 0.25);
     }
     .featured-title {
-      font-size: 2.25rem;
+      font-size: 1.6rem;
       font-weight: 800;
       color: #f8fafc;
-      margin: 0 0 1rem;
+      margin: 0 0 0.75rem;
       line-height: 1.2;
     }
     .featured-desc {
-      font-size: 1.05rem;
-      line-height: 1.6;
+      font-size: 0.95rem;
+      line-height: 1.5;
       color: #cbd5e1;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.25rem;
     }
     .featured-highlights {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1.25rem;
-      margin-bottom: 2rem;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
     }
     .highlight-pill {
       display: flex;
@@ -124,10 +121,10 @@
       gap: 0.5rem;
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      padding: 0.5rem 1rem;
-      border-radius: 0.75rem;
+      padding: 0.4rem 0.85rem;
+      border-radius: 0.5rem;
       color: #e2e8f0;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       font-weight: 600;
     }
     .highlight-pill svg {
@@ -160,30 +157,6 @@
       50% { transform: translateY(10px) rotate(-3deg); }
       100% { transform: translateY(0px) rotate(0deg); }
     }
-
-    @media (max-width: 860px) {
-      .featured-tournament {
-        padding: 2rem;
-      }
-      .featured-grid-layout {
-        grid-template-columns: 1fr !important;
-        gap: 2rem;
-      }
-      .cup-illustration-wrapper {
-        height: 240px;
-      }
-      .calgary-cup-main {
-        width: 100px;
-        height: 100px;
-      }
-      .surrounding-icon {
-        width: 32px;
-        height: 32px;
-      }
-      .featured-title {
-        font-size: 1.75rem;
-      }
-    }
   </style>
 </head>
 <body class="events-body">
@@ -191,7 +164,7 @@
     <div class="container header-inner">
       <a class="brand" href="../">
         <img src="../photos/logo.jpg" alt="University of Calgary Debate Society logo" class="logo-image" />
-        <span class="brand-text">University of Calgary Debate Society</span>
+        <span class="brand-text">UCDS</span>
       </a>
       <button class="menu-toggle" aria-label="Toggle navigation"><span class="hamburger"></span></button>
       <nav class="site-nav">
@@ -210,21 +183,21 @@
 
     <section class="section" style="position: relative;">
       <div class="bg-art-container" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; overflow: hidden; pointer-events: none; z-index: 0;">
-        <svg class="bg-art" style="top: 15%; left: 4%; width: 100px; height: 100px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <svg class="bg-art" style="top: 15%; left: 4%; width: 85px; height: 85px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
       </div>
       <div class="container" style="position: relative; z-index: 1;">
         <div class="section-header straddle animate-on-scroll fade-in-left">
           <h1 class="title-box">Upcoming UCDS events.</h1>
         </div>
-        <p class="section-copy" style="margin-bottom: 2rem;">Stay informed about our latest workshops, meetups, and community gatherings. Check back often for new event announcements.</p>
+        <p class="section-copy" style="margin-bottom: 1.5rem;">Stay informed about our latest workshops, meetups, and community gatherings. Check back often for new event announcements.</p>
         
         <!-- Featured Calgary Summer Cup 2026 Section -->
         <div class="featured-tournament animate-on-scroll fade-in">
           <div class="bg-art-container" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; overflow: hidden; pointer-events: none; z-index: 0;">
-            <div style="position: absolute; width: 300px; height: 300px; background: radial-gradient(circle, rgba(96, 165, 250, 0.08) 0%, rgba(0,0,0,0) 70%); top: -50px; left: -50px;"></div>
+            <div style="position: absolute; width: 200px; height: 200px; background: radial-gradient(circle, rgba(96, 165, 250, 0.08) 0%, rgba(0,0,0,0) 70%); top: -30px; left: -30px;"></div>
           </div>
           <div class="featured-grid-layout" style="position: relative; z-index: 1;">
-            <!-- Visual Graphic (Left Side) -->
+            <!-- Visual Graphic (Top on Mobile) -->
             <div class="cup-illustration-wrapper">
               <!-- Calgary Cup Logo -->
               <img class="calgary-cup-main" src="../photos/calgary_summer_cup_logo.png" alt="Calgary Summer Cup Logo" style="object-fit: contain; filter: drop-shadow(0 10px 25px rgba(96, 165, 250, 0.25));" />
@@ -238,7 +211,7 @@
               <svg class="surrounding-icon icon-cap" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
             </div>
             
-            <!-- Description & Buttons (Right Side) -->
+            <!-- Description & Buttons (Bottom on Mobile) -->
             <div class="featured-info">
               <span class="featured-tag">Featured Tournament</span>
               <h2 class="featured-title">Calgary Summer Cup 2026</h2>
@@ -248,21 +221,21 @@
               
               <div class="featured-highlights">
                 <div class="highlight-pill">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                   <span>July 25 - 26, 2026</span>
                 </div>
                 <div class="highlight-pill">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                   <span>Discord (Online)</span>
                 </div>
                 <div class="highlight-pill">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
                   <span>Grades 6 - 12</span>
                 </div>
               </div>
               
               <div class="featured-btn-container">
-                <a class="button" href="./calgary-summer-cup/" style="align-self: flex-start; text-decoration: none; padding: 0.85rem 2rem; font-weight: 700;">Registration and Details</a>
+                <a class="button" href="./calgary-summer-cup/" style="align-self: flex-start; text-decoration: none; padding: 0.75rem 1.5rem; font-weight: 700; width: 100%; text-align: center;">Registration and Details</a>
               </div>
             </div>
           </div>
@@ -275,8 +248,8 @@
     <!-- Summer and Spring Section -->
     <section class="section" style="position: relative;">
       <div class="bg-art-container" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; overflow: hidden; pointer-events: none; z-index: 0;">
-        <svg class="bg-art reverse" style="top: 25%; right: 4%; width: 110px; height: 110px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="m14 13-5.5 5.5t-9-1.5M9.5 8.5l9 9M17 11l4.5-4.5M10.5 4.5 15 9"/><path d="m6 21 3-3"/></svg>
-        <svg class="bg-art" style="bottom: 15%; left: 3%; width: 95px; height: 95px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
+        <svg class="bg-art reverse" style="top: 25%; right: 4%; width: 95px; height: 95px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="m14 13-5.5 5.5t-9-1.5M9.5 8.5l9 9M17 11l4.5-4.5M10.5 4.5 15 9"/><path d="m6 21 3-3"/></svg>
+        <svg class="bg-art" style="bottom: 15%; left: 3%; width: 80px; height: 80px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
       </div>
       <div class="container" style="position: relative; z-index: 1;">
         <div class="section-header straddle animate-on-scroll fade-in-left">
@@ -305,8 +278,8 @@
     <!-- Fall and Winter Section -->
     <section class="section alt" style="position: relative;">
       <div class="bg-art-container" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; overflow: hidden; pointer-events: none; z-index: 0;">
-        <svg class="bg-art" style="top: 20%; left: 4%; width: 100px; height: 100px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-        <svg class="bg-art reverse" style="bottom: 20%; right: 4%; width: 100px; height: 100px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        <svg class="bg-art" style="top: 20%; left: 4%; width: 90px; height: 90px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <svg class="bg-art reverse" style="bottom: 20%; right: 4%; width: 90px; height: 90px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
       </div>
       <div class="container" style="position: relative; z-index: 1;">
         <div class="section-header straddle animate-on-scroll fade-in-left">
@@ -334,7 +307,7 @@
 
   <footer class="site-footer">
     <div class="container footer-inner">
-      <p>&copy; <span id="currentYear"></span> UCDS. All rights reserved.</p>
+      <p>&copy; <span id="currentYear"></span> UCDS. All rights reserved. &bull; <a href="index.html?force=desktop" class="footer-desktop-link" style="color: #93c5fd; text-decoration: underline; margin-left: 0.5rem;">View Desktop Version</a></p>
       <div class="footer-socials">
         <a href="https://www.instagram.com/ucalgary.debate/" target="_blank" rel="noreferrer" aria-label="Instagram">
           <img src="../photos/instagram_footer.png" alt="Instagram" class="footer-social-icon" />
