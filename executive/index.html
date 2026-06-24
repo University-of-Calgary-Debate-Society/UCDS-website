@@ -103,9 +103,21 @@
       display: none;
       padding: 1.5rem 0;
       text-align: left;
+      opacity: 0;
     }
     .exec-tab-content.active {
       display: block;
+      animation: fadeInTab 0.25s ease-out forwards;
+    }
+    @keyframes fadeInTab {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
     .exec-table {
       width: 100%;
@@ -200,52 +212,14 @@
 
           <!-- Tabs header -->
           <div style="display: flex; gap: 8px; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 1rem;">
-            <button class="exec-tab-btn active" onclick="switchTab(event, 'minutes-tab')">Meeting Minutes</button>
-            <button class="exec-tab-btn" onclick="switchTab(event, 'ledger-tab')">Financial Ledger</button>
+            <button class="exec-tab-btn active" onclick="switchTab(event, 'ledger-tab')">Financial Ledger</button>
             <button class="exec-tab-btn" onclick="switchTab(event, 'roster-tab')">Executive Roster</button>
             <button class="exec-tab-btn" onclick="switchTab(event, 'email-tab')">Email Manager</button>
             <button class="exec-tab-btn" onclick="switchTab(event, 'debug-tab')">Debugging</button>
           </div>
 
-          <!-- Minutes Tab Pane -->
-          <div id="minutes-tab" class="exec-tab-content active">
-            <h3 style="color: #ffffff; margin: 0 0 0.5rem;">Recent Meeting Minutes</h3>
-            <p style="color: #94a3b8; font-size: 0.9rem; margin: 0 0 1.5rem;">Archive of executive committee meetings and general planning agendas.</p>
-            
-            <table class="exec-table">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Meeting Topic</th>
-                  <th>Presenter</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>June 12, 2026</td>
-                  <td>Summer Cup Logistics &amp; Adjudication Setup</td>
-                  <td>Bhuvi Goyal</td>
-                  <td><a href="#" style="color: #2563eb; text-decoration: underline;">View Notes</a></td>
-                </tr>
-                <tr>
-                  <td>May 28, 2026</td>
-                  <td>Google Apps Script Mailing List Syncing</td>
-                  <td>Michael Wang</td>
-                  <td><a href="#" style="color: #2563eb; text-decoration: underline;">View Notes</a></td>
-                </tr>
-                <tr>
-                  <td>May 05, 2026</td>
-                  <td>Spring Semester Budget Review &amp; AGMs</td>
-                  <td>Treasurer</td>
-                  <td><a href="#" style="color: #2563eb; text-decoration: underline;">View Notes</a></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
           <!-- Ledger Tab Pane -->
-          <div id="ledger-tab" class="exec-tab-content">
+          <div id="ledger-tab" class="exec-tab-content active">
             <h3 style="color: #ffffff; margin: 0 0 0.5rem;">Society Financial Ledger</h3>
             <p style="color: #94a3b8; font-size: 0.9rem; margin: 0 0 1.5rem;">View real-time financial tracking and expense reports connected directly to the club's Google Sheets records.</p>
             
@@ -270,24 +244,48 @@
 
             <div class="roster-card">
               <div>
+                <strong style="color: #ffffff; font-size: 1.1rem; display: block;">Sofija Trkulja</strong>
+                <span style="color: #94a3b8; font-size: 0.85rem;">Club President</span>
+              </div>
+              <a href="mailto:ucds.debate@gmail.com" style="color: #2563eb; font-weight: 600; font-size: 0.9rem;">ucds.debate@gmail.com</a>
+            </div>
+
+            <div class="roster-card">
+              <div>
                 <strong style="color: #ffffff; font-size: 1.1rem; display: block;">Bhuvi Goyal</strong>
-                <span style="color: #94a3b8; font-size: 0.85rem;">Club President / Tournament Organizer</span>
+                <span style="color: #94a3b8; font-size: 0.85rem;">VP of Internal / Tournament Organizer</span>
               </div>
               <a href="mailto:bhuvigoyal1107@gmail.com" style="color: #2563eb; font-weight: 600; font-size: 0.9rem;">bhuvigoyal1107@gmail.com</a>
             </div>
 
             <div class="roster-card">
               <div>
+                <strong style="color: #ffffff; font-size: 1.1rem; display: block;">Menooha Koneru</strong>
+                <span style="color: #94a3b8; font-size: 0.85rem;">Director of Equity</span>
+              </div>
+              <a href="mailto:ucds.debate@gmail.com" style="color: #2563eb; font-weight: 600; font-size: 0.9rem;">ucds.debate@gmail.com</a>
+            </div>
+
+            <div class="roster-card">
+              <div>
                 <strong style="color: #ffffff; font-size: 1.1rem; display: block;">Michael Wang</strong>
-                <span style="color: #94a3b8; font-size: 0.85rem;">Tech Lead / Systems Administrator</span>
+                <span style="color: #94a3b8; font-size: 0.85rem;">VP of Finance / Tech Lead &amp; Systems Administrator</span>
               </div>
               <a href="mailto:business.michaelwang@gmail.com" style="color: #2563eb; font-weight: 600; font-size: 0.9rem;">business.michaelwang@gmail.com</a>
             </div>
 
             <div class="roster-card">
               <div>
-                <strong style="color: #ffffff; font-size: 1.1rem; display: block;">UCDS general</strong>
-                <span style="color: #94a3b8; font-size: 0.85rem;">Official Club Mail</span>
+                <strong style="color: #ffffff; font-size: 1.1rem; display: block;">Tori Iles</strong>
+                <span style="color: #94a3b8; font-size: 0.85rem;">VP of Outreach</span>
+              </div>
+              <a href="mailto:ucds.debate@gmail.com" style="color: #2563eb; font-weight: 600; font-size: 0.9rem;">ucds.debate@gmail.com</a>
+            </div>
+
+            <div class="roster-card">
+              <div>
+                <strong style="color: #ffffff; font-size: 1.1rem; display: block;">Md Samiu Hossain</strong>
+                <span style="color: #94a3b8; font-size: 0.85rem;">Director of Tournaments</span>
               </div>
               <a href="mailto:ucds.debate@gmail.com" style="color: #2563eb; font-weight: 600; font-size: 0.9rem;">ucds.debate@gmail.com</a>
             </div>

@@ -428,7 +428,7 @@
                   <input type="radio" id="cat_junior_beginner" name="category" value="Junior Beginner" required>
                   <div>
                     <strong>Junior Beginner</strong> - <span style="font-size: 0.85rem; color: #cbd5e1;">For junior high
-                      debaters (completed Grade 8 or under) in their first year of competition.</span>
+                      debaters who have completed Grade 8 and under and are in their first year of competition.</span>
                   </div>
                 </label>
 
@@ -436,8 +436,7 @@
                   <input type="radio" id="cat_junior_open" name="category" value="Junior Open" required>
                   <div>
                     <strong>Junior Open</strong> - <span style="font-size: 0.85rem; color: #cbd5e1;">For junior high
-                      debaters (completed Grade 8 or under) with competitive experience, or eligible hybrid
-                      teams.</span>
+                      debaters who have completed Grade 9 and under with competitive experience.</span>
                   </div>
                 </label>
 
@@ -445,8 +444,8 @@
                   <input type="radio" id="cat_senior_beginner" name="category" value="Senior Beginner" required>
                   <div>
                     <strong>Senior Beginner</strong> - <span style="font-size: 0.85rem; color: #cbd5e1;">For high school
-                      debaters (completed Grade 11 or under) in their first year of high school competition, or eligible
-                      hybrid teams.</span>
+                      debaters who have completed Grade 11 and under and are in their first year of high school
+                      competition.</span>
                   </div>
                 </label>
 
@@ -472,8 +471,10 @@
 
             <!-- Mailing List Consent Checkbox -->
             <div class="form-group" style="margin-bottom: 2rem; text-align: left;">
-              <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer; color: #ffffff; font-size: 0.95rem; line-height: 1.4; font-weight: normal;">
-                <input type="checkbox" id="subscribeDebate" name="subscribeDebate" checked style="margin-top: 3px; cursor: pointer; width: auto;">
+              <label
+                style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer; color: #ffffff; font-size: 0.95rem; line-height: 1.4; font-weight: normal;">
+                <input type="checkbox" id="subscribeDebate" name="subscribeDebate" checked
+                  style="margin-top: 3px; cursor: pointer; width: auto;">
                 <span>Send me junior high and high school related debate communications</span>
               </label>
             </div>
@@ -685,7 +686,7 @@
         if (draft.partnerEmail) document.getElementById("partnerEmail").value = draft.partnerEmail;
         if (draft.partnerGrade) document.getElementById("partnerGrade").value = draft.partnerGrade;
         if (draft.suggestions) document.getElementById("suggestions").value = draft.suggestions;
-        
+
         if (draft.hasOwnProperty("subscribeDebate")) {
           document.getElementById("subscribeDebate").checked = draft.subscribeDebate;
         }

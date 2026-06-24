@@ -217,19 +217,21 @@
           </div>
 
           <!-- Ledger Table -->
-          <div style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; overflow: hidden;">
-            <table class="ledger-table">
+          <div style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; overflow-x: auto;">
+            <table class="ledger-table" style="min-width: 850px;">
               <thead>
                 <tr>
-                  <th width="15%">Date</th>
-                  <th width="50%">Description</th>
-                  <th width="15%">Type</th>
-                  <th width="20%">Amount</th>
+                  <th style="width: 12%;">Date</th>
+                  <th style="width: 16%;">Sender</th>
+                  <th style="width: 16%;">Recipient</th>
+                  <th style="width: 32%;">Description</th>
+                  <th style="width: 12%; text-align: right;">Amount</th>
+                  <th style="width: 12%; text-align: right;">Balance</th>
                 </tr>
               </thead>
               <tbody id="ledger-rows">
                 <tr>
-                  <td colspan="4" style="text-align: center; padding: 2rem; color: #94a3b8;">Loading transaction database...</td>
+                  <td colspan="6" style="text-align: center; padding: 2rem; color: #94a3b8;">Loading transaction database...</td>
                 </tr>
               </tbody>
             </table>
@@ -251,16 +253,16 @@
     // GOOGLE SPREADSHEET CONFIGURATION
     // Replace with your public Google Spreadsheet ID. 
     // The spreadsheet must be shared as "Anyone with the link can view".
-    const SPREADSHEET_ID = '1-your-spreadsheet-id-here';
+    const SPREADSHEET_ID = 'https://script.google.com/macros/s/AKfycbyD_W9FxWtVtX97nwO-_Nmh6KJWxuPDec6p7aGWVBoCU0Jiy0XF9DfDDKAYv54-xVhIVg/exec';
     
     // Mock Fallback Database
     const MOCK_DATA = [
-      { date: 'June 20, 2026', description: 'Domain registration renewal (ucalgarydebate.com)', type: 'Expense', amount: -18.50 },
-      { date: 'June 15, 2026', description: 'Calgary Summer Cup Entry Fee Payments (Pre-regs)', type: 'Revenue', amount: 180.00 },
-      { date: 'April 28, 2026', description: 'SU Club Funding Disbursement', type: 'Revenue', amount: 500.00 },
-      { date: 'March 12, 2026', description: 'Internal BP Debate Tournament Pizza Expense', type: 'Expense', amount: -75.45 },
-      { date: 'February 15, 2026', description: 'UCDS Membership Fees Collection (Winter)', type: 'Revenue', amount: 220.00 },
-      { date: 'January 10, 2026', description: 'CUSID National Championships Registration Fees', type: 'Expense', amount: -320.00 }
+      { date: '2026-06-20', method: 'Credit Card', description: 'Domain registration renewal (ucalgarydebate.com)', reference: 'TXN-90124', sender: '', recipient: 'Hover', deposit: '', withdrawal: 18.50, balance: 2709.00 },
+      { date: '2026-06-15', method: 'E-Transfer', description: 'Calgary Summer Cup Entry Fee Payments (Pre-regs)', reference: 'C1AxJf***mc9', sender: 'John Doe', recipient: 'ucds.debate@gmail.com', deposit: 180.00, withdrawal: '', balance: 2727.50 },
+      { date: '2026-04-28', method: 'Other', description: 'SU Club Funding Disbursement', reference: '', sender: 'SU Calgary', recipient: 'ucds.debate@gmail.com', deposit: 500.00, withdrawal: '', balance: 2547.50 },
+      { date: '2026-03-12', method: 'Cash', description: 'Internal BP Debate Tournament Pizza Expense', reference: '', sender: '', recipient: 'Pizza Hut', deposit: '', withdrawal: 75.45, balance: 2047.50 },
+      { date: '2026-02-15', method: 'E-Transfer', description: 'UCDS Membership Fees Collection (Winter)', reference: 'C1A5xH***vkG', sender: 'Jane Smith', recipient: 'ucds.debate@gmail.com', deposit: 220.00, withdrawal: '', balance: 2122.95 },
+      { date: '2026-01-10', method: 'E-Transfer', description: 'CUSID National Championships Registration Fees', reference: 'C1AAQf***8Mt', sender: '', recipient: 'CUSID', deposit: '', withdrawal: 320.00, balance: 1902.95 }
     ];
 
     let transactions = [];
@@ -303,6 +305,9 @@
           transactions = parseGoogleSheetsJSON(data);
         }
         
+        // Reverse array to display newest first (reverse chronological order)
+        transactions.reverse();
+        
         statusBadge.className = 'status-badge status-connected';
         statusBadge.innerHTML = '<span>Connected</span>';
         renderLedger(transactions);
@@ -314,31 +319,38 @@
       }
     }
 
+    function formatDate(dateStr) {
+      if (!dateStr) return '';
+      if (dateStr.includes('T') || dateStr.includes('-')) {
+        try {
+          const date = new Date(dateStr);
+          if (!isNaN(date.getTime())) {
+            const options = { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' };
+            return date.toLocaleDateString('en-US', options);
+          }
+        } catch (e) {
+          // ignore parsing error and return as-is
+        }
+      }
+      return dateStr;
+    }
+
     function parseLedgerData(data) {
       if (Array.isArray(data)) {
         return data.map(item => {
-          const keys = Object.keys(item);
-          const dateKey = keys.find(k => k.toLowerCase().includes('date')) || '';
-          const descKey = keys.find(k => k.toLowerCase().includes('desc') || k.toLowerCase().includes('trans') || k.toLowerCase().includes('item')) || '';
-          const typeKey = keys.find(k => k.toLowerCase().includes('type') || k.toLowerCase().includes('cat')) || '';
-          const amountKey = keys.find(k => k.toLowerCase().includes('amount') || k.toLowerCase().includes('value') || k.toLowerCase().includes('cost')) || '';
-          
-          const amountVal = amountKey ? Number(item[amountKey]) : 0;
-          let normType = 'Revenue';
-          const typeVal = typeKey ? String(item[typeKey]).toLowerCase() : '';
-          if (typeVal.includes('expense') || typeVal.includes('out') || typeVal.includes('spent') || amountVal < 0) {
-            normType = 'Expense';
-          }
-          
           return {
-            date: dateKey ? String(item[dateKey]) : '',
-            description: descKey ? String(item[descKey]) : '',
-            type: normType,
-            amount: amountVal
+            date: item['Date (D/M/Y)'] !== undefined ? String(item['Date (D/M/Y)']) : '',
+            method: item['Method'] !== undefined ? String(item['Method']) : '',
+            description: item['Description'] !== undefined ? String(item['Description']) : '',
+            reference: item['E-Transfer/Ref ID'] !== undefined ? String(item['E-Transfer/Ref ID']) : '',
+            sender: item['Sender'] !== undefined ? String(item['Sender']) : '',
+            recipient: item['Recipient'] !== undefined ? String(item['Recipient']) : '',
+            deposit: item['Deposit'] !== undefined && item['Deposit'] !== '' ? Number(item['Deposit']) : '',
+            withdrawal: item['Withdrawal'] !== undefined && item['Withdrawal'] !== '' ? Number(item['Withdrawal']) : '',
+            balance: item['Balance'] !== undefined && item['Balance'] !== '' ? Number(item['Balance']) : ''
           };
-        }).filter(t => t.date || t.description || t.amount);
+        }).filter(t => t.date || t.description || t.deposit || t.withdrawal);
       } else if (data && typeof data === 'object') {
-        // If single object returned
         return [data];
       }
       return [];
@@ -349,9 +361,14 @@
       const cols = table.cols.map(c => c.label ? c.label.trim().toLowerCase() : '');
       
       const dateIdx = cols.findIndex(c => c.includes('date'));
+      const methodIdx = cols.findIndex(c => c.includes('method'));
       const descIdx = cols.findIndex(c => c.includes('desc') || c.includes('trans') || c.includes('item'));
-      const typeIdx = cols.findIndex(c => c.includes('type') || c.includes('cat'));
-      const amountIdx = cols.findIndex(c => c.includes('amount') || c.includes('value') || c.includes('cost') || c.includes('price'));
+      const refIdx = cols.findIndex(c => c.includes('ref') || c.includes('e-transfer'));
+      const senderIdx = cols.findIndex(c => c.includes('sender'));
+      const recipientIdx = cols.findIndex(c => c.includes('recipient') || c.includes('recip'));
+      const depositIdx = cols.findIndex(c => c.includes('deposit'));
+      const withdrawIdx = cols.findIndex(c => c.includes('withdrawal') || c.includes('withdrawl'));
+      const balanceIdx = cols.findIndex(c => c.includes('balance'));
       
       const parsed = [];
       table.rows.forEach(r => {
@@ -359,28 +376,27 @@
         if (!cells) return;
         
         const dateVal = dateIdx !== -1 && cells[dateIdx] ? (cells[dateIdx].f || cells[dateIdx].v || '') : '';
+        const methodVal = methodIdx !== -1 && cells[methodIdx] ? (cells[methodIdx].v || '') : '';
         const descVal = descIdx !== -1 && cells[descIdx] ? (cells[descIdx].v || '') : '';
-        const typeVal = typeIdx !== -1 && cells[typeIdx] ? (cells[typeIdx].v || '') : '';
-        const amountVal = amountIdx !== -1 && cells[amountIdx] ? (cells[amountIdx].v || 0) : 0;
+        const refVal = refIdx !== -1 && cells[refIdx] ? (cells[refIdx].v || '') : '';
+        const senderVal = senderIdx !== -1 && cells[senderIdx] ? (cells[senderIdx].v || '') : '';
+        const recipientVal = recipientIdx !== -1 && cells[recipientIdx] ? (cells[recipientIdx].v || '') : '';
+        const depositVal = depositIdx !== -1 && cells[depositIdx] ? (cells[depositIdx].v || '') : '';
+        const withdrawVal = withdrawIdx !== -1 && cells[withdrawIdx] ? (cells[withdrawIdx].v || '') : '';
+        const balanceVal = balanceIdx !== -1 && cells[balanceIdx] ? (cells[balanceIdx].v || '') : '';
         
-        if (!dateVal && !descVal && !amountVal) return;
-        
-        // Normalize type
-        let normType = 'Revenue';
-        if (typeVal) {
-          const typeLower = String(typeVal).toLowerCase();
-          if (typeLower.includes('expense') || typeLower.includes('out') || typeLower.includes('spent') || typeLower.includes('debit')) {
-            normType = 'Expense';
-          }
-        } else if (Number(amountVal) < 0) {
-          normType = 'Expense';
-        }
+        if (!dateVal && !descVal && !depositVal && !withdrawVal) return;
         
         parsed.push({
           date: String(dateVal),
+          method: String(methodVal),
           description: String(descVal),
-          type: normType,
-          amount: Number(amountVal)
+          reference: String(refVal),
+          sender: String(senderVal),
+          recipient: String(recipientVal),
+          deposit: depositVal !== null && depositVal !== undefined && depositVal !== '' ? Number(depositVal) : '',
+          withdrawal: withdrawVal !== null && withdrawVal !== undefined && withdrawVal !== '' ? Number(withdrawVal) : '',
+          balance: balanceVal !== null && balanceVal !== undefined && balanceVal !== '' ? Number(balanceVal) : ''
         });
       });
       return parsed;
@@ -402,37 +418,78 @@
       tbody.innerHTML = '';
       
       if (data.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2rem; color: #94a3b8;">No matching transactions found.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 2rem; color: #94a3b8;">No matching transactions found.</td></tr>`;
         document.getElementById('net-position').innerText = '$0.00 CAD';
+        document.getElementById('net-position').style.color = '#ffffff';
         document.getElementById('ledger-stats').innerText = '0 transactions loaded';
         return;
       }
 
-      let balance = 0;
+      // Calculate account net position from the entire (unfiltered) transactions list
+      // Since transactions are ordered newest first, we find the first non-empty balance
+      let finalBalance = 0;
+      let foundBalance = false;
+      for (let i = 0; i < transactions.length; i++) {
+        const val = transactions[i].balance;
+        if (val !== '' && val !== null && val !== undefined && !isNaN(Number(val))) {
+          finalBalance = Number(val);
+          foundBalance = true;
+          break;
+        }
+      }
+      if (!foundBalance) {
+        let calculatedBalance = 0;
+        transactions.forEach(t => {
+          calculatedBalance += (Number(t.deposit) || 0) - (Number(t.withdrawal) || 0);
+        });
+        finalBalance = calculatedBalance;
+      }
+      
+      document.getElementById('net-position').innerText = `${finalBalance >= 0 ? '' : '-'}$${Math.abs(finalBalance).toFixed(2)} CAD`;
+      document.getElementById('net-position').style.color = finalBalance >= 0 ? '#22c55e' : '#f87171';
+      document.getElementById('ledger-stats').innerText = `${transactions.length} transactions loaded`;
+
+      // Render rows
       data.forEach(t => {
-        balance += t.amount;
-        
         const row = document.createElement('tr');
-        const isRevenue = t.type.toLowerCase() === 'revenue';
         
+        const depNum = t.deposit !== '' && t.deposit !== null && t.deposit !== undefined ? Number(t.deposit) : null;
+        const witNum = t.withdrawal !== '' && t.withdrawal !== null && t.withdrawal !== undefined ? Number(t.withdrawal) : null;
+        const balNum = t.balance !== '' && t.balance !== null && t.balance !== undefined ? Number(t.balance) : null;
+
+        // Combined amount column
+        let amountText = '';
+        let amountColor = '#ffffff';
+        if (depNum !== null && !isNaN(depNum)) {
+          amountText = `+$${depNum.toFixed(2)}`;
+          amountColor = '#22c55e';
+        } else if (witNum !== null && !isNaN(witNum)) {
+          amountText = `-$${witNum.toFixed(2)}`;
+          amountColor = '#f87171';
+        } else {
+          amountText = '-';
+        }
+        
+        const balanceText = balNum !== null && !isNaN(balNum) ? `$${balNum.toFixed(2)}` : '';
+
+        // Prepend method to description if it exists
+        let descHTML = '';
+        if (t.method) {
+          descHTML = `<span style="background: rgba(255, 255, 255, 0.08); padding: 2px 6px; border-radius: 4px; font-size: 0.85em; margin-right: 6px; color: #93c5fd; font-weight: 600; vertical-align: middle;">${t.method}</span><span style="vertical-align: middle;">${t.description || ''}</span>`;
+        } else {
+          descHTML = `<span style="vertical-align: middle;">${t.description || ''}</span>`;
+        }
+
         row.innerHTML = `
-          <td style="color: #ffffff; font-weight: 600;">${t.date}</td>
-          <td>${t.description}</td>
-          <td>
-            <span style="font-weight: 700; color: ${isRevenue ? '#22c55e' : '#f87171'}">
-              ${t.type}
-            </span>
-          </td>
-          <td style="font-weight: bold; color: ${isRevenue ? '#22c55e' : '#f87171'}">
-            ${isRevenue ? '+' : ''}${t.amount.toFixed(2)} CAD
-          </td>
+          <td style="color: #ffffff; font-weight: 600; white-space: nowrap;">${formatDate(t.date)}</td>
+          <td>${t.sender || '-'}</td>
+          <td>${t.recipient || '-'}</td>
+          <td>${descHTML}</td>
+          <td style="text-align: right; font-weight: 700; color: ${amountColor}; white-space: nowrap;">${amountText}</td>
+          <td style="text-align: right; font-weight: bold; color: #ffffff; white-space: nowrap;">${balanceText}</td>
         `;
         tbody.appendChild(row);
       });
-
-      document.getElementById('net-position').innerText = `${balance >= 0 ? '' : '-'}$${Math.abs(balance).toFixed(2)} CAD`;
-      document.getElementById('net-position').style.color = balance >= 0 ? '#22c55e' : '#f87171';
-      document.getElementById('ledger-stats').innerText = `${data.length} transactions loaded`;
     }
 
     function applyFilters() {
@@ -440,8 +497,21 @@
       const type = document.getElementById('type-filter').value;
       
       const filtered = transactions.filter(t => {
-        const matchesQuery = t.description.toLowerCase().includes(query) || t.date.toLowerCase().includes(query);
-        const matchesType = type === 'all' || t.type.toLowerCase() === type;
+        const matchesQuery = 
+          (t.description && t.description.toLowerCase().includes(query)) || 
+          (t.date && t.date.toLowerCase().includes(query)) ||
+          (t.method && t.method.toLowerCase().includes(query)) ||
+          (t.reference && t.reference.toLowerCase().includes(query)) ||
+          (t.sender && t.sender.toLowerCase().includes(query)) ||
+          (t.recipient && t.recipient.toLowerCase().includes(query));
+          
+        let matchesType = true;
+        if (type === 'revenue') {
+          matchesType = t.deposit !== '' && t.deposit !== null && t.deposit !== undefined && Number(t.deposit) > 0;
+        } else if (type === 'expense') {
+          matchesType = t.withdrawal !== '' && t.withdrawal !== null && t.withdrawal !== undefined && Number(t.withdrawal) > 0;
+        }
+        
         return matchesQuery && matchesType;
       });
       

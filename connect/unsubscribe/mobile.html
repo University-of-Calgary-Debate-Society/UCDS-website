@@ -3,14 +3,11 @@
 <head>
   <script>
     (function () {
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('force') === 'desktop') {
-        sessionStorage.setItem('forceDesktop', 'true');
-      }
-      const forceDesktop = sessionStorage.getItem('forceDesktop') === 'true';
       const isMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-      if (isMobile && !forceDesktop) {
-        window.location.replace("mobile.html" + window.location.search + window.location.hash);
+      if (!isMobile) {
+        window.location.replace("index.html" + window.location.search + window.location.hash);
+      } else {
+        sessionStorage.removeItem('forceDesktop');
       }
     })();
   </script>
@@ -140,7 +137,7 @@
     <div class="container header-inner">
       <a class="brand" href="../../">
         <img src="../../photos/logo.jpg" alt="University of Calgary Debate Society logo" class="logo-image" />
-        <span class="brand-text">University of Calgary Debate Society</span>
+        <span class="brand-text">UCDS</span>
       </a>
       <button class="menu-toggle" aria-label="Toggle navigation"><span class="hamburger"></span></button>
       <nav class="site-nav">
