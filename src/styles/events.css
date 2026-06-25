@@ -1,0 +1,731 @@
+/* Events Page & Calgary Summer Cup Specific Styles */
+
+body.events-body {
+  background-image: url('../photos/background5.jpg');
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* Ensure all main titles on the events and Calgary Summer Cup pages are white */
+.events-body h1,
+.events-body h2,
+.events-body h3,
+.events-body h4,
+.events-body .title-box {
+  color: #ffffff !important;
+}
+
+.events-page-banner {
+  height: 40vh;
+  min-height: 400px;
+  background-image: linear-gradient(rgba(4, 23, 43, 0.267), rgba(4, 23, 43, 0.116)), url('../photos/background4.jpg');
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.events-body .card {
+  box-shadow: 8px 8px 0px #204a99;
+  transition: opacity 0.8s ease-out, transform 1s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 1s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.events-body .card:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: 12px 12px 0px #3b82f6;
+}
+
+.calendar-embed {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 2rem;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
+}
+
+.calendar-embed iframe {
+  width: 100%;
+  max-width: 100%;
+  height: 600px;
+  border: none !important;
+  border-radius: 0.5rem;
+}
+
+/* Calgary Summer Cup Featured Section styling */
+.featured-tournament {
+  background: linear-gradient(135deg, rgba(17, 40, 84, 0.6) 0%, rgba(10, 21, 46, 0.7) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1.5rem;
+  padding: 3rem;
+  backdrop-filter: blur(12px);
+  margin-top: 2rem;
+  position: relative;
+  overflow: hidden;
+  text-align: left;
+}
+
+.featured-grid-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+.cup-illustration-wrapper {
+  position: relative;
+  width: 100%;
+  height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calgary-cup-main {
+  width: 140px;
+  height: 140px;
+  filter: drop-shadow(0 10px 25px rgba(253, 224, 71, 0.25));
+  animation: cup-glow 6s ease-in-out infinite alternate;
+  z-index: 2;
+}
+
+.surrounding-icon {
+  position: absolute;
+  color: rgba(147, 197, 253, 0.6);
+  width: 44px;
+  height: 44px;
+  z-index: 1;
+  pointer-events: none;
+  animation: float-icon 8s ease-in-out infinite;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.3));
+}
+
+/* Surrounding icons positions */
+.icon-speech-bubble { top: 15%; left: 15%; animation-delay: 0s; }
+.icon-gavel { top: 12%; right: 15%; animation-delay: 2s; }
+.icon-book { bottom: 15%; left: 18%; animation-delay: 4s; }
+.icon-star { bottom: 15%; right: 18%; animation-delay: 6s; }
+.icon-podium { top: 48%; left: 5%; animation-delay: 1s; }
+.icon-cap { top: 45%; right: 5%; animation-delay: 3s; }
+
+@keyframes cup-glow {
+  0% { transform: translateY(0) scale(1); filter: drop-shadow(0 10px 20px rgba(253, 224, 71, 0.2)); }
+  100% { transform: translateY(-8px) scale(1.03); filter: drop-shadow(0 15px 30px rgba(253, 224, 71, 0.35)); }
+}
+
+@keyframes float-icon {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(8deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
+
+.featured-info {
+  text-align: left;
+}
+
+.featured-tag {
+  display: inline-block;
+  background: rgba(96, 165, 250, 0.15);
+  color: #60a5fa;
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 1rem;
+  border: 1px solid rgba(96, 165, 250, 0.25);
+}
+
+.featured-title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  margin: 0 0 1rem;
+  line-height: 1.2;
+}
+
+.featured-desc {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: #cbd5e1;
+  margin-bottom: 1.5rem;
+}
+
+.featured-highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.highlight-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.5rem 1rem;
+  border-radius: 0.75rem;
+  color: #e2e8f0;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.highlight-pill svg {
+  color: #60a5fa;
+  flex-shrink: 0;
+}
+
+.featured-btn-container {
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* Calgary Summer Cup Hero Section styling */
+.calgary-summer-cup-hero {
+  background: linear-gradient(180deg, rgba(11, 26, 58, 0.4) 0%, rgba(17, 40, 84, 0.7) 100%), url('../photos/background5.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  padding: 6rem 0 4rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.hero-logo-image {
+  max-height: 150px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.45));
+  margin-bottom: 1.5rem;
+}
+
+.hero-title {
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 800;
+  margin: 0 0 1.5rem;
+  letter-spacing: -0.02em;
+  text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.hero-subtitle {
+  max-width: 44rem;
+  margin: 0 auto;
+  font-size: 1.15rem;
+  line-height: 1.6;
+  color: #cbd5e1;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.association-notice {
+  display: inline-block;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #fca5a5;
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+}
+
+.schedule-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+
+.schedule-day {
+  background: #f8fafc;
+  padding: 1.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid #e2e8f0;
+}
+
+.schedule-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-family: monospace;
+  font-size: 0.95rem;
+}
+
+.schedule-list li {
+  margin-bottom: 0.6rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.schedule-time {
+  color: #2563eb;
+  font-weight: bold;
+  margin-right: 1rem;
+  flex-shrink: 0;
+}
+
+.schedule-desc {
+  text-align: right;
+  color: #334155;
+}
+
+.cta-btn-black {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #000000;
+  color: #ffffff;
+  border: 1px solid #ffffff;
+  border-radius: 4px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  cursor: pointer;
+}
+
+.cta-btn-black:hover {
+  background-color: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
+}
+
+.large-cta-btn {
+  padding: 16px 36px;
+  font-size: 1.25rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+.sub-section-title {
+  margin-top: 0;
+  font-size: 1.25rem;
+  margin-bottom: 0.75rem;
+  font-weight: 700;
+}
+
+.category-badge {
+  display: inline-block;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid currentColor;
+  vertical-align: middle;
+  margin: 0.2rem 0.2rem;
+}
+
+.badge-jr-beg {
+  color: #93c5fd;
+  background: rgba(147, 197, 253, 0.15);
+}
+
+.badge-jr-open {
+  color: #60a5fa;
+  background: rgba(96, 165, 250, 0.15);
+}
+
+.badge-sr-beg {
+  color: #fdba74;
+  background: rgba(253, 186, 116, 0.15);
+}
+
+.badge-sr-open {
+  color: #fde047;
+  background: rgba(253, 224, 71, 0.15);
+}
+
+.badge-sr-any {
+  color: #f43f5e;
+  background: rgba(244, 63, 94, 0.15);
+}
+
+.deadlines-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 3rem;
+  text-align: left;
+}
+
+.deadline-item {
+  background: rgba(17, 40, 84, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  padding: 2rem;
+  backdrop-filter: blur(10px);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.deadline-item:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+@media (max-width: 860px) {
+  .calendar-embed iframe {
+    width: 100%;
+    height: 500px;
+  }
+  
+  .featured-tournament {
+    padding: 2rem;
+  }
+  
+  .featured-grid-layout {
+    grid-template-columns: 1fr !important;
+    gap: 2rem;
+  }
+  
+  .cup-illustration-wrapper {
+    height: 240px;
+  }
+  
+  .calgary-cup-main {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .surrounding-icon {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .featured-title {
+    font-size: 1.75rem;
+  }
+  
+  .schedule-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem;
+  }
+  
+  .deadlines-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+}
+
+/* Layout Spacing: 2-Column Grid */
+.grid-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  margin-top: 2.5rem;
+  align-items: stretch;
+}
+
+@media (max-width: 860px) {
+  .grid-2col {
+    grid-template-columns: 1fr !important;
+    gap: 2rem;
+  }
+}
+
+/* Light Blue Card Theme for Events and Calgary Summer Cup pages */
+.events-body .card:not(.social-card) {
+  background: #f0f7ff !important;
+  color: #334155 !important;
+  border: 1px solid #bfdbfe !important;
+  box-shadow: 8px 8px 0px #3b82f6 !important;
+  transition: opacity 0.8s ease-out, transform 1s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 1s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.events-body .card:not(.social-card):hover {
+  transform: translate(-4px, -4px) !important;
+  box-shadow: 12px 12px 0px #2563eb !important;
+}
+
+.events-body .card:not(.social-card) p {
+  color: #334155 !important;
+}
+
+.events-body .card:not(.social-card) h3,
+.events-body .card:not(.social-card) h4 {
+  color: #1e3a8a !important;
+}
+
+
+/* Registration Form Styling (Glassmorphism & Contrast) */
+.registration-container {
+  position: relative;
+  z-index: 10;
+}
+
+.form-section-card {
+  background: rgba(10, 25, 59, 0.45) !important;
+  border: 1px solid rgba(59, 130, 246, 0.2) !important;
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: blur(16px) !important;
+  padding: 2.5rem !important;
+  border-radius: 1.5rem !important;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+
+.form-section-card:hover {
+  border-color: rgba(96, 165, 250, 0.4) !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 0 0 20px rgba(59, 130, 246, 0.1) !important;
+  transform: translateY(-2px);
+}
+
+.form-section-card h3 {
+  color: #93c5fd !important;
+  border-bottom: 1px solid rgba(147, 197, 253, 0.15) !important;
+  padding-bottom: 0.75rem !important;
+  margin-bottom: 2rem !important;
+  font-size: 1.45rem !important;
+  font-weight: 700 !important;
+  text-align: center !important;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Centered Form Labels & Inputs */
+.form-group {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.65rem !important;
+}
+
+.form-group label {
+  text-align: center !important;
+  width: 100% !important;
+  color: #93c5fd !important;
+  font-weight: 600 !important;
+  font-size: 0.95rem !important;
+  letter-spacing: 0.02em;
+}
+
+/* Centered & Nicer Inputs, Selects, and Textareas */
+.text-input,
+.select-input,
+.textarea-input {
+  background: rgba(8, 18, 41, 0.6) !important;
+  border: 1px solid rgba(147, 197, 253, 0.18) !important;
+  color: #f8fafc !important;
+  padding: 0.95rem 1.25rem !important;
+  border-radius: 0.75rem !important;
+  font-family: inherit !important;
+  font-size: 1rem !important;
+  outline: none !important;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+  width: 100% !important;
+  text-align: center !important; /* Centered Details */
+}
+
+.text-input::placeholder,
+.textarea-input::placeholder {
+  color: rgba(147, 197, 253, 0.3) !important;
+}
+
+.text-input:hover,
+.select-input:hover,
+.textarea-input:hover {
+  border-color: rgba(96, 165, 250, 0.4) !important;
+  background: rgba(8, 18, 41, 0.7) !important;
+}
+
+.text-input:focus,
+.select-input:focus,
+.textarea-input:focus {
+  border-color: #3b82f6 !important;
+  background: rgba(8, 18, 41, 0.8) !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25), 0 0 15px rgba(59, 130, 246, 0.2) !important;
+}
+
+.select-input option {
+  background: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+/* Nice Selection radio labels centered */
+.radio-label {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important; /* Centered Details */
+  gap: 0.85rem !important;
+  cursor: pointer !important;
+  color: #cbd5e1 !important;
+  background: rgba(255, 255, 255, 0.02) !important;
+  border: 1px solid rgba(147, 197, 253, 0.1) !important;
+  padding: 1.15rem 1.5rem !important;
+  border-radius: 0.75rem !important;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+
+.radio-label strong {
+  color: #f8fafc !important;
+}
+
+.radio-label:not(.disabled):hover {
+  background: rgba(59, 130, 246, 0.06) !important;
+  border-color: rgba(59, 130, 246, 0.35) !important;
+  color: #f8fafc !important;
+  transform: translateY(-1px);
+}
+
+/* Checked state of radio cards */
+.radio-label.checked {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.15) 0%, rgba(139, 92, 246, 0.1) 100%) !important;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+  color: #f8fafc !important;
+  transform: translateY(-2px);
+}
+
+.radio-label.checked strong {
+  color: #60a5fa !important;
+}
+
+.radio-label.disabled {
+  cursor: not-allowed !important;
+  color: #475569 !important;
+  opacity: 0.4 !important;
+  background: rgba(255, 255, 255, 0.005) !important;
+  border-color: rgba(255, 255, 255, 0.02) !important;
+}
+
+.radio-label.disabled strong {
+  color: #475569 !important;
+}
+
+.radio-label input[type="radio"] {
+  cursor: inherit !important;
+  width: 18px !important;
+  height: 18px !important;
+  margin: 0 !important;
+  accent-color: #3b82f6 !important;
+}
+
+/* Premium Gradient Submit Button */
+.form-submit-btn {
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+  padding: 1.1rem 4rem !important;
+  font-size: 1.2rem !important;
+  font-weight: 700 !important;
+  border-radius: 0.75rem !important;
+  cursor: pointer !important;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+  box-shadow: 0 4px 20px rgba(139, 92, 246, 0.35) !important;
+  letter-spacing: 0.03em;
+}
+
+.form-submit-btn:hover:not(:disabled) {
+  transform: translateY(-3px) scale(1.02) !important;
+  background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%) !important;
+  box-shadow: 0 10px 30px rgba(139, 92, 246, 0.55), 0 0 15px rgba(59, 130, 246, 0.3) !important;
+}
+
+.form-submit-btn:active:not(:disabled) {
+  transform: translateY(-1px) scale(0.98) !important;
+}
+
+.form-submit-btn:disabled {
+  background: #1e293b !important;
+  color: #475569 !important;
+  border-color: rgba(255, 255, 255, 0.05) !important;
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+}
+
+/* Background Floating Debate Icons styles */
+.reg-bg-icon {
+  position: absolute;
+  color: rgba(147, 197, 253, 0.06) !important;
+  width: 75px !important;
+  height: 75px !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+  filter: drop-shadow(0 6px 15px rgba(0, 0, 0, 0.35)) !important;
+  transition: color 0.5s ease;
+}
+
+/* Individual positions & delays & animated types */
+.reg-icon-gavel {
+  top: 5%;
+  left: 6%;
+  animation: float-slow-sway 18s ease-in-out infinite;
+  animation-delay: 0s;
+}
+
+.reg-icon-speech {
+  top: 15%;
+  right: 8%;
+  animation: float-drift 22s ease-in-out infinite;
+  animation-delay: 3s;
+}
+
+.reg-icon-podium {
+  top: 30%;
+  left: 4%;
+  animation: float-rotate 28s ease-in-out infinite;
+  animation-delay: 6s;
+}
+
+.reg-icon-book {
+  top: 45%;
+  right: 6%;
+  animation: float-pulse 16s ease-in-out infinite;
+  animation-delay: 2s;
+}
+
+.reg-icon-scales {
+  top: 60%;
+  left: 8%;
+  animation: float-slow-sway 24s ease-in-out infinite;
+  animation-delay: 5s;
+}
+
+.reg-icon-trophy {
+  top: 72%;
+  right: 4%;
+  animation: float-drift 20s ease-in-out infinite;
+  animation-delay: 8s;
+}
+
+.reg-icon-microphone {
+  top: 85%;
+  left: 5%;
+  animation: float-pulse 20s ease-in-out infinite;
+  animation-delay: 1s;
+}
+
+.reg-icon-cap {
+  top: 92%;
+  right: 7%;
+  animation: float-rotate 26s ease-in-out infinite;
+  animation-delay: 4s;
+}
+
+/* Organic Floating Keyframes */
+@keyframes float-slow-sway {
+  0% { transform: translateY(0px) translateX(0px) rotate(0deg); }
+  33% { transform: translateY(-16px) translateX(8px) rotate(3deg); }
+  66% { transform: translateY(-5px) translateX(-6px) rotate(-3deg); }
+  100% { transform: translateY(0px) translateX(0px) rotate(0deg); }
+}
+
+@keyframes float-drift {
+  0% { transform: translateY(0px) translateX(0px) rotate(0deg); }
+  50% { transform: translateY(-28px) translateX(-18px) rotate(-7deg); }
+  100% { transform: translateY(0px) translateX(0px) rotate(0deg); }
+}
+
+@keyframes float-pulse {
+  0% { transform: scale(1) translateY(0); opacity: 0.7; }
+  50% { transform: scale(1.08) translateY(-8px); opacity: 1; }
+  100% { transform: scale(1) translateY(0); opacity: 0.7; }
+}
+
+@keyframes float-rotate {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(10px) rotate(180deg); }
+  100% { transform: translateY(0px) rotate(360deg); }
+}

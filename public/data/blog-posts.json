@@ -1,0 +1,16 @@
+[
+  {
+    "id": "demo-post-1",
+    "title": "Welcome to the UCDS Rebuild!",
+    "date": "2026-06-25",
+    "summary": "We are excited to launch the brand-new React and Firebase rebuild of the University of Calgary Debate Society website.",
+    "content": "<p>Welcome to our brand-new website! We have successfully migrated the UCDS codebase to <strong>React</strong> and integrated <strong>Google Firebase</strong> for dynamic database capabilities, and <strong>Python</strong> for automated background triggers.</p><p>This new setup ensures high-speed page loads, responsive navigation on both desktop and mobile, and a state-of-the-art secure executive panel.</p>"
+  },
+  {
+    "id": "demo-post-2",
+    "title": "Calgary Summer Cup 2026 Preparations",
+    "date": "2026-06-10",
+    "summary": "Preparations are underway for the Calgary Summer Cup 2026, featuring various divisions for grades 6-12.",
+    "content": "<p>We are gearing up for the <strong>Calgary Summer Cup 2026</strong>! The tournament will take place online on Discord on <strong>July 25th and 26th</strong>.</p><p>Registration is now open on the website. E-transfer payments can be sent directly to ucds.debate@gmail.com. We welcome debaters of all experience levels to sign up!</p>"
+  }
+]

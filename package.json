@@ -1,13 +1,25 @@
 {
-  "name": "ucds-website",
-  "version": "1.0.0",
-  "description": "Static website for UCDS",
+  "name": "ucds-2026",
   "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "sync-blog": "node scripts/sync-blog.js"
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "oxlint",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "cheerio": "^1.0.0-rc.12",
-    "googleapis": "^128.0.0"
+    "firebase": "^12.15.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "react-router-dom": "^7.18.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.2",
+    "oxlint": "^1.69.0",
+    "vite": "^8.1.0"
   }
 }
