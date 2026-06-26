@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, query, where, getDocs, updateDoc, doc } from 'firebase/firestore';
 import { db } from '../../../../firebase';
 import { useDialog } from '../../../../context/DialogContext';
 
@@ -31,7 +31,14 @@ export default function Registration() {
     partnerGrade: '',
     category: '',
     suggestions: '',
-    subscribeDebate: true // Default to true
+    pollQ1: '',
+    pollQ2: '',
+    pollQ3: '',
+    pollFirstName: '',
+    pollLastName: '',
+    pollGrade: '',
+    pollSchool: '',
+    pollEmail: ''
   });
 
   const [draftStatus, setDraftStatus] = useState('');
@@ -144,10 +151,31 @@ export default function Registration() {
     const { name, value, type, checked } = e.target;
     const val = type === 'checkbox' ? checked : value;
 
-    const nextState = {
+    let nextState = {
       ...formState,
       [name]: val
     };
+
+    // If pollQ3 changed to 'Yes', auto-populate contact details if they are empty
+    if (name === 'pollQ3' && val === 'Yes') {
+      const splitName = (nameStr) => {
+        const trimmed = (nameStr || '').trim();
+        const parts = trimmed.split(/\s+/);
+        const first = parts[0] || '';
+        const last = parts.slice(1).join(' ') || '';
+        return { first, last };
+      };
+      
+      const { first, last } = splitName(formState.fullName);
+      
+      nextState = {
+        ...nextState,
+        pollFirstName: formState.pollFirstName || first,
+        pollLastName: formState.pollLastName || last,
+        pollEmail: formState.pollEmail || formState.email,
+        pollGrade: formState.pollGrade || formState.grade
+      };
+    }
 
     setFormState(nextState);
 
@@ -183,6 +211,30 @@ export default function Registration() {
       return;
     }
 
+    // Poll Validations
+    if (!formState.pollQ1) {
+      alert("Please answer Question 1 of the poll.");
+      return;
+    }
+    if (!formState.pollQ2) {
+      alert("Please answer Question 2 of the poll.");
+      return;
+    }
+    if (!formState.pollQ3) {
+      alert("Please answer Question 3 of the poll.");
+      return;
+    }
+    if (formState.pollQ3 === 'Yes') {
+      if (!formState.pollFirstName.trim() || !formState.pollLastName.trim() || !formState.pollGrade || !formState.pollSchool.trim() || !formState.pollEmail.trim()) {
+        alert("Please fill out all contact information fields for the mailing list.");
+        return;
+      }
+      if (!emailRegex.test(formState.pollEmail.trim())) {
+        alert("Please enter a valid email address for the mailing list.");
+        return;
+      }
+    }
+
     setIsSubmitting(true);
     setDraftStatus('Submitting registration...');
 
@@ -198,11 +250,19 @@ export default function Registration() {
         partnerGrade: formState.partnerGrade,
         category: formState.category,
         suggestions: formState.suggestions.trim(),
-        subscribedToMailingList: formState.subscribeDebate
+        subscribedToMailingList: formState.pollQ3 === 'Yes'
       });
 
-      // 2. Add to Subscribers collection if they opted-in
-      if (formState.subscribeDebate) {
+      // 2. Submit Poll response to Firestore
+      await addDoc(collection(db, 'polls'), {
+        timestamp: new Date().toISOString(),
+        q1: formState.pollQ1,
+        q2: formState.pollQ2,
+        q3: formState.pollQ3
+      });
+
+      // 3. Add to Subscribers collection if they opted-in to receive mail
+      if (formState.pollQ3 === 'Yes') {
         const getInitialListType = (gradeStr) => {
           const match = (gradeStr || '').match(/\d+/);
           if (match) {
@@ -213,65 +273,42 @@ export default function Registration() {
           return 'subscribers';
         };
 
-        const splitName = (nameStr) => {
-          const trimmed = (nameStr || '').trim();
-          const parts = trimmed.split(/\s+/);
-          const first = parts[0] || '';
-          const last = parts.slice(1).join(' ') || '';
-          return { first, last };
-        };
-
-        const isNovice = formState.category.toLowerCase().includes('beginner');
+        const targetEmail = formState.pollEmail.trim().toLowerCase();
+        const listType = getInitialListType(formState.pollGrade);
         const timestamp = new Date().toISOString();
 
-        // Register registrant
-        try {
-          const userNames = splitName(formState.fullName);
-          const userListType = getInitialListType(formState.grade);
-          await addDoc(collection(db, 'subscribers'), {
-            email: formState.email.trim().toLowerCase(),
-            fullName: formState.fullName.trim(),
-            firstName: userNames.first,
-            lastName: userNames.last,
-            grade: formState.grade,
-            listType: userListType,
-            lists: [userListType],
-            subscribed: true,
-            active: true,
-            createdAt: timestamp,
-            updatedAt: timestamp,
-            debater: true,
-            novice: isNovice,
-            volunteer: false,
-            judge: false
-          });
-        } catch (subErr) {
-          console.error("Failed to register registrant subscriber", subErr);
-        }
+        // Query if this email already exists in subscribers
+        const subscribersRef = collection(db, 'subscribers');
+        const q = query(subscribersRef, where('email', '==', targetEmail));
+        const querySnapshot = await getDocs(q);
 
-        // Register partner
-        try {
-          const partnerNames = splitName(formState.partnerName);
-          const partnerListType = getInitialListType(formState.partnerGrade);
-          await addDoc(collection(db, 'subscribers'), {
-            email: formState.partnerEmail.trim().toLowerCase(),
-            fullName: formState.partnerName.trim(),
-            firstName: partnerNames.first,
-            lastName: partnerNames.last,
-            grade: formState.partnerGrade,
-            listType: partnerListType,
-            lists: [partnerListType],
-            subscribed: true,
-            active: true,
-            createdAt: timestamp,
-            updatedAt: timestamp,
-            debater: true,
-            novice: isNovice,
-            volunteer: false,
-            judge: false
+        const subscriberPayload = {
+          email: targetEmail,
+          fullName: `${formState.pollFirstName.trim()} ${formState.pollLastName.trim()}`,
+          firstName: formState.pollFirstName.trim(),
+          lastName: formState.pollLastName.trim(),
+          grade: formState.pollGrade,
+          school: formState.pollSchool.trim(),
+          listType: listType,
+          lists: [listType],
+          subscribed: true,
+          active: true,
+          updatedAt: timestamp,
+          debater: true,
+          volunteer: false,
+          judge: false
+        };
+
+        if (!querySnapshot.empty) {
+          // Update existing document
+          const docId = querySnapshot.docs[0].id;
+          await updateDoc(doc(db, 'subscribers', docId), subscriberPayload);
+        } else {
+          // Add new document
+          await addDoc(subscribersRef, {
+            ...subscriberPayload,
+            createdAt: timestamp
           });
-        } catch (subErr) {
-          console.error("Failed to register partner subscriber", subErr);
         }
       }
 
@@ -531,7 +568,7 @@ export default function Registration() {
                 </div>
               </div>
 
-              {/* Suggestions / Newsletter */}
+              {/* Suggestions */}
               <div className="form-section-card">
                 <h3>Additional Options</h3>
 
@@ -547,20 +584,199 @@ export default function Registration() {
                     rows="3"
                   />
                 </div>
+              </div>
 
-                <div className="form-group" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', marginTop: '1.5rem', cursor: 'pointer' }}>
-                  <input
-                    type="checkbox"
-                    id="subscribeDebate"
-                    name="subscribeDebate"
-                    checked={formState.subscribeDebate}
-                    onChange={handleInputChange}
-                    style={{ width: '18px', height: '18px', cursor: 'pointer' }}
-                  />
-                  <label htmlFor="subscribeDebate" style={{ cursor: 'pointer', fontSize: '0.95rem' }}>
-                    Subscribe to the UCDS Mailing List to receive news and future tournament announcements.
+              {/* Public Poll */}
+              <div className="form-section-card" style={{ border: '1px solid rgba(59, 130, 246, 0.3)', background: 'rgba(30, 41, 59, 0.4)' }}>
+                <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#93c5fd' }}>
+                  📊 Public Interest Poll
+                </h3>
+                
+                <p style={{ color: '#cbd5e1', fontSize: '0.95rem', lineHeight: '1.6', marginBottom: '1.5rem' }}>
+                  We are doing an online tournament this time around. We simply did not have time to prepare for an in-person tournament and are having a difficult time seeing how many students would be interested.
+                </p>
+
+                {/* Q1 */}
+                <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1.5rem' }}>
+                  <label style={{ fontWeight: 600, color: '#ffffff' }}>
+                    1. If the UCDS were to host an in-person tournament around the start of the school year for junior high and high school students, would you be interested? <span style={{ color: '#f87171' }}>*</span>
                   </label>
+                  <div style={{ display: 'flex', gap: '1.5rem', marginTop: '0.25rem' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', color: '#ffffff' }}>
+                      <input
+                        type="radio"
+                        name="pollQ1"
+                        value="Yes"
+                        checked={formState.pollQ1 === 'Yes'}
+                        onChange={handleInputChange}
+                        style={{ width: '18px', height: '18px', accentColor: '#2563eb' }}
+                        required
+                      />
+                      <span>Yes</span>
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', color: '#ffffff' }}>
+                      <input
+                        type="radio"
+                        name="pollQ1"
+                        value="No"
+                        checked={formState.pollQ1 === 'No'}
+                        onChange={handleInputChange}
+                        style={{ width: '18px', height: '18px', accentColor: '#2563eb' }}
+                      />
+                      <span>No</span>
+                    </label>
+                  </div>
                 </div>
+
+                {/* Q2 */}
+                <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1.5rem' }}>
+                  <label style={{ fontWeight: 600, color: '#ffffff' }}>
+                    2. What month would be best for you? <span style={{ color: '#f87171' }}>*</span>
+                  </label>
+                  <div style={{ display: 'flex', gap: '1.5rem', marginTop: '0.25rem' }}>
+                    {['September', 'October', 'November'].map((month) => (
+                      <label key={month} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', color: '#ffffff' }}>
+                        <input
+                          type="radio"
+                          name="pollQ2"
+                          value={month}
+                          checked={formState.pollQ2 === month}
+                          onChange={handleInputChange}
+                          style={{ width: '18px', height: '18px', accentColor: '#2563eb' }}
+                          required
+                        />
+                        <span>{month}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Q3 */}
+                <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  <label style={{ fontWeight: 600, color: '#ffffff' }}>
+                    3. If you are interested, would you like to receive information? <span style={{ color: '#f87171' }}>*</span>
+                  </label>
+                  <div style={{ display: 'flex', gap: '1.5rem', marginTop: '0.25rem', marginBottom: formState.pollQ3 === 'Yes' ? '1.5rem' : '0px' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', color: '#ffffff' }}>
+                      <input
+                        type="radio"
+                        name="pollQ3"
+                        value="Yes"
+                        checked={formState.pollQ3 === 'Yes'}
+                        onChange={handleInputChange}
+                        style={{ width: '18px', height: '18px', accentColor: '#2563eb' }}
+                        required
+                      />
+                      <span>Yes</span>
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', color: '#ffffff' }}>
+                      <input
+                        type="radio"
+                        name="pollQ3"
+                        value="No"
+                        checked={formState.pollQ3 === 'No'}
+                        onChange={handleInputChange}
+                        style={{ width: '18px', height: '18px', accentColor: '#2563eb' }}
+                      />
+                      <span>No</span>
+                    </label>
+                  </div>
+                </div>
+
+                {/* Conditional Fields for Q3 = Yes */}
+                {formState.pollQ3 === 'Yes' && (
+                  <div style={{
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    background: 'rgba(15, 23, 42, 0.3)',
+                    padding: '1.5rem',
+                    borderRadius: '8px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '1.25rem',
+                    marginTop: '1rem'
+                  }}>
+                    <h4 style={{ margin: 0, fontSize: '1rem', color: '#93c5fd' }}>Mailing List Contact Details</h4>
+                    
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                      <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                        <label htmlFor="pollFirstName" style={{ fontSize: '0.9rem', fontWeight: 600 }}>First Name</label>
+                        <input
+                          type="text"
+                          id="pollFirstName"
+                          name="pollFirstName"
+                          value={formState.pollFirstName}
+                          onChange={handleInputChange}
+                          className="text-input"
+                          placeholder="First Name"
+                          required
+                        />
+                      </div>
+                      <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                        <label htmlFor="pollLastName" style={{ fontSize: '0.9rem', fontWeight: 600 }}>Last Name</label>
+                        <input
+                          type="text"
+                          id="pollLastName"
+                          name="pollLastName"
+                          value={formState.pollLastName}
+                          onChange={handleInputChange}
+                          className="text-input"
+                          placeholder="Last Name"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                      <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                        <label htmlFor="pollGrade" style={{ fontSize: '0.9rem', fontWeight: 600 }}>Grade</label>
+                        <select
+                          id="pollGrade"
+                          name="pollGrade"
+                          value={formState.pollGrade}
+                          onChange={handleInputChange}
+                          className="select-input"
+                          required
+                        >
+                          <option value="" disabled>Select Grade</option>
+                          <option value="Grade 6">Grade 6</option>
+                          <option value="Grade 7">Grade 7</option>
+                          <option value="Grade 8">Grade 8</option>
+                          <option value="Grade 9">Grade 9</option>
+                          <option value="Grade 10">Grade 10</option>
+                          <option value="Grade 11">Grade 11</option>
+                          <option value="Grade 12">Grade 12</option>
+                        </select>
+                      </div>
+                      <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                        <label htmlFor="pollSchool" style={{ fontSize: '0.9rem', fontWeight: 600 }}>School</label>
+                        <input
+                          type="text"
+                          id="pollSchool"
+                          name="pollSchool"
+                          value={formState.pollSchool}
+                          onChange={handleInputChange}
+                          className="text-input"
+                          placeholder="School Name"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                      <label htmlFor="pollEmail" style={{ fontSize: '0.9rem', fontWeight: 600 }}>Email Address</label>
+                      <input
+                        type="email"
+                        id="pollEmail"
+                        name="pollEmail"
+                        value={formState.pollEmail}
+                        onChange={handleInputChange}
+                        className="text-input"
+                        placeholder="email@example.com"
+                        required
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div style={{ textAlign: 'center', marginTop: '1rem' }}>

@@ -1,15 +1,196 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../../../../firebase';
 
 const STRIPE_LINKS = {
   30: 'https://buy.stripe.com/placeholder-30-cad',
   60: 'https://buy.stripe.com/3cIeVf6OM99mg1D0LefEk01'
 };
 
+function PieChart({ data, title }) {
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+  const total = data.reduce((sum, item) => sum + item.value, 0);
+  
+  let accumulatedAngle = 0;
+  
+  if (total === 0) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '180px', color: '#94a3b8', flex: 1, background: 'rgba(15, 23, 42, 0.2)', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.05)', padding: '20px' }}>
+        <h4 style={{ margin: '0 0 10px', color: '#93c5fd', fontSize: '0.95rem', fontWeight: 600 }}>{title}</h4>
+        <p style={{ fontSize: '0.85rem', margin: 0 }}>No responses yet</p>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', background: 'rgba(15, 23, 42, 0.2)', border: '1px solid rgba(255, 255, 255, 0.05)', padding: '20px', borderRadius: '8px', flex: 1, minWidth: '280px' }}>
+      <h4 style={{ margin: '0 0 15px', color: '#93c5fd', fontSize: '0.95rem', textAlign: 'center', fontWeight: 600 }}>{title}</h4>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap', justifyContent: 'center', width: '100%' }}>
+        <svg width="120" height="120" viewBox="-70 -70 140 140" style={{ transform: 'rotate(-90deg)', overflow: 'visible' }}>
+          {data.map((item, index) => {
+            const percentage = (item.value / total) * 100;
+            if (percentage === 0) return null;
+            
+            const isHovered = hoveredIndex === index;
+            const scale = isHovered ? 1.05 : 1;
+            
+            if (percentage === 100) {
+              return (
+                <circle
+                  key={index}
+                  cx="0"
+                  cy="0"
+                  r="37.5"
+                  fill="none"
+                  stroke={item.color}
+                  strokeWidth="25"
+                  style={{
+                    transform: `scale(${scale})`,
+                    transformOrigin: '0px 0px',
+                    transition: 'transform 0.2s ease',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={() => setHoveredIndex(index)}
+                  onMouseLeave={() => setHoveredIndex(null)}
+                >
+                  <title>{`${item.label}: ${item.value} (${percentage.toFixed(1)}%)`}</title>
+                </circle>
+              );
+            }
+            
+            const startAngle = accumulatedAngle;
+            const endAngle = accumulatedAngle + (item.value / total) * 360;
+            accumulatedAngle = endAngle;
+
+            // Convert angles to radians
+            const radStart = (startAngle * Math.PI) / 180;
+            const radEnd = (endAngle * Math.PI) / 180;
+
+            // Outer points
+            const x1 = 50 * Math.cos(radStart);
+            const y1 = 50 * Math.sin(radStart);
+            const x2 = 50 * Math.cos(radEnd);
+            const y2 = 50 * Math.sin(radEnd);
+
+            // Inner points
+            const x1_in = 25 * Math.cos(radStart);
+            const y1_in = 25 * Math.sin(radStart);
+            const x2_in = 25 * Math.cos(radEnd);
+            const y2_in = 25 * Math.sin(radEnd);
+
+            const largeArcFlag = endAngle - startAngle > 180 ? 1 : 0;
+
+            const d = `
+              M ${x1_in} ${y1_in}
+              L ${x1} ${y1}
+              A 50 50 0 ${largeArcFlag} 1 ${x2} ${y2}
+              L ${x2_in} ${y2_in}
+              A 25 25 0 ${largeArcFlag} 0 ${x1_in} ${y1_in}
+              Z
+            `;
+
+            return (
+              <path
+                key={index}
+                d={d}
+                fill={item.color}
+                style={{
+                  transform: `scale(${scale})`,
+                  transformOrigin: '0px 0px',
+                  transition: 'transform 0.2s ease',
+                  cursor: 'pointer',
+                }}
+                onMouseEnter={() => setHoveredIndex(index)}
+                onMouseLeave={() => setHoveredIndex(null)}
+              >
+                <title>{`${item.label}: ${item.value} (${percentage.toFixed(1)}%)`}</title>
+              </path>
+            );
+          })}
+        </svg>
+
+        {/* Legend */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', minWidth: '120px', textAlign: 'left' }}>
+          {data.map((item, index) => {
+            const pct = total > 0 ? ((item.value / total) * 100).toFixed(1) : 0;
+            const isHovered = hoveredIndex === index;
+            return (
+              <div 
+                key={index} 
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '8px', 
+                  fontSize: '0.85rem', 
+                  color: isHovered ? '#ffffff' : '#cbd5e1',
+                  transition: 'color 0.2s ease',
+                  cursor: 'pointer'
+                }}
+                onMouseEnter={() => setHoveredIndex(index)}
+                onMouseLeave={() => setHoveredIndex(null)}
+              >
+                <span style={{ display: 'inline-block', width: '12px', height: '12px', borderRadius: '3px', backgroundColor: item.color }} />
+                <span style={{ fontWeight: isHovered ? 700 : 500 }}>{item.label}:</span>
+                <span style={{ color: isHovered ? '#93c5fd' : '#94a3b8' }}>{item.value} ({pct}%)</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function RegistrationSuccess() {
   const [feeOption, setFeeOption] = useState(60);
   const [paymentTab, setPaymentTab] = useState('etransfer');
   const [copyStatus, setCopyStatus] = useState('Copy Email');
+  const [pollStats, setPollStats] = useState({
+    q1Yes: 0,
+    q1No: 0,
+    q2Sep: 0,
+    q2Oct: 0,
+    q2Nov: 0,
+    loading: true
+  });
+
+  useEffect(() => {
+    const fetchPolls = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'polls'));
+        let q1Yes = 0;
+        let q1No = 0;
+        let q2Sep = 0;
+        let q2Oct = 0;
+        let q2Nov = 0;
+
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          if (data.q1 === 'Yes') q1Yes++;
+          else if (data.q1 === 'No') q1No++;
+
+          if (data.q2 === 'September') q2Sep++;
+          else if (data.q2 === 'October') q2Oct++;
+          else if (data.q2 === 'November') q2Nov++;
+        });
+
+        setPollStats({
+          q1Yes,
+          q1No,
+          q2Sep,
+          q2Oct,
+          q2Nov,
+          loading: false
+        });
+      } catch (err) {
+        console.error("Error fetching poll data:", err);
+        setPollStats(prev => ({ ...prev, loading: false }));
+      }
+    };
+
+    fetchPolls();
+  }, []);
 
   const copyEmail = () => {
     navigator.clipboard.writeText('ucds.debate@gmail.com').then(() => {
@@ -141,6 +322,37 @@ export default function RegistrationSuccess() {
                   <p style={{ fontSize: '0.95rem', color: '#cbd5e1', marginBottom: '20px', lineHeight: 1.6 }}>
                     Direct card payments via Stripe are currently under maintenance and will be available soon. Please use **Interac E-Transfer** to complete your Calgary Summer Cup registration.
                   </p>
+                </div>
+              )}
+            </div>
+
+            {/* Poll Results Section */}
+            <div style={{ background: 'rgba(15, 23, 42, 0.4)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', padding: '25px', marginBottom: '2rem', textAlign: 'left' }}>
+              <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#ffffff', marginBottom: '1.25rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                📊 Public Interest Poll Results
+              </h2>
+
+              {pollStats.loading ? (
+                <div style={{ textAlign: 'center', color: '#94a3b8', padding: '40px 0' }}>
+                  <p>Loading poll results...</p>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', justifyContent: 'space-between', marginTop: '10px' }}>
+                  <PieChart
+                    title="Q1: Interested in In-Person Tournament?"
+                    data={[
+                      { label: 'Yes', value: pollStats.q1Yes, color: '#10b981' },
+                      { label: 'No', value: pollStats.q1No, color: '#ef4444' }
+                    ]}
+                  />
+                  <PieChart
+                    title="Q2: Preferred Month"
+                    data={[
+                      { label: 'September', value: pollStats.q2Sep, color: '#3b82f6' },
+                      { label: 'October', value: pollStats.q2Oct, color: '#8b5cf6' },
+                      { label: 'November', value: pollStats.q2Nov, color: '#f59e0b' }
+                    ]}
+                  />
                 </div>
               )}
             </div>
