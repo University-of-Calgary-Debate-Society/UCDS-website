@@ -16,6 +16,7 @@ export default function MembershipSignUp() {
   const [ucid, setUcid] = useState('');
   const [program, setProgram] = useState('');
   const [year, setYear] = useState('');
+  const [membershipType, setMembershipType] = useState('Standard Student');
   const [feesWaived, setFeesWaived] = useState('no'); // 'yes' or 'no'
   const [newsletterSubscribe, setNewsletterSubscribe] = useState(true);
 
@@ -120,6 +121,8 @@ export default function MembershipSignUp() {
         active: newsletterSubscribe,
         'newsletter-subscribe': newsletterSubscribe,
         grade: year,
+        membershipType: membershipType,
+        fees_paid: membershipType === 'None' ? true : false,
         institution: 'University of Calgary',
         club: 'The University of Calgary Debate Society',
         city: 'Calgary',
@@ -143,8 +146,10 @@ export default function MembershipSignUp() {
         judge: interests.judge,
         volunteer: interests.volunteer,
         chilling: interests.chill,
-        fees_paid: false,
-        alumni: false,
+        fees_paid: membershipType === 'None' ? true : false,
+        payment_method: membershipType === 'None' ? 'None' : '',
+        alumni: membershipType === 'Alumni',
+        membershipType: membershipType,
         subscriberId: subDocRef.id, // linked reference
         'newsletter-subscribe': newsletterSubscribe,
         institution: 'University of Calgary',
@@ -400,6 +405,36 @@ export default function MembershipSignUp() {
                       <option key={i + 1} value={String(i + 1)} style={{ color: '#fff' }}>Year {i + 1}</option>
                     ))}
                   </select>
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="membershipType">Membership Type to Apply For</label>
+                <div style={{ position: 'relative' }}>
+                  <select
+                    id="membershipType"
+                    className="select-input"
+                    value={membershipType}
+                    onChange={e => setMembershipType(e.target.value)}
+                    style={{ appearance: 'none', width: '100%' }}
+                  >
+                    <option value="Standard Student" style={{ color: '#fff' }}>Standard Student ($20.00/yr)</option>
+                    <option value="Executive" style={{ color: '#fff' }}>Executive ($20.00/yr)</option>
+                    <option value="Alumni" style={{ color: '#fff' }}>Alumni ($20.00/yr)</option>
+                    <option value="Coach/Judge" style={{ color: '#fff' }}>Coach/Judge ($20.00/yr)</option>
+                    <option value="Community" style={{ color: '#fff' }}>Community ($20.00/yr)</option>
+                    <option value="None" style={{ color: '#fff' }}>None (Free - $0.00/yr)</option>
+                  </select>
+                  <div style={{
+                    position: 'absolute',
+                    right: '15px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    pointerEvents: 'none',
+                    color: '#94a3b8'
+                  }}>
+                    ▼
+                  </div>
                 </div>
               </div>
 

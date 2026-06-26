@@ -19,6 +19,7 @@ export default function MembershipManager() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterAlumni, setFilterAlumni] = useState('all'); // 'all', 'active', 'alumni'
   const [filterPayment, setFilterPayment] = useState('all'); // 'all', 'paid', 'unpaid', 'etrans_pending', 'waiver_pending'
+  const [filterType, setFilterType] = useState('all');
 
   // Modal / Form state
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -39,6 +40,7 @@ export default function MembershipManager() {
   const [paymentReference, setPaymentReference] = useState('');
   const [feeWaiverRequested, setFeeWaiverRequested] = useState(false);
   const [feeWaiverReason, setFeeWaiverReason] = useState('');
+  const [membershipType, setMembershipType] = useState('Standard Student');
 
   // Interests check
   const [interests, setInterests] = useState({
@@ -105,6 +107,7 @@ export default function MembershipManager() {
     setYear('');
     setFeesPaid(true); // Default to true when manually adding
     setAlumni(false);
+    setMembershipType('Standard Student');
     setPaymentMethod('Cash / Manual');
     setPaymentReference('MANUAL-ADD-' + Math.random().toString(36).substring(2, 7).toUpperCase());
     setFeeWaiverRequested(false);
@@ -125,6 +128,7 @@ export default function MembershipManager() {
     setYear(member.grade || '');
     setFeesPaid(!!member.fees_paid);
     setAlumni(!!member.alumni);
+    setMembershipType(member.membershipType || 'Standard Student');
     setPaymentMethod(member.payment_method || '');
     setPaymentReference(member.payment_reference || '');
     setFeeWaiverRequested(!!member.fee_waiver_requested);
@@ -175,6 +179,7 @@ export default function MembershipManager() {
           grade: year,
           fees_paid: feesPaid,
           alumni: alumni,
+          membershipType: membershipType,
           payment_method: paymentMethod,
           payment_reference: paymentReference,
           fee_waiver_requested: feeWaiverRequested,
@@ -197,6 +202,7 @@ export default function MembershipManager() {
           grade: year,
           fees_paid: feesPaid,
           alumni: alumni,
+          membershipType: membershipType,
           updatedAt: new Date().toISOString()
         };
 
@@ -247,6 +253,7 @@ export default function MembershipManager() {
           grade: year,
           fees_paid: feesPaid,
           alumni: alumni,
+          membershipType: membershipType,
           institution: 'University of Calgary',
           club: 'The University of Calgary Debate Society',
           city: 'Calgary',
@@ -268,6 +275,7 @@ export default function MembershipManager() {
           grade: year,
           fees_paid: feesPaid,
           alumni: alumni,
+          membershipType: membershipType,
           payment_method: paymentMethod,
           payment_reference: paymentReference,
           fee_waiver_requested: feeWaiverRequested,
@@ -496,6 +504,11 @@ export default function MembershipManager() {
       result = result.filter(m => m.alumni);
     }
 
+    // Membership Type filter
+    if (filterType !== 'all') {
+      result = result.filter(m => (m.membershipType || 'Standard Student') === filterType);
+    }
+
     // Payment status filter
     if (filterPayment === 'paid') {
       result = result.filter(m => m.fees_paid);
@@ -508,7 +521,7 @@ export default function MembershipManager() {
     }
 
     return result;
-  }, [members, searchTerm, filterAlumni, filterPayment]);
+  }, [members, searchTerm, filterAlumni, filterPayment, filterType]);
 
   return (
     <main style={{ minHeight: '90vh' }}>
@@ -616,6 +629,30 @@ export default function MembershipManager() {
                 <option value="waiver_pending">Fee Waiver Requested</option>
               </select>
             </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+              <label style={{ fontSize: '0.85rem', color: '#cbd5e1' }}>Membership Type Filter</label>
+              <select
+                value={filterType}
+                onChange={e => setFilterType(e.target.value)}
+                style={{
+                  padding: '0.6rem 1rem',
+                  background: 'rgba(0, 0, 0, 0.25)',
+                  border: '1px solid rgba(255, 255, 255, 0.15)',
+                  borderRadius: '8px',
+                  color: '#ffffff',
+                  outline: 'none'
+                }}
+              >
+                <option value="all">All Membership Types</option>
+                <option value="Standard Student">Standard Student</option>
+                <option value="Executive">Executive</option>
+                <option value="Alumni">Alumni</option>
+                <option value="Coach/Judge">Coach/Judge</option>
+                <option value="Community">Community</option>
+                <option value="None">None</option>
+              </select>
+            </div>
           </div>
 
           {/* Members Table */}
@@ -635,7 +672,7 @@ export default function MembershipManager() {
                     <th style={{ padding: '0.75rem', fontWeight: 700 }}>Emails & UCID</th>
                     <th style={{ padding: '0.75rem', fontWeight: 700 }}>Year / Program</th>
                     <th style={{ padding: '0.75rem', fontWeight: 700 }}>Interests</th>
-                    <th style={{ padding: '0.75rem', fontWeight: 700 }}>Alumni Status</th>
+                    <th style={{ padding: '0.75rem', fontWeight: 700 }}>Type & Status</th>
                     <th style={{ padding: '0.75rem', fontWeight: 700 }}>Payment Dues</th>
                     <th style={{ padding: '0.75rem', fontWeight: 700, textAlign: 'right' }}>Actions</th>
                   </tr>
@@ -674,19 +711,34 @@ export default function MembershipManager() {
                         </div>
                       </td>
 
-                      {/* Alumni Status */}
+                      {/* Type & Status */}
                       <td style={{ padding: '0.75rem' }}>
-                        <span style={{
-                          display: 'inline-block',
-                          padding: '0.2rem 0.6rem',
-                          borderRadius: '4px',
-                          fontSize: '0.8rem',
-                          fontWeight: 600,
-                          background: member.alumni ? 'rgba(139, 92, 246, 0.15)' : 'rgba(16, 185, 129, 0.15)',
-                          color: member.alumni ? '#a78bfa' : '#34d399'
-                        }}>
-                          {member.alumni ? 'Alumni' : 'Active Member'}
-                        </span>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', alignItems: 'flex-start' }}>
+                          <span style={{
+                            display: 'inline-block',
+                            padding: '0.2rem 0.6rem',
+                            borderRadius: '4px',
+                            fontSize: '0.8rem',
+                            fontWeight: 600,
+                            background: 'rgba(59, 130, 246, 0.15)',
+                            color: '#60a5fa'
+                          }}>
+                            {member.membershipType || 'Standard Student'}
+                          </span>
+                          {member.alumni && (
+                            <span style={{
+                              display: 'inline-block',
+                              padding: '0.2rem 0.6rem',
+                              borderRadius: '4px',
+                              fontSize: '0.75rem',
+                              fontWeight: 600,
+                              background: 'rgba(139, 92, 246, 0.15)',
+                              color: '#a78bfa'
+                            }}>
+                              Alumni
+                            </span>
+                          )}
+                        </div>
                       </td>
 
                       {/* Payment Dues */}
@@ -943,26 +995,49 @@ export default function MembershipManager() {
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '1rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <input 
-                    type="checkbox"
-                    id="feesPaid"
-                    checked={feesPaid}
-                    onChange={e => setFeesPaid(e.target.checked)}
-                    style={{ width: '18px', height: '18px', cursor: 'pointer' }}
-                  />
-                  <label htmlFor="feesPaid" style={{ fontSize: '0.85rem', color: '#cbd5e1', cursor: 'pointer' }}>Fees Paid ($20.00)</label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                  <label style={{ fontSize: '0.8rem', color: '#cbd5e1' }}>Membership Type</label>
+                  <select
+                    value={membershipType}
+                    onChange={e => {
+                      setMembershipType(e.target.value);
+                      if (e.target.value === 'Alumni') {
+                        setAlumni(true);
+                      }
+                    }}
+                    style={{ padding: '0.6rem 0.8rem', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '6px', color: '#fff' }}
+                  >
+                    <option value="Standard Student">Standard Student</option>
+                    <option value="Executive">Executive</option>
+                    <option value="Alumni">Alumni</option>
+                    <option value="Coach/Judge">Coach/Judge</option>
+                    <option value="Community">Community</option>
+                    <option value="None">None</option>
+                  </select>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <input 
-                    type="checkbox"
-                    id="alumniCheck"
-                    checked={alumni}
-                    onChange={e => setAlumni(e.target.checked)}
-                    style={{ width: '18px', height: '18px', cursor: 'pointer' }}
-                  />
-                  <label htmlFor="alumniCheck" style={{ fontSize: '0.85rem', color: '#cbd5e1', cursor: 'pointer' }}>Mark as Alumni</label>
+                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '0.75rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <input 
+                      type="checkbox"
+                      id="feesPaid"
+                      checked={feesPaid}
+                      onChange={e => setFeesPaid(e.target.checked)}
+                      style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+                    />
+                    <label htmlFor="feesPaid" style={{ fontSize: '0.85rem', color: '#cbd5e1', cursor: 'pointer' }}>Fees Paid ($20.00)</label>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <input 
+                      type="checkbox"
+                      id="alumniCheck"
+                      checked={alumni}
+                      onChange={e => setAlumni(e.target.checked)}
+                      style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+                    />
+                    <label htmlFor="alumniCheck" style={{ fontSize: '0.85rem', color: '#cbd5e1', cursor: 'pointer' }}>Mark as Alumni</label>
+                  </div>
                 </div>
               </div>
 

@@ -390,7 +390,9 @@ export default function MembershipFees() {
                 <div className="form-section-card" style={{ background: 'rgba(17, 40, 84, 0.45)', border: '1px solid rgba(16, 185, 129, 0.3)', padding: '3rem', borderRadius: '1.25rem', textAlign: 'center' }}>
                   <h3 style={{ color: '#10b981', marginBottom: '1rem', fontSize: '1.8rem' }}>🎉 Welcome to UCDS!</h3>
                   <p style={{ color: '#cbd5e1', fontSize: '1.1rem', marginBottom: '2rem' }}>
-                    Your general membership fee is fully paid and confirmed. You are officially an active general member in good standing of the University of Calgary Debate Society!
+                    {memberData.membershipType === 'None'
+                      ? "Your membership registration is confirmed. You are officially registered with the University of Calgary Debate Society!"
+                      : "Your general membership fee is fully paid and confirmed. You are officially an active general member in good standing of the University of Calgary Debate Society!"}
                   </p>
                   <Link to="/" className="exec-btn" style={{ textDecoration: 'none', background: '#3b82f6', color: '#ffffff', padding: '0.8rem 2rem', borderRadius: '999px', fontWeight: 700 }}>
                     Return to Homepage
