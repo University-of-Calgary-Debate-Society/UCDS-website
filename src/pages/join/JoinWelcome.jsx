@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db } from '../../firebase';
 
 export default function JoinWelcome() {
   const [name, setName] = useState('');
@@ -54,7 +54,7 @@ export default function JoinWelcome() {
           <div className="section-header">
             <h1>Welcome to the UCDS</h1>
           </div>
-          
+
           <div style={{ maxWidth: '600px', margin: '3rem auto 0' }}>
             <article className="card" style={{ background: '#112854', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '1.25rem', padding: '2.5rem', color: '#ffffff' }}>
               <h3 style={{ color: '#60a5fa', fontSize: '1.5rem', fontWeight: 'bold', borderBottom: 'none', paddingBottom: 0, marginTop: 0, marginBottom: '1rem' }}>
@@ -63,37 +63,37 @@ export default function JoinWelcome() {
               <p style={{ color: '#cbd5e1', lineHeight: '1.6', marginBottom: '2rem' }}>
                 Stay in the loop with our monthly newsletter. Get updates on upcoming events, tournament results, general details, and debate resources delivered straight to your inbox.
               </p>
-              
+
               <form onSubmit={handleSubscribe} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', textAlign: 'left' }}>
                 <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                   <label htmlFor="welcomeName" style={{ fontWeight: 600, fontSize: '0.9rem', color: '#cbd5e1' }}>Full Name (Optional)</label>
-                  <input 
-                    type="text" 
-                    id="welcomeName" 
+                  <input
+                    type="text"
+                    id="welcomeName"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="text-input" 
-                    placeholder="John Doe" 
+                    className="text-input"
+                    placeholder="John Doe"
                   />
                 </div>
-                
+
                 <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                   <label htmlFor="welcomeEmail" style={{ fontWeight: 600, fontSize: '0.9rem', color: '#cbd5e1' }}>Email Address *</label>
-                  <input 
-                    type="email" 
-                    id="welcomeEmail" 
-                    required 
+                  <input
+                    type="email"
+                    id="welcomeEmail"
+                    required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="text-input" 
-                    placeholder="name@example.com" 
+                    className="text-input"
+                    placeholder="name@example.com"
                   />
                 </div>
-                
-                <button 
-                  type="submit" 
+
+                <button
+                  type="submit"
                   disabled={isSubmitting}
-                  className="button" 
+                  className="button"
                   style={{ width: '100%', padding: '0.95rem', fontSize: '1rem', fontWeight: '600', border: 'none', borderRadius: '999px', background: '#2563eb', color: '#ffffff', cursor: 'pointer' }}
                 >
                   {isSubmitting ? 'Submitting...' : 'Subscribe Now'}

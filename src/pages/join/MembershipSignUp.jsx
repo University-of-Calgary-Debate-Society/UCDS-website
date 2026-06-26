@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { collection, query, where, getDocs, addDoc } from 'firebase/firestore';
-import { db } from '../firebase';
-import { useDialog } from '../context/DialogContext';
+import { db } from '../../firebase';
+import { useDialog } from '../../context/DialogContext';
 
 export default function MembershipSignUp() {
   const navigate = useNavigate();
@@ -560,9 +560,9 @@ export default function MembershipSignUp() {
 
               {/* Newsletter subscription checkbox */}
               <div className="form-group" style={{ marginTop: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem' }}>
-                <input 
-                  type="checkbox" 
-                  id="newsletterSubscribe" 
+                <input
+                  type="checkbox"
+                  id="newsletterSubscribe"
                   checked={newsletterSubscribe}
                   onChange={e => setNewsletterSubscribe(e.target.checked)}
                   style={{ width: '18px', height: '18px', cursor: 'pointer' }}

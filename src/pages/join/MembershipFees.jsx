@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { doc, getDoc, updateDoc, collection, getDocs, addDoc } from 'firebase/firestore';
-import { db } from '../firebase';
-import { useDialog } from '../context/DialogContext';
+import { db } from '../../firebase';
+import { useDialog } from '../../context/DialogContext';
 
 export default function MembershipFees() {
   const location = useLocation();
@@ -274,7 +274,7 @@ export default function MembershipFees() {
     <main style={{ minHeight: '80vh', display: 'flex', flexDirection: 'column' }}>
       <section className="section" style={{ background: '#0b1a3a', padding: '4rem 0', flex: 1 }}>
         <div className="container" style={{ maxWidth: '900px' }}>
-          
+
           <div className="section-header" style={{ textAlign: 'center', marginBottom: '3rem' }}>
             <h1 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '3rem', fontWeight: 800, color: '#ffffff', marginBottom: '1rem' }}>
               Complete Registration
@@ -288,9 +288,9 @@ export default function MembershipFees() {
             <div className="form-section-card" style={{ background: 'rgba(17, 40, 84, 0.45)', border: '1px solid rgba(59, 130, 246, 0.2)', padding: '3rem', borderRadius: '1.25rem', textAlign: 'center' }}>
               <h3 style={{ color: '#ffffff', marginBottom: '1.5rem' }}>Lookup Your Application</h3>
               <p style={{ color: '#cbd5e1', marginBottom: '2rem' }}>If you have already signed up, enter your email address to select a payment option.</p>
-              
+
               <form onSubmit={handleLookup} style={{ display: 'flex', gap: '1rem', justifyContent: 'center', maxWidth: '500px', margin: '0 auto' }}>
-                <input 
+                <input
                   type="email"
                   placeholder="email@example.com"
                   value={emailLookup}
@@ -307,7 +307,7 @@ export default function MembershipFees() {
                   }}
                   required
                 />
-                <button 
+                <button
                   type="submit"
                   disabled={searching}
                   style={{
@@ -332,7 +332,7 @@ export default function MembershipFees() {
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
-              
+
               {/* Member Profile Summary */}
               <div className="form-section-card" style={{ background: 'rgba(17, 40, 84, 0.45)', border: '1px solid rgba(59, 130, 246, 0.2)', padding: '2rem', borderRadius: '1.25rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.5rem' }}>
@@ -351,32 +351,31 @@ export default function MembershipFees() {
                       borderRadius: '999px',
                       fontSize: '0.9rem',
                       fontWeight: 700,
-                      background: memberData.fees_paid 
-                        ? 'rgba(16, 185, 129, 0.15)' 
+                      background: memberData.fees_paid
+                        ? 'rgba(16, 185, 129, 0.15)'
                         : memberData.payment_method === 'Waiver'
                           ? 'rgba(245, 158, 11, 0.15)'
                           : memberData.payment_method === 'E-Transfer'
                             ? 'rgba(14, 165, 233, 0.15)'
                             : 'rgba(239, 68, 68, 0.15)',
-                      color: memberData.fees_paid 
-                        ? '#10b981' 
+                      color: memberData.fees_paid
+                        ? '#10b981'
                         : memberData.payment_method === 'Waiver'
                           ? '#f59e0b'
                           : memberData.payment_method === 'E-Transfer'
                             ? '#0ea5e9'
                             : '#ef4444',
-                      border: `1px solid ${
-                        memberData.fees_paid 
-                          ? 'rgba(16, 185, 129, 0.3)' 
+                      border: `1px solid ${memberData.fees_paid
+                          ? 'rgba(16, 185, 129, 0.3)'
                           : memberData.payment_method === 'Waiver'
                             ? 'rgba(245, 158, 11, 0.3)'
                             : memberData.payment_method === 'E-Transfer'
                               ? 'rgba(14, 165, 233, 0.3)'
                               : 'rgba(239, 68, 68, 0.3)'
-                      }`
+                        }`
                     }}>
-                      Status: {memberData.fees_paid 
-                        ? 'Active Member (Paid)' 
+                      Status: {memberData.fees_paid
+                        ? 'Active Member (Paid)'
                         : memberData.payment_method === 'Waiver'
                           ? 'Waiver Requested (Pending Review)'
                           : memberData.payment_method === 'E-Transfer'
@@ -416,7 +415,7 @@ export default function MembershipFees() {
                     borderRadius: '10px',
                     border: '1px solid rgba(255, 255, 255, 0.05)'
                   }}>
-                    <button 
+                    <button
                       type="button"
                       onClick={() => setActiveTab('etransfer')}
                       style={{
@@ -435,7 +434,7 @@ export default function MembershipFees() {
                     >
                       💸 Interac E-Transfer
                     </button>
-                    <button 
+                    <button
                       type="button"
                       onClick={() => setActiveTab('stripe')}
                       style={{
@@ -453,7 +452,7 @@ export default function MembershipFees() {
                     >
                       💳 Card (Coming Soon)
                     </button>
-                    <button 
+                    <button
                       type="button"
                       onClick={() => setActiveTab('waiver')}
                       style={{
@@ -479,7 +478,7 @@ export default function MembershipFees() {
                     {activeTab === 'etransfer' && (
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                         <h4 style={{ color: '#ffffff', fontSize: '1.3rem', fontWeight: 800, margin: 0 }}>💸 Option 1: Interac E-Transfer</h4>
-                        
+
                         <div style={{
                           background: 'rgba(34, 197, 94, 0.1)',
                           border: '1px solid rgba(34, 197, 94, 0.2)',
@@ -498,7 +497,7 @@ export default function MembershipFees() {
                         </p>
 
                         <div style={{ display: 'flex', marginTop: '0.5rem' }}>
-                          <button 
+                          <button
                             type="button"
                             onClick={handleETransferDone}
                             style={{
@@ -537,11 +536,11 @@ export default function MembershipFees() {
                         <p style={{ color: '#cbd5e1', margin: 0, lineHeight: '1.6', fontSize: '0.95rem' }}>
                           Debaters in financial situations that prevent them from paying fees are eligible to have their registration fee and other associated costs subsidized. Please fill out the details below:
                         </p>
-                        
+
                         <form onSubmit={handleWaiverSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                           <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                             <label htmlFor="waiverReason" style={{ fontSize: '0.9rem', color: '#cbd5e1' }}>Why are you choosing this option?</label>
-                            <textarea 
+                            <textarea
                               id="waiverReason"
                               rows="3"
                               placeholder="Please provide details (financial hardship, student budget constraints, etc.) so we can review your waiver request."
@@ -561,7 +560,7 @@ export default function MembershipFees() {
                               required
                             />
                           </div>
-                          <button 
+                          <button
                             type="submit"
                             disabled={submittingWaiver}
                             style={{
@@ -617,7 +616,7 @@ export default function MembershipFees() {
             boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
             position: 'relative'
           }}>
-            <button 
+            <button
               onClick={() => { if (!stripeProcessing) setShowStripeModal(false); }}
               style={{
                 position: 'absolute',
@@ -667,11 +666,11 @@ export default function MembershipFees() {
               </div>
             ) : (
               <form onSubmit={handleStripePayment} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                
+
                 <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                   <label htmlFor="cardNo" style={{ fontSize: '0.85rem', color: '#cbd5e1' }}>Card Number</label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     id="cardNo"
                     placeholder="4242 •••• •••• 4242"
                     value={cardNumber}
@@ -686,15 +685,15 @@ export default function MembershipFees() {
                       fontSize: '1rem',
                       outline: 'none'
                     }}
-                    required 
+                    required
                   />
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
                   <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                     <label htmlFor="cardExp" style={{ fontSize: '0.85rem', color: '#cbd5e1' }}>Expiry Date</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       id="cardExp"
                       placeholder="MM / YY"
                       value={cardExpiry}
@@ -709,14 +708,14 @@ export default function MembershipFees() {
                         fontSize: '1rem',
                         outline: 'none'
                       }}
-                      required 
+                      required
                     />
                   </div>
 
                   <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                     <label htmlFor="cardCvc" style={{ fontSize: '0.85rem', color: '#cbd5e1' }}>CVC</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       id="cardCvc"
                       placeholder="123"
                       value={cardCvc}
@@ -731,15 +730,15 @@ export default function MembershipFees() {
                         fontSize: '1rem',
                         outline: 'none'
                       }}
-                      required 
+                      required
                     />
                   </div>
                 </div>
 
                 <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                   <label htmlFor="cardZip" style={{ fontSize: '0.85rem', color: '#cbd5e1' }}>Postal / ZIP Code</label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     id="cardZip"
                     placeholder="T2N 1N4"
                     value={cardZip}
@@ -754,11 +753,11 @@ export default function MembershipFees() {
                       fontSize: '1rem',
                       outline: 'none'
                     }}
-                    required 
+                    required
                   />
                 </div>
 
-                <button 
+                <button
                   type="submit"
                   style={{
                     background: '#6366f1',

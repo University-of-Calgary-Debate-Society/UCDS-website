@@ -11,6 +11,11 @@ import Registration from './pages/Registration';
 import RegistrationSuccess from './pages/RegistrationSuccess';
 import Blog from './pages/Blog';
 import Resources from './pages/Resources';
+import Constitution from './pages/Constitution';
+import Internal from './pages/resources/Internal';
+import Practice from './pages/resources/Practice';
+import External from './pages/resources/External';
+import Matter from './pages/resources/Matter';
 import Connect from './pages/Connect';
 import Socials from './pages/Socials';
 import Calendar from './pages/Calendar';
@@ -51,6 +56,13 @@ function RouteObserver() {
       document.body.classList.remove('events-body');
     }
 
+    // Set body background to black on void routes, fall back to global css theme elsewhere
+    if (path.startsWith('/void')) {
+      document.body.style.backgroundColor = '#000000';
+    } else {
+      document.body.style.backgroundColor = '';
+    }
+
     // Set document title based on path
     let pageTitle = 'Home';
     switch (path) {
@@ -74,6 +86,22 @@ function RouteObserver() {
         break;
       case '/resources':
         pageTitle = 'Resources';
+        break;
+      case '/resources/internal':
+        pageTitle = 'Internal Resources';
+        break;
+      case '/resources/practice':
+        pageTitle = 'Practice Resources';
+        break;
+      case '/resources/external':
+        pageTitle = 'External Resources';
+        break;
+      case '/resources/matter':
+        pageTitle = 'Matter Files';
+        break;
+      case '/resources/internal/constitution':
+      case '/resources/internal/consitution':
+        pageTitle = 'Constitution';
         break;
       case '/connect':
         pageTitle = 'Connect';
@@ -211,6 +239,12 @@ function AnimatedRoutes() {
         <Route path="/events/calgary-summer-cup/registration/success" element={<RegistrationSuccess />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/resources" element={<Resources />} />
+        <Route path="/resources/internal" element={<Internal />} />
+        <Route path="/resources/practice" element={<Practice />} />
+        <Route path="/resources/external" element={<External />} />
+        <Route path="/resources/matter" element={<Matter />} />
+        <Route path="/resources/internal/constitution" element={<Constitution />} />
+        <Route path="/resources/internal/consitution" element={<Constitution />} />
         <Route path="/connect" element={<Connect />} />
         <Route path="/socials" element={<Socials />} />
         <Route path="/calendar" element={<Calendar />} />

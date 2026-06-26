@@ -1,0 +1,162 @@
+/* Resources Page Specific CSS */
+
+.resources-page-container {
+  position: relative;
+  overflow: hidden; /* Prevent background icons from stretching width/height and causing scrollbars */
+  width: 100%;
+}
+
+/* Container for background decorations */
+.resources-bg-decorations {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+/* Base floating icon styles */
+.floating-bg-icon {
+  position: absolute;
+  opacity: 0.04;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Animations */
+@keyframes float-slow {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(4deg);
+  }
+}
+
+@keyframes float-medium {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-30px) rotate(-6deg);
+  }
+}
+
+@keyframes float-fast {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-15px) rotate(8deg);
+  }
+}
+
+.float-anim-slow {
+  animation: float-slow 12s ease-in-out infinite;
+}
+
+.float-anim-medium {
+  animation: float-medium 9s ease-in-out infinite;
+}
+
+.float-anim-fast {
+  animation: float-fast 6s ease-in-out infinite;
+}
+
+/* Hover effects for cards to make it premium */
+.resources-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+  z-index: 1;
+  position: relative;
+}
+
+.resources-card {
+  background: #112854;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  padding: 2.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.resources-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(96, 165, 250, 0.4);
+  box-shadow: 0 12px 30px rgba(96, 165, 250, 0.1);
+  background: #153066;
+}
+
+/* Recommended resources section styles */
+.recommended-section {
+  margin-top: 6rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 4rem;
+  position: relative;
+  z-index: 1;
+}
+
+.recommended-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.recommended-header h3 {
+  font-size: 2rem;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+}
+
+.recommended-header p {
+  color: #94a3b8;
+  font-size: 1.05rem;
+}
+
+.recommended-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
+.recommended-item {
+  background: rgba(17, 40, 84, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.recommended-item:hover {
+  background: rgba(17, 40, 84, 0.8);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: scale(1.02);
+}
+
+.recommended-item h4 {
+  color: #60a5fa;
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.recommended-item p {
+  color: #cbd5e1;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+}

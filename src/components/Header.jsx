@@ -94,7 +94,16 @@ export default function Header() {
             </div>
           </div>
           <NavLink to="/blog" onClick={closeMenu}>Blog</NavLink>
-          <NavLink to="/resources" onClick={closeMenu}>Resources</NavLink>
+          <div className="nav-dropdown-wrapper">
+            <NavLink to="/resources" className="nav-dropdown-trigger" onClick={closeMenu}>Resources</NavLink>
+            <div className="nav-dropdown-menu">
+              <Link to="/resources" onClick={closeMenu}>Overview</Link>
+              <Link to="/resources/internal" onClick={closeMenu}>Internal Resources</Link>
+              <Link to="/resources/practice" onClick={closeMenu}>Practice & Training</Link>
+              <Link to="/resources/external" onClick={closeMenu}>External Resources</Link>
+              <Link to="/resources/matter" onClick={closeMenu}>Matter Files</Link>
+            </div>
+          </div>
           <div className="nav-dropdown-wrapper">
             <NavLink to="/connect" className="nav-dropdown-trigger" onClick={closeMenu}>Connect</NavLink>
             <div className="nav-dropdown-menu">

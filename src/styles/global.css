@@ -31,16 +31,19 @@ body {
   line-height: 1.6;
   animation: fadeInPage 0.8s ease-in-out forwards;
   min-height: 100%;
+  background-color: #0b1a3a;
 }
 
 #root {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  background-color: #0b1a3a;
 }
 
 .page-transition-wrapper {
   flex: 1 0 auto;
+  background-color: #0b1a3a;
 }
 
 /* Typography Overrides */
