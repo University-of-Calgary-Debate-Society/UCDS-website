@@ -50,6 +50,102 @@ function RouteObserver() {
       document.body.classList.remove('events-body');
     }
 
+    // Set document title based on path
+    let pageTitle = 'Home';
+    switch (path) {
+      case '/':
+        pageTitle = 'Home';
+        break;
+      case '/events':
+        pageTitle = 'Events';
+        break;
+      case '/events/calgary-summer-cup':
+        pageTitle = 'Calgary Summer Cup';
+        break;
+      case '/events/calgary-summer-cup/registration':
+        pageTitle = 'Summer Cup Registration';
+        break;
+      case '/events/calgary-summer-cup/registration/success':
+        pageTitle = 'Registration Success';
+        break;
+      case '/blog':
+        pageTitle = 'Blog';
+        break;
+      case '/resources':
+        pageTitle = 'Resources';
+        break;
+      case '/connect':
+        pageTitle = 'Connect';
+        break;
+      case '/socials':
+        pageTitle = 'Socials';
+        break;
+      case '/calendar':
+        pageTitle = 'Calendar';
+        break;
+      case '/connect/unsubscribe':
+        pageTitle = 'Unsubscribe';
+        break;
+      case '/join':
+        pageTitle = 'Join UCDS';
+        break;
+      case '/join/welcome':
+        pageTitle = 'Welcome';
+        break;
+      case '/void':
+        pageTitle = 'Void';
+        break;
+      case '/void/discord':
+        pageTitle = 'Discord Bot';
+        break;
+      case '/void/discord/terms-and-privacy':
+        pageTitle = 'Discord Terms & Privacy';
+        break;
+      case '/executive':
+        pageTitle = 'Executive Portal';
+        break;
+      case '/executive/roster':
+        pageTitle = 'Roster Manager';
+        break;
+      case '/executive/ledger':
+        pageTitle = 'Ledger Manager';
+        break;
+      case '/executive/email':
+        pageTitle = 'Email Campaign Manager';
+        break;
+      case '/executive/blog':
+        pageTitle = 'Blog Manager';
+        break;
+      case '/executive/access':
+        pageTitle = 'Access Control Manager';
+        break;
+      case '/executive/posts':
+        pageTitle = 'Posts Manager';
+        break;
+      case '/executive/calendar':
+        pageTitle = 'Calendar Manager';
+        break;
+      case '/executive/debug':
+        pageTitle = 'Debug Portal';
+        break;
+      case '/executive/membership':
+        pageTitle = 'Membership Manager';
+        break;
+      case '/membership-sign-up':
+        pageTitle = 'Membership Sign-Up';
+        break;
+      case '/membership-sign-up/fees':
+        pageTitle = 'Membership Fees';
+        break;
+      default:
+        if (path.startsWith('/executive/')) {
+          pageTitle = 'Executive Manager';
+        } else {
+          pageTitle = 'UCDS';
+        }
+    }
+    document.title = `UCDS | ${pageTitle}`;
+
     if (path === '/join') {
       document.documentElement.classList.add('join-page');
       document.body.classList.add('join-page');
