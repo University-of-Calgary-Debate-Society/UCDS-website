@@ -40,7 +40,7 @@ export default function MembershipManager() {
   const [paymentReference, setPaymentReference] = useState('');
   const [feeWaiverRequested, setFeeWaiverRequested] = useState(false);
   const [feeWaiverReason, setFeeWaiverReason] = useState('');
-  const [membershipType, setMembershipType] = useState('Standard Student');
+  const [membershipType, setMembershipType] = useState('General member');
 
   // Interests check
   const [interests, setInterests] = useState({
@@ -107,7 +107,7 @@ export default function MembershipManager() {
     setYear('');
     setFeesPaid(true); // Default to true when manually adding
     setAlumni(false);
-    setMembershipType('Standard Student');
+    setMembershipType('General member');
     setPaymentMethod('Cash / Manual');
     setPaymentReference('MANUAL-ADD-' + Math.random().toString(36).substring(2, 7).toUpperCase());
     setFeeWaiverRequested(false);
@@ -128,7 +128,7 @@ export default function MembershipManager() {
     setYear(member.grade || '');
     setFeesPaid(!!member.fees_paid);
     setAlumni(!!member.alumni);
-    setMembershipType(member.membershipType || 'Standard Student');
+    setMembershipType(member.membershipType || 'General member');
     setPaymentMethod(member.payment_method || '');
     setPaymentReference(member.payment_reference || '');
     setFeeWaiverRequested(!!member.fee_waiver_requested);
@@ -168,6 +168,10 @@ export default function MembershipManager() {
           subId = memberSnap.data().subscriberId;
         }
 
+        const isFree = membershipType === 'Alumni' || membershipType === 'Community member';
+        const finalFeesPaid = isFree ? 'None' : feesPaid;
+        const finalPaymentMethod = isFree ? 'None' : paymentMethod;
+
         const memberPayload = {
           firstName: firstName.trim(),
           lastName: lastName.trim(),
@@ -177,11 +181,11 @@ export default function MembershipManager() {
           ucid: ucid.trim(),
           program: program.trim(),
           grade: year,
-          fees_paid: feesPaid,
+          fees_paid: finalFeesPaid,
           alumni: alumni,
           membershipType: membershipType,
-          payment_method: paymentMethod,
-          payment_reference: paymentReference,
+          payment_method: finalPaymentMethod,
+          payment_reference: isFree ? 'None' : paymentReference,
           fee_waiver_requested: feeWaiverRequested,
           fee_waiver_reason: feeWaiverReason,
           debater: interests.debater,
@@ -200,7 +204,7 @@ export default function MembershipManager() {
           lastName: lastName.trim(),
           fullName: `${firstName.trim()} ${lastName.trim()}`,
           grade: year,
-          fees_paid: feesPaid,
+          fees_paid: finalFeesPaid,
           alumni: alumni,
           membershipType: membershipType,
           updatedAt: new Date().toISOString()
@@ -240,6 +244,10 @@ export default function MembershipManager() {
 
         alert("Member details updated successfully.");
       } else {
+        const isFree = membershipType === 'Alumni' || membershipType === 'Community member';
+        const finalFeesPaid = isFree ? 'None' : feesPaid;
+        const finalPaymentMethod = isFree ? 'None' : paymentMethod;
+
         // Create in subscribers collection first
         const subPayload = {
           email: email.trim().toLowerCase(),
@@ -251,7 +259,7 @@ export default function MembershipManager() {
           lists: ['newsletter'],
           active: true,
           grade: year,
-          fees_paid: feesPaid,
+          fees_paid: finalFeesPaid,
           alumni: alumni,
           membershipType: membershipType,
           institution: 'University of Calgary',
@@ -273,11 +281,11 @@ export default function MembershipManager() {
           ucid: ucid.trim(),
           program: program.trim(),
           grade: year,
-          fees_paid: feesPaid,
+          fees_paid: finalFeesPaid,
           alumni: alumni,
           membershipType: membershipType,
-          payment_method: paymentMethod,
-          payment_reference: paymentReference,
+          payment_method: finalPaymentMethod,
+          payment_reference: isFree ? 'None' : paymentReference,
           fee_waiver_requested: feeWaiverRequested,
           fee_waiver_reason: feeWaiverReason,
           debater: interests.debater,
@@ -506,7 +514,7 @@ export default function MembershipManager() {
 
     // Membership Type filter
     if (filterType !== 'all') {
-      result = result.filter(m => (m.membershipType || 'Standard Student') === filterType);
+      result = result.filter(m => (m.membershipType || 'General member') === filterType);
     }
 
     // Payment status filter
@@ -645,12 +653,10 @@ export default function MembershipManager() {
                 }}
               >
                 <option value="all">All Membership Types</option>
-                <option value="Standard Student">Standard Student</option>
-                <option value="Executive">Executive</option>
+                <option value="General member">General member</option>
                 <option value="Alumni">Alumni</option>
-                <option value="Coach/Judge">Coach/Judge</option>
-                <option value="Community">Community</option>
-                <option value="None">None</option>
+                <option value="Community member">Community member</option>
+                <option value="Executive">Executive</option>
               </select>
             </div>
           </div>
@@ -723,7 +729,7 @@ export default function MembershipManager() {
                             background: 'rgba(59, 130, 246, 0.15)',
                             color: '#60a5fa'
                           }}>
-                            {member.membershipType || 'Standard Student'}
+                            {member.membershipType || 'General member'}
                           </span>
                           {member.alumni && (
                             <span style={{
@@ -743,7 +749,11 @@ export default function MembershipManager() {
 
                       {/* Payment Dues */}
                       <td style={{ padding: '0.75rem' }}>
-                        {member.fees_paid ? (
+                        {member.fees_paid === 'None' ? (
+                          <div>
+                            <span style={{ fontSize: '0.8rem', color: '#10b981', fontWeight: 'bold' }}>✓ Free Tier (No Fees)</span>
+                          </div>
+                        ) : member.fees_paid ? (
                           <div>
                             <span style={{ fontSize: '0.8rem', color: '#10b981', fontWeight: 'bold' }}>✓ Paid (${member.payment_method || 'Stripe'})</span>
                             <div style={{ fontSize: '0.75rem', color: '#94a3b8', maxWidth: '150px', textOverflow: 'ellipsis', overflow: 'hidden' }}>Ref: {member.payment_reference || 'N/A'}</div>
@@ -1007,12 +1017,10 @@ export default function MembershipManager() {
                     }}
                     style={{ padding: '0.6rem 0.8rem', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '6px', color: '#fff' }}
                   >
-                    <option value="Standard Student">Standard Student</option>
-                    <option value="Executive">Executive</option>
-                    <option value="Alumni">Alumni</option>
-                    <option value="Coach/Judge">Coach/Judge</option>
-                    <option value="Community">Community</option>
-                    <option value="None">None</option>
+                     <option value="General member">General member</option>
+                     <option value="Alumni">Alumni</option>
+                     <option value="Community member">Community member</option>
+                     <option value="Executive">Executive</option>
                   </select>
                 </div>
 

@@ -374,13 +374,15 @@ export default function MembershipFees() {
                               : 'rgba(239, 68, 68, 0.3)'
                         }`
                     }}>
-                      Status: {memberData.fees_paid
-                        ? 'Active Member (Paid)'
-                        : memberData.payment_method === 'Waiver'
-                          ? 'Waiver Requested (Pending Review)'
-                          : memberData.payment_method === 'E-Transfer'
-                            ? 'E-Transfer Submitted (Pending Review)'
-                            : 'Unpaid'}
+                      Status: {memberData.fees_paid === 'None'
+                        ? 'Active (Free Tier)'
+                        : memberData.fees_paid
+                          ? 'Active Member (Paid)'
+                          : memberData.payment_method === 'Waiver'
+                            ? 'Waiver Requested (Pending Review)'
+                            : memberData.payment_method === 'E-Transfer'
+                              ? 'E-Transfer Submitted (Pending Review)'
+                              : 'Unpaid'}
                     </span>
                   </div>
                 </div>
@@ -390,7 +392,7 @@ export default function MembershipFees() {
                 <div className="form-section-card" style={{ background: 'rgba(17, 40, 84, 0.45)', border: '1px solid rgba(16, 185, 129, 0.3)', padding: '3rem', borderRadius: '1.25rem', textAlign: 'center' }}>
                   <h3 style={{ color: '#10b981', marginBottom: '1rem', fontSize: '1.8rem' }}>🎉 Welcome to UCDS!</h3>
                   <p style={{ color: '#cbd5e1', fontSize: '1.1rem', marginBottom: '2rem' }}>
-                    {memberData.membershipType === 'None'
+                    {memberData.fees_paid === 'None'
                       ? "Your membership registration is confirmed. You are officially registered with the University of Calgary Debate Society!"
                       : "Your general membership fee is fully paid and confirmed. You are officially an active general member in good standing of the University of Calgary Debate Society!"}
                   </p>

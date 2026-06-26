@@ -16,7 +16,7 @@ export default function MembershipSignUp() {
   const [ucid, setUcid] = useState('');
   const [program, setProgram] = useState('');
   const [year, setYear] = useState('');
-  const [membershipType, setMembershipType] = useState('Standard Student');
+  const [membershipType, setMembershipType] = useState('General member');
   const [feesWaived, setFeesWaived] = useState('no'); // 'yes' or 'no'
   const [newsletterSubscribe, setNewsletterSubscribe] = useState(true);
 
@@ -122,7 +122,7 @@ export default function MembershipSignUp() {
         'newsletter-subscribe': newsletterSubscribe,
         grade: year,
         membershipType: membershipType,
-        fees_paid: membershipType === 'None' ? true : false,
+        fees_paid: (membershipType === 'Alumni' || membershipType === 'Community member') ? 'None' : false,
         institution: 'University of Calgary',
         club: 'The University of Calgary Debate Society',
         city: 'Calgary',
@@ -146,8 +146,8 @@ export default function MembershipSignUp() {
         judge: interests.judge,
         volunteer: interests.volunteer,
         chilling: interests.chill,
-        fees_paid: membershipType === 'None' ? true : false,
-        payment_method: membershipType === 'None' ? 'None' : '',
+        fees_paid: (membershipType === 'Alumni' || membershipType === 'Community member') ? 'None' : false,
+        payment_method: (membershipType === 'Alumni' || membershipType === 'Community member') ? 'None' : '',
         alumni: membershipType === 'Alumni',
         membershipType: membershipType,
         subscriberId: subDocRef.id, // linked reference
@@ -418,12 +418,9 @@ export default function MembershipSignUp() {
                     onChange={e => setMembershipType(e.target.value)}
                     style={{ appearance: 'none', width: '100%' }}
                   >
-                    <option value="Standard Student" style={{ color: '#fff' }}>Standard Student ($20.00/yr)</option>
-                    <option value="Executive" style={{ color: '#fff' }}>Executive ($20.00/yr)</option>
-                    <option value="Alumni" style={{ color: '#fff' }}>Alumni ($20.00/yr)</option>
-                    <option value="Coach/Judge" style={{ color: '#fff' }}>Coach/Judge ($20.00/yr)</option>
-                    <option value="Community" style={{ color: '#fff' }}>Community ($20.00/yr)</option>
-                    <option value="None" style={{ color: '#fff' }}>None (Free - $0.00/yr)</option>
+                    <option value="General member" style={{ color: '#fff' }}>General member ($20.00/yr)</option>
+                    <option value="Alumni" style={{ color: '#fff' }}>Alumni (Free)</option>
+                    <option value="Community member" style={{ color: '#fff' }}>Community member (Free)</option>
                   </select>
                   <div style={{
                     position: 'absolute',
