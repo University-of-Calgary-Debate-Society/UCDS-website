@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import Mascot from '../components/Mascot';
 import useIsMobile from '../hooks/useIsMobile';
 
 export default function Home() {
@@ -344,8 +343,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Goofy Mascot */}
-      <Mascot />
     </main>
   );
 }

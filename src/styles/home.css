@@ -393,18 +393,23 @@
 /* Rex Footer Mascot Container */
 .rex-footer-container {
   position: fixed;
-  bottom: -250px;
+  bottom: -10px;
   right: 2rem;
   width: 220px;
   height: 220px;
   z-index: 1000;
   pointer-events: none;
-  transition: bottom 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  will-change: bottom;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(100px);
+  transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.6s ease, visibility 0.6s ease;
+  will-change: transform, opacity;
 }
 
 .rex-footer-container.active {
-  bottom: -10px;
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
   pointer-events: auto;
 }
 

@@ -13,6 +13,61 @@ export default function Header() {
     setIsOpen(false);
   };
 
+  const isVoidPage = location.pathname.startsWith('/void');
+
+  if (isVoidPage) {
+    return (
+      <header className={`site-header void-header ${isOpen ? 'nav-open' : ''}`} style={{
+        background: '#000000',
+        borderBottom: '2px solid #39ff14',
+        padding: '0.75rem 0',
+        position: 'sticky',
+        top: 0,
+        zIndex: 1000,
+        fontFamily: 'SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace'
+      }}>
+        <div className="container header-inner" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Link className="brand" to="/void" onClick={closeMenu} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none', color: '#ffffff' }}>
+            <span style={{ color: '#39ff14', fontWeight: 'bold', fontSize: '1.2rem', letterSpacing: '0.15em' }}>&gt; UCDS_VOID</span>
+          </Link>
+          <button 
+            className={`menu-toggle ${isOpen ? 'active' : ''}`} 
+            aria-label="Toggle navigation"
+            onClick={toggleMenu}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#39ff14',
+              cursor: 'pointer'
+            }}
+          >
+            <span className="hamburger" style={{ background: '#39ff14' }}></span>
+          </button>
+          <nav className={`site-nav ${isOpen ? 'active' : ''}`} style={{ display: 'flex', gap: '1.25rem', alignItems: 'center' }}>
+            <Link to="/" onClick={closeMenu} style={{
+              color: '#000000',
+              background: '#ffffff',
+              border: '1px solid #ffffff',
+              textDecoration: 'none',
+              fontSize: '0.85rem',
+              fontWeight: 700,
+              padding: '0.35rem 0.95rem',
+              borderRadius: '4px',
+              transition: 'all 0.2s',
+              fontFamily: 'inherit',
+              boxShadow: '0 0 8px rgba(255, 255, 255, 0.2)'
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = '#39ff14'; e.currentTarget.style.borderColor = '#39ff14'; e.currentTarget.style.boxShadow = '0 0 12px rgba(57, 255, 20, 0.6)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = '#ffffff'; e.currentTarget.style.borderColor = '#ffffff'; e.currentTarget.style.boxShadow = '0 0 8px rgba(255, 255, 255, 0.2)'; }}
+            >
+              Exit Void
+            </Link>
+          </nav>
+        </div>
+      </header>
+    );
+  }
+
   return (
     <header className={`site-header ${isOpen ? 'nav-open' : ''}`}>
       <div className="container header-inner">

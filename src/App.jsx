@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { DialogProvider } from './context/DialogContext';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import Mascot from './components/Mascot';
 import Home from './pages/Home';
 import Events from './pages/Events';
 import CalgarySummerCup from './pages/CalgarySummerCup';
@@ -42,7 +43,7 @@ function RouteObserver() {
 
     // Toggle events-body class based on path to load the page background image
     const path = location.pathname;
-    const isEventsBodyRoute = path.startsWith('/events') || path.startsWith('/calendar') || path.startsWith('/connect/unsubscribe') || path.startsWith('/executive') || path.startsWith('/void') || path.startsWith('/membership-sign-up');
+    const isEventsBodyRoute = path.startsWith('/events') || path.startsWith('/calendar') || path.startsWith('/connect/unsubscribe') || path.startsWith('/executive') || path.startsWith('/membership-sign-up');
     
     if (isEventsBodyRoute) {
       document.body.classList.add('events-body');
@@ -244,6 +245,7 @@ function App() {
         <Header />
         <AnimatedRoutes />
         <Footer />
+        <Mascot />
       </Router>
     </DialogProvider>
   );
