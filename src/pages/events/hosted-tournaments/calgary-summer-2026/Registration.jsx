@@ -23,22 +23,21 @@ export default function Registration() {
 
   // Form State
   const [formState, setFormState] = useState({
-    fullName: '',
+    firstName: '',
+    lastName: '',
     email: '',
     grade: '',
-    partnerName: '',
+    school: '',
+    partnerFirstName: '',
+    partnerLastName: '',
     partnerEmail: '',
     partnerGrade: '',
+    partnerSchool: '',
     category: '',
     suggestions: '',
     pollQ1: '',
     pollQ2: '',
-    pollQ3: '',
-    pollFirstName: '',
-    pollLastName: '',
-    pollGrade: '',
-    pollSchool: '',
-    pollEmail: ''
+    pollQ3: ''
   });
 
   const [draftStatus, setDraftStatus] = useState('');
@@ -156,27 +155,6 @@ export default function Registration() {
       [name]: val
     };
 
-    // If pollQ3 changed to 'Yes', auto-populate contact details if they are empty
-    if (name === 'pollQ3' && val === 'Yes') {
-      const splitName = (nameStr) => {
-        const trimmed = (nameStr || '').trim();
-        const parts = trimmed.split(/\s+/);
-        const first = parts[0] || '';
-        const last = parts.slice(1).join(' ') || '';
-        return { first, last };
-      };
-      
-      const { first, last } = splitName(formState.fullName);
-      
-      nextState = {
-        ...nextState,
-        pollFirstName: formState.pollFirstName || first,
-        pollLastName: formState.pollLastName || last,
-        pollEmail: formState.pollEmail || formState.email,
-        pollGrade: formState.pollGrade || formState.grade
-      };
-    }
-
     setFormState(nextState);
 
     // Save draft to localStorage
@@ -208,15 +186,49 @@ export default function Registration() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!formState.firstName.trim()) {
+      alert("Please enter your first name.");
+      return;
+    }
+    if (!formState.lastName.trim()) {
+      alert("Please enter your last name.");
+      return;
+    }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formState.email.trim())) {
       alert("Please enter a valid email address.");
+      return;
+    }
+    if (!formState.grade) {
+      alert("Please select your grade.");
+      return;
+    }
+    if (!formState.school.trim()) {
+      alert("Please enter your school.");
+      return;
+    }
+
+    if (!formState.partnerFirstName.trim()) {
+      alert("Please enter your partner's first name.");
+      return;
+    }
+    if (!formState.partnerLastName.trim()) {
+      alert("Please enter your partner's last name.");
       return;
     }
     if (!emailRegex.test(formState.partnerEmail.trim())) {
       alert("Please enter a valid partner email address.");
       return;
     }
+    if (!formState.partnerGrade) {
+      alert("Please select your partner's grade.");
+      return;
+    }
+    if (!formState.partnerSchool.trim()) {
+      alert("Please enter your partner's school.");
+      return;
+    }
+
     if (!formState.category) {
       alert("Please select a tournament category.");
       return;
@@ -235,16 +247,6 @@ export default function Registration() {
       alert("Please answer Question 3 of the poll.");
       return;
     }
-    if (formState.pollQ3 === 'Yes') {
-      if (!formState.pollFirstName.trim() || !formState.pollLastName.trim() || !formState.pollGrade || !formState.pollSchool.trim() || !formState.pollEmail.trim()) {
-        alert("Please fill out all contact information fields for the mailing list.");
-        return;
-      }
-      if (!emailRegex.test(formState.pollEmail.trim())) {
-        alert("Please enter a valid email address for the mailing list.");
-        return;
-      }
-    }
 
     setIsSubmitting(true);
     setDraftStatus('Submitting registration...');
@@ -253,12 +255,16 @@ export default function Registration() {
       // 1. Submit Registration payload to Firestore
       await addDoc(collection(db, 'registrations'), {
         timestamp: new Date().toISOString(),
-        fullName: formState.fullName.trim(),
+        firstName: formState.firstName.trim(),
+        lastName: formState.lastName.trim(),
         email: formState.email.trim(),
         grade: formState.grade,
-        partnerName: formState.partnerName.trim(),
+        school: formState.school.trim(),
+        partnerFirstName: formState.partnerFirstName.trim(),
+        partnerLastName: formState.partnerLastName.trim(),
         partnerEmail: formState.partnerEmail.trim(),
         partnerGrade: formState.partnerGrade,
+        partnerSchool: formState.partnerSchool.trim(),
         category: formState.category,
         suggestions: formState.suggestions.trim(),
         subscribedToMailingList: formState.pollQ3 === 'Yes'
@@ -284,24 +290,21 @@ export default function Registration() {
           return 'subscribers';
         };
 
-        const targetEmail = formState.pollEmail.trim().toLowerCase();
-        const listType = getInitialListType(formState.pollGrade);
         const timestamp = new Date().toISOString();
 
-        // Query if this email already exists in subscribers
-        const subscribersRef = collection(db, 'subscribers');
-        const q = query(subscribersRef, where('email', '==', targetEmail));
-        const querySnapshot = await getDocs(q);
-
-        const subscriberPayload = {
-          email: targetEmail,
-          fullName: `${formState.pollFirstName.trim()} ${formState.pollLastName.trim()}`,
-          firstName: formState.pollFirstName.trim(),
-          lastName: formState.pollLastName.trim(),
-          grade: formState.pollGrade,
-          school: formState.pollSchool.trim(),
-          listType: listType,
-          lists: [listType],
+        // Register Registrant
+        const registrantEmail = formState.email.trim().toLowerCase();
+        const registrantListType = getInitialListType(formState.grade);
+        
+        const registrantPayload = {
+          email: registrantEmail,
+          fullName: `${formState.firstName.trim()} ${formState.lastName.trim()}`,
+          firstName: formState.firstName.trim(),
+          lastName: formState.lastName.trim(),
+          grade: formState.grade,
+          school: formState.school.trim(),
+          listType: registrantListType,
+          lists: [registrantListType],
           subscribed: true,
           active: true,
           updatedAt: timestamp,
@@ -310,14 +313,48 @@ export default function Registration() {
           judge: false
         };
 
-        if (!querySnapshot.empty) {
-          // Update existing document
-          const docId = querySnapshot.docs[0].id;
-          await updateDoc(doc(db, 'subscribers', docId), subscriberPayload);
+        const subscribersRef = collection(db, 'subscribers');
+        const qReg = query(subscribersRef, where('email', '==', registrantEmail));
+        const regSnap = await getDocs(qReg);
+
+        if (!regSnap.empty) {
+          await updateDoc(doc(db, 'subscribers', regSnap.docs[0].id), registrantPayload);
         } else {
-          // Add new document
           await addDoc(subscribersRef, {
-            ...subscriberPayload,
+            ...registrantPayload,
+            createdAt: timestamp
+          });
+        }
+
+        // Register Partner
+        const partnerEmail = formState.partnerEmail.trim().toLowerCase();
+        const partnerListType = getInitialListType(formState.partnerGrade);
+
+        const partnerPayload = {
+          email: partnerEmail,
+          fullName: `${formState.partnerFirstName.trim()} ${formState.partnerLastName.trim()}`,
+          firstName: formState.partnerFirstName.trim(),
+          lastName: formState.partnerLastName.trim(),
+          grade: formState.partnerGrade,
+          school: formState.partnerSchool.trim(),
+          listType: partnerListType,
+          lists: [partnerListType],
+          subscribed: true,
+          active: true,
+          updatedAt: timestamp,
+          debater: true,
+          volunteer: false,
+          judge: false
+        };
+
+        const qPart = query(subscribersRef, where('email', '==', partnerEmail));
+        const partSnap = await getDocs(qPart);
+
+        if (!partSnap.empty) {
+          await updateDoc(doc(db, 'subscribers', partSnap.docs[0].id), partnerPayload);
+        } else {
+          await addDoc(subscribersRef, {
+            ...partnerPayload,
             createdAt: timestamp
           });
         }
@@ -400,18 +437,34 @@ export default function Registration() {
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                   <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                    <label htmlFor="fullName" style={{ fontWeight: 600 }}>Full Name</label>
+                    <label htmlFor="firstName" style={{ fontWeight: 600 }}>First Name</label>
                     <input
                       type="text"
-                      id="fullName"
-                      name="fullName"
-                      value={formState.fullName}
+                      id="firstName"
+                      name="firstName"
+                      value={formState.firstName}
                       onChange={handleInputChange}
                       className="text-input"
-                      placeholder="John Doe"
+                      placeholder="John"
                       required
                     />
                   </div>
+                  <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <label htmlFor="lastName" style={{ fontWeight: 600 }}>Last Name</label>
+                    <input
+                      type="text"
+                      id="lastName"
+                      name="lastName"
+                      value={formState.lastName}
+                      onChange={handleInputChange}
+                      className="text-input"
+                      placeholder="Doe"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginTop: '1.5rem' }}>
                   <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                     <label htmlFor="email" style={{ fontWeight: 600 }}>Email Address</label>
                     <input
@@ -422,6 +475,19 @@ export default function Registration() {
                       onChange={handleInputChange}
                       className="text-input"
                       placeholder="johndoe@example.com"
+                      required
+                    />
+                  </div>
+                  <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <label htmlFor="school" style={{ fontWeight: 600 }}>School</label>
+                    <input
+                      type="text"
+                      id="school"
+                      name="school"
+                      value={formState.school}
+                      onChange={handleInputChange}
+                      className="text-input"
+                      placeholder="Your School Name"
                       required
                     />
                   </div>
@@ -455,18 +521,34 @@ export default function Registration() {
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                   <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                    <label htmlFor="partnerName" style={{ fontWeight: 600 }}>Partner's Full Name</label>
+                    <label htmlFor="partnerFirstName" style={{ fontWeight: 600 }}>Partner's First Name</label>
                     <input
                       type="text"
-                      id="partnerName"
-                      name="partnerName"
-                      value={formState.partnerName}
+                      id="partnerFirstName"
+                      name="partnerFirstName"
+                      value={formState.partnerFirstName}
                       onChange={handleInputChange}
                       className="text-input"
-                      placeholder="Jane Smith"
+                      placeholder="Jane"
                       required
                     />
                   </div>
+                  <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <label htmlFor="partnerLastName" style={{ fontWeight: 600 }}>Partner's Last Name</label>
+                    <input
+                      type="text"
+                      id="partnerLastName"
+                      name="partnerLastName"
+                      value={formState.partnerLastName}
+                      onChange={handleInputChange}
+                      className="text-input"
+                      placeholder="Smith"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginTop: '1.5rem' }}>
                   <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                     <label htmlFor="partnerEmail" style={{ fontWeight: 600 }}>Partner's Email Address</label>
                     <input
@@ -477,6 +559,19 @@ export default function Registration() {
                       onChange={handleInputChange}
                       className="text-input"
                       placeholder="janesmith@example.com"
+                      required
+                    />
+                  </div>
+                  <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <label htmlFor="partnerSchool" style={{ fontWeight: 600 }}>Partner's School</label>
+                    <input
+                      type="text"
+                      id="partnerSchool"
+                      name="partnerSchool"
+                      value={formState.partnerSchool}
+                      onChange={handleInputChange}
+                      className="text-input"
+                      placeholder="Partner's School Name"
                       required
                     />
                   </div>
@@ -670,7 +765,7 @@ export default function Registration() {
                   <label style={{ fontWeight: 600, color: '#ffffff' }}>
                     3. If you are interested, would you like to receive information? <span style={{ color: '#f87171' }}>*</span>
                   </label>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem', marginTop: '0.25rem', marginBottom: formState.pollQ3 === 'Yes' ? '1.5rem' : '0px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem', marginTop: '0.25rem' }}>
                     {['Yes', 'No'].map((opt) => (
                       <div
                         key={opt}
@@ -693,101 +788,6 @@ export default function Registration() {
                     ))}
                   </div>
                 </div>
-
-                {/* Conditional Fields for Q3 = Yes */}
-                {formState.pollQ3 === 'Yes' && (
-                  <div style={{
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    background: 'rgba(15, 23, 42, 0.3)',
-                    padding: '1.5rem',
-                    borderRadius: '8px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '1.25rem',
-                    marginTop: '1rem'
-                  }}>
-                    <h4 style={{ margin: 0, fontSize: '1rem', color: '#93c5fd' }}>Mailing List Contact Details</h4>
-                    
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                      <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                        <label htmlFor="pollFirstName" style={{ fontSize: '0.9rem', fontWeight: 600 }}>First Name</label>
-                        <input
-                          type="text"
-                          id="pollFirstName"
-                          name="pollFirstName"
-                          value={formState.pollFirstName}
-                          onChange={handleInputChange}
-                          className="text-input"
-                          placeholder="First Name"
-                          required
-                        />
-                      </div>
-                      <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                        <label htmlFor="pollLastName" style={{ fontSize: '0.9rem', fontWeight: 600 }}>Last Name</label>
-                        <input
-                          type="text"
-                          id="pollLastName"
-                          name="pollLastName"
-                          value={formState.pollLastName}
-                          onChange={handleInputChange}
-                          className="text-input"
-                          placeholder="Last Name"
-                          required
-                        />
-                      </div>
-                    </div>
-
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                      <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                        <label htmlFor="pollGrade" style={{ fontSize: '0.9rem', fontWeight: 600 }}>Grade</label>
-                        <select
-                          id="pollGrade"
-                          name="pollGrade"
-                          value={formState.pollGrade}
-                          onChange={handleInputChange}
-                          className="select-input"
-                          required
-                        >
-                          <option value="" disabled>Select Grade</option>
-                          <option value="Grade 6">Grade 6</option>
-                          <option value="Grade 7">Grade 7</option>
-                          <option value="Grade 8">Grade 8</option>
-                          <option value="Grade 9">Grade 9</option>
-                          <option value="Grade 10">Grade 10</option>
-                          <option value="Grade 11">Grade 11</option>
-                          <option value="Grade 12">Grade 12</option>
-                        </select>
-                      </div>
-                      <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                        <label htmlFor="pollSchool" style={{ fontSize: '0.9rem', fontWeight: 600 }}>School</label>
-                        <input
-                          type="text"
-                          id="pollSchool"
-                          name="pollSchool"
-                          value={formState.pollSchool}
-                          onChange={handleInputChange}
-                          className="text-input"
-                          placeholder="School Name"
-                          required
-                        />
-                      </div>
-                    </div>
-
-                    <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                      <label htmlFor="pollEmail" style={{ fontSize: '0.9rem', fontWeight: 600 }}>Email Address</label>
-                      <input
-                        type="email"
-                        id="pollEmail"
-                        name="pollEmail"
-                        value={formState.pollEmail}
-                        onChange={handleInputChange}
-                        className="text-input"
-                        placeholder="email@example.com"
-                        required
-                      />
-                    </div>
-                  </div>
-                )}
               </div>
 
               <div style={{ textAlign: 'center', marginTop: '1rem' }}>

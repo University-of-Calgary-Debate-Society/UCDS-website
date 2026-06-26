@@ -1,16 +1,30 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const [mobileDropdown, setMobileDropdown] = useState(null);
   const location = useLocation();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
+    if (isOpen) {
+      setMobileDropdown(null);
+    }
   };
 
   const closeMenu = () => {
     setIsOpen(false);
+    setMobileDropdown(null);
+  };
+
+  const toggleMobileDropdown = (name, e) => {
+    if (window.innerWidth <= 860) {
+      e.preventDefault();
+      setMobileDropdown(prev => prev === name ? null : name);
+    } else {
+      closeMenu();
+    }
   };
 
   const isVoidPage = location.pathname.startsWith('/void');
@@ -85,8 +99,10 @@ export default function Header() {
         </button>
         <nav className={`site-nav ${isOpen ? 'active' : ''}`}>
           <NavLink to="/" end onClick={closeMenu}>Home</NavLink>
-          <div className="nav-dropdown-wrapper">
-            <NavLink to="/events" className="nav-dropdown-trigger" onClick={closeMenu}>Events</NavLink>
+          <div className={`nav-dropdown-wrapper ${mobileDropdown === 'events' ? 'mobile-expanded' : ''}`}>
+            <NavLink to="/events" className="nav-dropdown-trigger" onClick={(e) => toggleMobileDropdown('events', e)}>
+              Events <span className="dropdown-caret">▼</span>
+            </NavLink>
             <div className="nav-dropdown-menu">
               <Link to="/events" onClick={closeMenu}>Overview</Link>
               <Link to="/calendar" onClick={closeMenu}>Interactive Calendar</Link>
@@ -94,8 +110,10 @@ export default function Header() {
             </div>
           </div>
           <NavLink to="/blog" onClick={closeMenu}>Blog</NavLink>
-          <div className="nav-dropdown-wrapper">
-            <NavLink to="/resources" className="nav-dropdown-trigger" onClick={closeMenu}>Resources</NavLink>
+          <div className={`nav-dropdown-wrapper ${mobileDropdown === 'resources' ? 'mobile-expanded' : ''}`}>
+            <NavLink to="/resources" className="nav-dropdown-trigger" onClick={(e) => toggleMobileDropdown('resources', e)}>
+              Resources <span className="dropdown-caret">▼</span>
+            </NavLink>
             <div className="nav-dropdown-menu">
               <Link to="/resources" onClick={closeMenu}>Overview</Link>
               <Link to="/resources/internal" onClick={closeMenu}>Internal Resources</Link>
@@ -104,8 +122,10 @@ export default function Header() {
               <Link to="/resources/matter" onClick={closeMenu}>Matter Files</Link>
             </div>
           </div>
-          <div className="nav-dropdown-wrapper">
-            <NavLink to="/connect" className="nav-dropdown-trigger" onClick={closeMenu}>Connect</NavLink>
+          <div className={`nav-dropdown-wrapper ${mobileDropdown === 'connect' ? 'mobile-expanded' : ''}`}>
+            <NavLink to="/connect" className="nav-dropdown-trigger" onClick={(e) => toggleMobileDropdown('connect', e)}>
+              Connect <span className="dropdown-caret">▼</span>
+            </NavLink>
             <div className="nav-dropdown-menu">
               <Link to="/connect" onClick={closeMenu}>Exec Team</Link>
               <Link to="/socials" onClick={closeMenu}>Social Feed</Link>

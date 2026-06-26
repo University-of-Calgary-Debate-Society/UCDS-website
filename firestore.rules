@@ -1,0 +1,79 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if the request is from an authenticated user (executive)
+    function isExec() {
+      return request.auth != null;
+    }
+
+    // 1. Allowed Emails:
+    // Executives can manage it. Unauthenticated users can read/query it to verify eligibility during executive sign-up.
+    match /allowed_emails/{docId} {
+      allow read: if true;
+      allow write: if isExec();
+    }
+
+    // 2. Calendar Events & Tournaments: Public read, Executive write
+    match /calendar_events/{docId} {
+      allow read: if true;
+      allow write: if isExec();
+    }
+    match /tournaments_and_events/{docId} {
+      allow read: if true;
+      allow write: if isExec();
+    }
+
+    // 3. Executives list (Roster): Public read, Executive write
+    match /executives/{docId} {
+      allow read: if true;
+      allow write: if isExec();
+    }
+
+    // 4. Blog Posts: Public read, Executive write
+    match /posts/{docId} {
+      allow read: if true;
+      allow write: if isExec();
+    }
+
+    // 5. Subscribers:
+    // - Public can read/get a doc, query by email, create subscriber docs, and update active state to unsubscribe.
+    // - Executives have full access.
+    match /subscribers/{docId} {
+      allow create: if true;
+      allow read: if true;
+      allow update: if isExec() || (
+        // Allow unauthenticated update if only changing specific fields like active status (unsubscribing)
+        request.resource.data.email == resource.data.email &&
+        request.resource.data.createdAt == resource.data.createdAt
+      );
+      allow delete: if isExec();
+    }
+
+    // 6. Members:
+    // - Public can sign up (create member).
+    // - Executives have full access.
+    match /members/{docId} {
+      allow create: if true;
+      allow read, write: if isExec();
+    }
+
+    // 7. Ledger:
+    // - Public can add transaction checkout records (create).
+    // - Executives have full access.
+    match /ledger/{docId} {
+      allow create: if true;
+      allow read, write: if isExec();
+    }
+
+    // 8. Drafts & Schedules (for Email campaigns):
+    // - Only Executives can access
+    match /drafts/{docId} {
+      allow read, write: if isExec();
+    }
+    match /schedules/{docId} {
+      allow read, write: if isExec();
+    }
+    
+  }
+}

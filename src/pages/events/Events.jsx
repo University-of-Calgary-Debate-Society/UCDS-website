@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { collection, getDocs, query } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { getGoogleCalendarLink, downloadCalendarICS } from '../../utils/calendarUtils';
+import AnimatedBackground from '../../components/AnimatedBackground';
 
 export default function Events() {
   const [upcomingEvents, setUpcomingEvents] = useState([]);
@@ -46,7 +47,8 @@ export default function Events() {
   };
 
   return (
-    <main>
+    <main style={{ position: 'relative' }}>
+      <AnimatedBackground />
       <section className="events-page-banner"></section>
 
       {/* Intro Section */}
