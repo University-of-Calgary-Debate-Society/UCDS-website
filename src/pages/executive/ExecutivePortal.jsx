@@ -140,6 +140,25 @@ const PANEL_THEMES = {
       </svg>
     )
   },
+  tournaments: {
+    id: 'tournaments',
+    label: 'Tournaments Manager',
+    path: '/executive/events',
+    color: '#a855f7', // Purple
+    bgColor: 'rgba(168, 85, 247, 0.04)',
+    borderColor: 'rgba(168, 85, 247, 0.25)',
+    borderHoverColor: 'rgba(168, 85, 247, 0.45)',
+    shadowColor: 'rgba(168, 85, 247, 0.1)',
+    badgeColor: '#581c87',
+    badgeTextColor: '#e9d5ff',
+    btnBg: '#a855f7',
+    btnHoverBg: '#9333ea',
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" style={{ width: '20px', height: '20px' }}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+      </svg>
+    )
+  },
   membership: {
     id: 'membership',
     label: 'Membership Manager',
@@ -206,6 +225,7 @@ export default function ExecutivePortal() {
   const [instagramPostsCount, setInstagramPostsCount] = useState(0);
   const [allowedCount, setAllowedCount] = useState(0);
   const [eventsCount, setEventsCount] = useState(0);
+  const [tournamentsCount, setTournamentsCount] = useState(0);
   const [netBalance, setNetBalance] = useState(0);
   const [membersCount, setMembersCount] = useState(0);
   const [alumniCount, setAlumniCount] = useState(0);
@@ -277,6 +297,10 @@ export default function ExecutivePortal() {
       // 6. Calendar Events
       const eventsSnap = await getDocs(collection(db, 'calendar_events'));
       setEventsCount(eventsSnap.size);
+
+      // 7. Tournaments/Events
+      const tournamentsSnap = await getDocs(collection(db, 'tournaments_and_events'));
+      setTournamentsCount(tournamentsSnap.size);
     } catch (err) {
       console.error("Error loading dashboard stats", err);
     } finally {
@@ -582,6 +606,15 @@ export default function ExecutivePortal() {
             </div>
           </div>
         );
+      case 'tournaments':
+        return (
+          <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+            <div style={{ background: 'rgba(0, 0, 0, 0.25)', padding: '1rem 1.5rem', borderRadius: '10px', minWidth: '150px' }}>
+              <div style={{ fontSize: '0.85rem', color: '#94a3b8', marginBottom: '0.25rem' }}>Total Tournaments</div>
+              <div style={{ fontSize: '1.75rem', fontWeight: 'bold', color: '#a855f7' }}>{tournamentsCount}</div>
+            </div>
+          </div>
+        );
       case 'system':
         return (
           <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap', marginTop: '1rem' }}>
@@ -753,6 +786,7 @@ export default function ExecutivePortal() {
                       {activeTheme.id === 'socials' && "Manage dynamic Instagram post cards displayed natively to the socials feed."}
                       {activeTheme.id === 'calendar' && "Schedule, edit, and organize society seminars, debate opens, socials, and executive board meetings."}
                       {activeTheme.id === 'membership' && "Review member profiles, verify payments, approve fee waivers, and manage UCDS alumni."}
+                      {activeTheme.id === 'tournaments' && "Create, edit, and configure debate tournaments with automatic form generation, schedules, and custom settings."}
                       {activeTheme.id === 'system' && "Initialize Cloud Firestore collection tables with default mock databases."}
                     </p>
                   </div>

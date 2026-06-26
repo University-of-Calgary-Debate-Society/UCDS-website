@@ -37,6 +37,8 @@ import DebugPortal from './pages/executive/DebugPortal';
 import MembershipSignUp from './pages/join/MembershipSignUp';
 import MembershipFees from './pages/join/MembershipFees';
 import MembershipManager from './pages/executive/MembershipManager';
+import Tournaments from './pages/Tournaments';
+import EventManager from './pages/executive/EventManager';
 
 // Component to handle scroll restoration and run the IntersectionObserver for scroll animations
 function RouteObserver() {
@@ -160,6 +162,12 @@ function RouteObserver() {
       case '/executive/membership':
         pageTitle = 'Membership Manager';
         break;
+      case '/events/tournaments':
+        pageTitle = 'Tournaments';
+        break;
+      case '/executive/events':
+        pageTitle = 'Tournaments/Events Manager';
+        break;
       case '/membership-sign-up':
         pageTitle = 'Membership Sign-Up';
         break;
@@ -264,6 +272,8 @@ function AnimatedRoutes() {
         <Route path="/executive/calendar" element={<CalendarManager />} />
         <Route path="/executive/debug" element={<DebugPortal />} />
         <Route path="/executive/membership" element={<MembershipManager />} />
+        <Route path="/events/tournaments" element={<Tournaments />} />
+        <Route path="/executive/events" element={<EventManager />} />
         <Route path="/membership-sign-up" element={<MembershipSignUp />} />
         <Route path="/membership-sign-up/fees" element={<MembershipFees />} />
       </Routes>

@@ -90,7 +90,7 @@ export default function Header() {
             <div className="nav-dropdown-menu">
               <Link to="/events" onClick={closeMenu}>Overview</Link>
               <Link to="/calendar" onClick={closeMenu}>Interactive Calendar</Link>
-              <Link to="/events/calgary-summer-cup" onClick={closeMenu}>Summer Cup</Link>
+              <Link to="/events/tournaments" onClick={closeMenu}>Tournaments</Link>
             </div>
           </div>
           <NavLink to="/blog" onClick={closeMenu}>Blog</NavLink>

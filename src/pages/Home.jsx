@@ -1,12 +1,47 @@
 import { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import useIsMobile from '../hooks/useIsMobile';
+import { collection, getDocs, query } from 'firebase/firestore';
+import { db } from '../firebase';
 
 export default function Home() {
   const isMobile = useIsMobile();
   const [animationsDisabled, setAnimationsDisabled] = useState(
     localStorage.getItem('animationsDisabled') === 'true'
   );
+
+  const [homeEvents, setHomeEvents] = useState([]);
+  const [loadingHomeEvents, setLoadingHomeEvents] = useState(true);
+
+  // Fetch nearest two upcoming events
+  useEffect(() => {
+    const fetchHomeEvents = async () => {
+      try {
+        const todayStr = new Date().toISOString().split('T')[0];
+        const q = query(collection(db, 'calendar_events'));
+        const snapshot = await getDocs(q);
+        const list = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+        // Filter events today onwards
+        const filtered = list.filter(evt => {
+          const start = evt.startDate || evt.date;
+          const end = evt.endDate || evt.date || start;
+          return (end || '') >= todayStr;
+        });
+
+        // Sort chronologically
+        filtered.sort((a, b) => new Date(a.startDate || a.date || 0) - new Date(b.startDate || b.date || 0));
+        
+        // Take nearest two
+        setHomeEvents(filtered.slice(0, 2));
+      } catch (err) {
+        console.error("Error loading home events:", err);
+      } finally {
+        setLoadingHomeEvents(false);
+      }
+    };
+    fetchHomeEvents();
+  }, []);
 
   const aboutRef = useRef(null);
   const missionRef = useRef(null);
@@ -343,9 +378,77 @@ export default function Home() {
                 <h2 className="section-title">Our Mission</h2>
                 <div className="accent-line"></div>
               </div>
-              <p className="section-copy">Our mission is to foster a supportive and intellectually stimulating environment where students can engage with complex issues, develop their analytical abilities, and represent the University of Calgary at regional, national, and international debate tournaments.</p>
+              <p className="section-copy" style={{ marginBottom: '1.5rem' }}>Our mission is to foster a supportive and intellectually stimulating environment where students can engage with complex issues, develop their analytical abilities, and represent the University of Calgary at regional, national, and international debate tournaments.</p>
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <Link to="/resources/internal/constitution" className="button-white">
+                  More
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: '0.5rem' }}>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
+                </Link>
+              </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Upcoming Events Section */}
+      <section id="upcoming-events" className="section" style={{ position: 'relative' }}>
+        <div className="container">
+          <div className="section-header straddle animate-on-scroll fade-in-left">
+            <h2 className="title-box"><span>Upcoming Events</span></h2>
+          </div>
+          <p className="section-copy" style={{ marginBottom: '3rem', textAlign: 'center' }}>
+            Check out what's coming up next in the University of Calgary Debate Society. Join us for practices, socials, and major tournaments.
+          </p>
+
+          {loadingHomeEvents ? (
+            <p style={{ color: '#cbd5e1', textAlign: 'center', fontSize: '1.1rem' }}>Loading upcoming events...</p>
+          ) : homeEvents.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '3rem 1.5rem', background: 'rgba(10, 25, 59, 0.4)', borderRadius: '1.5rem', border: '1px dashed rgba(255,255,255,0.1)', maxWidth: '600px', margin: '0 auto' }}>
+              <p style={{ color: '#94a3b8', fontSize: '1.1rem', margin: 0 }}>No upcoming events scheduled right now. Check back soon!</p>
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem', maxWidth: '900px', margin: '0 auto' }}>
+              {homeEvents.map(event => (
+                <div key={event.id} className="exec-card" style={{ background: 'rgba(17, 40, 84, 0.55)', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '16px', padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1rem', position: 'relative', overflow: 'hidden' }}>
+                  <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '5px',
+                    height: '100%',
+                    background: event.category === 'practice' ? '#3b82f6' : 
+                                event.category === 'tournament' ? '#f97316' :
+                                event.category === 'social' ? '#22c55e' :
+                                event.category === 'meeting' ? '#8b5cf6' : '#14b8a6'
+                  }}></div>
+                  <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 800, color: event.category === 'practice' ? '#93c5fd' : 
+                                event.category === 'tournament' ? '#fdba74' :
+                                event.category === 'social' ? '#86efac' :
+                                event.category === 'meeting' ? '#c084fc' : '#99f6e4' }}>
+                    {event.category}
+                  </span>
+                  <h3 style={{ margin: 0, fontSize: '1.4rem', color: '#ffffff', fontWeight: 'bold' }}>{event.title}</h3>
+                  <p style={{ margin: 0, color: '#cbd5e1', fontSize: '0.95rem' }}>
+                    📅 {event.startDate && event.endDate && event.startDate !== event.endDate ? `${event.startDate} to ${event.endDate}` : (event.startDate || event.date)}
+                  </p>
+                  {event.location && (
+                    <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.9rem' }}>📍 {event.location}</p>
+                  )}
+                  {event.description && (
+                    <p style={{ margin: 0, color: '#cbd5e1', fontSize: '0.9rem', lineClamp: 2, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{event.description}</p>
+                  )}
+                  <div style={{ marginTop: 'auto', paddingTop: '1rem' }}>
+                    <Link to={event.link || "/events"} className="button" style={{ width: '100%', textDecoration: 'none', textAlign: 'center', display: 'block', padding: '0.75rem 0' }}>
+                      {event.category === 'tournament' ? 'Tournament Details & Sign-Up' : 'View Event'}
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
