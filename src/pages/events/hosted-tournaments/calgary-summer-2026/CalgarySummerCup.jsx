@@ -1,14 +1,190 @@
+import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
 export default function CalgarySummerCup() {
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let animationFrameId;
+    let width = canvas.width = canvas.parentElement.offsetWidth || window.innerWidth;
+    let height = canvas.height = canvas.parentElement.offsetHeight || 400;
+
+    const particles = [];
+    const particleCount = Math.min(80, Math.floor((width * height) / 7000));
+
+    // Mouse tracker
+    const mouse = { x: null, y: null, active: false };
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.vx = (Math.random() - 0.5) * 0.35;
+        this.vy = (Math.random() - 0.5) * 0.35;
+        this.baseRadius = Math.random() * 1.5 + 1.5;
+        this.radius = this.baseRadius;
+        this.baseOpacity = Math.random() * 0.15 + 0.22;
+        this.opacity = this.baseOpacity;
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+
+        if (this.x < 0 || this.x > width) this.vx *= -1;
+        if (this.y < 0 || this.y > height) this.vy *= -1;
+
+        // Proximity check for cursor glow
+        if (mouse.active) {
+          const dx = this.x - mouse.x;
+          const dy = this.y - mouse.y;
+          const dist = Math.hypot(dx, dy);
+          const limit = 150;
+
+          if (dist < limit) {
+            const factor = 1 - dist / limit;
+            this.opacity = Math.min(0.95, this.baseOpacity + factor * 0.60);
+            this.radius = this.baseRadius + factor * 3.0;
+          } else {
+            this.opacity = this.opacity * 0.95 + this.baseOpacity * 0.05;
+            this.radius = this.radius * 0.95 + this.baseRadius * 0.05;
+          }
+        } else {
+          this.opacity = this.opacity * 0.95 + this.baseOpacity * 0.05;
+          this.radius = this.radius * 0.95 + this.baseRadius * 0.05;
+        }
+      }
+
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        
+        if (this.opacity > this.baseOpacity + 0.05) {
+          ctx.shadowBlur = 12;
+          ctx.shadowColor = 'rgba(96, 165, 250, 0.8)';
+          ctx.fillStyle = `rgba(186, 218, 255, ${this.opacity})`;
+        } else {
+          ctx.shadowBlur = 0;
+          ctx.fillStyle = `rgba(96, 165, 250, ${this.opacity})`;
+        }
+        
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+    }
+
+    const init = () => {
+      particles.length = 0;
+      for (let i = 0; i < particleCount; i++) {
+        particles.push(new Particle());
+      }
+    };
+
+    const handleResize = () => {
+      if (!canvas.parentElement) return;
+      width = canvas.width = canvas.parentElement.offsetWidth || window.innerWidth;
+      height = canvas.height = canvas.parentElement.offsetHeight || 400;
+      init();
+    };
+
+    const handleMouseMove = (e) => {
+      const rect = canvas.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+      mouse.active = true;
+    };
+
+    const handleMouseLeave = () => {
+      mouse.active = false;
+    };
+
+    const container = canvas.parentElement;
+    container.addEventListener('mousemove', handleMouseMove);
+    container.addEventListener('mouseleave', handleMouseLeave);
+    window.addEventListener('resize', handleResize);
+
+    init();
+
+    const animate = () => {
+      ctx.clearRect(0, 0, width, height);
+
+      // 1. Update & Draw Particles
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+
+      // 2. Draw Network Lines
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const p1 = particles[i];
+          const p2 = particles[j];
+          const dist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
+          const limit = 110;
+
+          if (dist < limit) {
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+
+            let opacity = (1 - dist / limit) * 0.22;
+
+            if (mouse.active) {
+              const d1 = Math.hypot(p1.x - mouse.x, p1.y - mouse.y);
+              const d2 = Math.hypot(p2.x - mouse.x, p2.y - mouse.y);
+              if (d1 < 150 || d2 < 150) {
+                const mouseFactor = Math.max(1 - d1 / 150, 1 - d2 / 150);
+                opacity += mouseFactor * 0.40;
+              }
+            }
+
+            ctx.strokeStyle = `rgba(96, 165, 250, ${opacity})`;
+            ctx.lineWidth = opacity > 0.3 ? 1.4 : opacity > 0.15 ? 0.9 : 0.6;
+            ctx.stroke();
+          }
+        }
+      }
+
+      // 3. Draw connection to mouse pointer
+      if (mouse.active) {
+        particles.forEach(p => {
+          const dist = Math.hypot(p.x - mouse.x, p.y - mouse.y);
+          const limit = 135;
+          if (dist < limit) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(mouse.x, mouse.y);
+            const opacity = (1 - dist / limit) * 0.4;
+            ctx.strokeStyle = `rgba(165, 203, 255, ${opacity})`;
+            ctx.lineWidth = 1.1;
+            ctx.stroke();
+          }
+        });
+      }
+
+      animationFrameId = requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      container.removeEventListener('mousemove', handleMouseMove);
+      container.removeEventListener('mouseleave', handleMouseLeave);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   return (
     <main>
       {/* Banner Section */}
-      <section className="calgary-summer-cup-hero" style={{ position: 'relative' }}>
-        <div className="bg-art-container" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>
-          <svg className="bg-art" style={{ top: '15%', left: '5%', width: '120px', height: '120px' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          <svg className="bg-art reverse" style={{ top: '25%', right: '5%', width: '110px', height: '110px' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="m14 13-5.5 5.5t-9-1.5M9.5 8.5l9 9M17 11l4.5-4.5M10.5 4.5 15 9"/><path d="m6 21 3-3"/></svg>
-        </div>
+      <section className="calgary-summer-cup-hero" style={{ position: 'relative', overflow: 'hidden' }}>
+        <canvas ref={canvasRef} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0, pointerEvents: 'none' }} />
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div style={{ textAlign: 'center' }}>
             <img src="/photos/calgary_summer_cup_logo.png" alt="Calgary Summer Cup Logo" className="hero-logo-image" />
