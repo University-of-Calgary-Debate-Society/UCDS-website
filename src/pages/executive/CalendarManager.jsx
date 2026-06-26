@@ -599,14 +599,25 @@ export default function CalendarManager() {
             
             {loading ? (
               <p style={{ color: '#cbd5e1', padding: '1rem 0' }}>Loading events...</p>
-            ) : events.length === 0 ? (
-              <p style={{ color: '#94a3b8', padding: '1rem 0', fontStyle: 'italic' }}>No calendar events scheduled yet. Create an event to populate the database.</p>
-            ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxHeight: '720px', overflowY: 'auto', paddingRight: '0.25rem' }}>
-                {events.map((evt, idx) => {
-                  const start = evt.startDate || evt.date;
-                  const end = evt.endDate || evt.date || start;
-                  const isMultiDay = start !== end;
+            ) : (() => {
+              const seenGroups = new Set();
+              const displayedEvents = events.filter(evt => {
+                if (!evt.recurrenceGroupId) return true;
+                if (seenGroups.has(evt.recurrenceGroupId)) return false;
+                seenGroups.add(evt.recurrenceGroupId);
+                return true;
+              });
+
+              if (displayedEvents.length === 0) {
+                return <p style={{ color: '#94a3b8', padding: '1rem 0', fontStyle: 'italic' }}>No calendar events scheduled yet. Create an event to populate the database.</p>;
+              }
+
+              return (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxHeight: '720px', overflowY: 'auto', paddingRight: '0.25rem' }}>
+                  {displayedEvents.map((evt, idx) => {
+                    const start = evt.startDate || evt.date;
+                    const end = evt.endDate || evt.date || start;
+                    const isMultiDay = start !== end;
 
                   return (
                     <div 
@@ -669,7 +680,7 @@ export default function CalendarManager() {
                   );
                 })}
               </div>
-            )}
+            )})()}
           </div>
 
         </div>
