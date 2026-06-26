@@ -116,6 +116,20 @@ body.join-page {
     height: auto !important;
     min-height: 100vh;
   }
+  .join-button-wrapper {
+    margin-top: 3rem !important;
+  }
+  .mute-container {
+    display: none !important;
+  }
+  body.join-page .section-copy {
+    display: none !important;
+  }
+}
+
+.join-button-wrapper {
+  text-align: center;
+  margin-top: 10rem;
 }
 
 body.join-page .section {

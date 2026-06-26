@@ -503,7 +503,7 @@ export default function Join() {
             Become a part of our vibrant community. Whether you are an experienced debater or just starting, UCDS offers a platform to grow, learn, and compete. Joining is easy and opens up a world of opportunities.
           </p>
 
-          <div style={{ textAlign: 'center', marginTop: '10rem' }}>
+          <div className="join-button-wrapper">
             {!eeTriggered ? (
               <button 
                 ref={specialBtnRef} 

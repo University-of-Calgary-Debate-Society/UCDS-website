@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { collection, query, where, getDocs, addDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { useDialog } from '../../context/DialogContext';
@@ -204,7 +204,7 @@ export default function MembershipSignUp() {
               <li><strong>Practice Sessions</strong>: Practice rounds run twice weekly at the discretion of the club.</li>
               <li><strong>Academic Term</strong>: Memberships run from September to August of the following year.</li>
               <li><strong>Membership Dues</strong>: Active membership requires a $20.00 yearly registration fee to help fund tournament entries, socials, and resources.</li>
-              <li><strong>Constitution</strong>: For further details about member rights, responsibilities, and guidelines, please review the <a href="/resources/internal/constitution" style={{ color: '#60a5fa', textDecoration: 'underline' }}>UCDS Constitution</a>.</li>
+              <li><strong>Constitution</strong>: For further details about member rights, responsibilities, and guidelines, please review the <Link to="/resources/internal/constitution" style={{ color: '#60a5fa', textDecoration: 'underline' }}>UCDS Constitution</Link>.</li>
             </ul>
           </div>
 

@@ -51,19 +51,19 @@ service cloud.firestore {
     }
 
     // 6. Members:
-    // - Public can sign up (create member).
+    // - Public can sign up (create), lookup details (read), and checkout (update).
     // - Executives have full access.
     match /members/{docId} {
-      allow create: if true;
-      allow read, write: if isExec();
+      allow create, read, update: if true;
+      allow delete: if isExec();
     }
 
     // 7. Ledger:
-    // - Public can add transaction checkout records (create).
+    // - Public can log and lookup transaction checkout records.
     // - Executives have full access.
     match /ledger/{docId} {
-      allow create: if true;
-      allow read, write: if isExec();
+      allow create, read: if true;
+      allow update, delete: if isExec();
     }
 
     // 8. Drafts & Schedules (for Email campaigns):
