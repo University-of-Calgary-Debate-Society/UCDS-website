@@ -184,6 +184,17 @@ export default function Registration() {
     showSaveStatus();
   };
 
+  const handlePollChange = (name, val) => {
+    handleInputChange({
+      target: {
+        name,
+        value: val,
+        type: 'radio',
+        checked: false
+      }
+    });
+  };
+
   const handleCategoryChange = (val) => {
     const nextState = {
       ...formState,
@@ -601,30 +612,27 @@ export default function Registration() {
                   <label style={{ fontWeight: 600, color: '#ffffff' }}>
                     1. If the UCDS were to host an in-person tournament around the start of the school year for junior high and high school students, would you be interested? <span style={{ color: '#f87171' }}>*</span>
                   </label>
-                  <div style={{ display: 'flex', gap: '1.5rem', marginTop: '0.25rem' }}>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', color: '#ffffff' }}>
-                      <input
-                        type="radio"
-                        name="pollQ1"
-                        value="Yes"
-                        checked={formState.pollQ1 === 'Yes'}
-                        onChange={handleInputChange}
-                        style={{ width: '18px', height: '18px', accentColor: '#2563eb' }}
-                        required
-                      />
-                      <span>Yes</span>
-                    </label>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', color: '#ffffff' }}>
-                      <input
-                        type="radio"
-                        name="pollQ1"
-                        value="No"
-                        checked={formState.pollQ1 === 'No'}
-                        onChange={handleInputChange}
-                        style={{ width: '18px', height: '18px', accentColor: '#2563eb' }}
-                      />
-                      <span>No</span>
-                    </label>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem', marginTop: '0.25rem' }}>
+                    {['Yes', 'No'].map((opt) => (
+                      <div
+                        key={opt}
+                        onClick={() => handlePollChange('pollQ1', opt)}
+                        style={{
+                          cursor: 'pointer',
+                          padding: '1rem',
+                          borderRadius: '0.75rem',
+                          textAlign: 'center',
+                          fontWeight: 700,
+                          background: formState.pollQ1 === opt ? 'rgba(59, 130, 246, 0.15)' : 'rgba(255, 255, 255, 0.03)',
+                          border: formState.pollQ1 === opt ? '2px solid #3b82f6' : '2px solid rgba(255, 255, 255, 0.08)',
+                          color: formState.pollQ1 === opt ? '#60a5fa' : '#cbd5e1',
+                          transition: 'all 0.2s',
+                          boxShadow: formState.pollQ1 === opt ? '0 0 12px rgba(59,130,246,0.3)' : 'none'
+                        }}
+                      >
+                        {opt === 'Yes' ? '👍 Yes' : '👎 No'}
+                      </div>
+                    ))}
                   </div>
                 </div>
 
@@ -633,20 +641,26 @@ export default function Registration() {
                   <label style={{ fontWeight: 600, color: '#ffffff' }}>
                     2. What month would be best for you? <span style={{ color: '#f87171' }}>*</span>
                   </label>
-                  <div style={{ display: 'flex', gap: '1.5rem', marginTop: '0.25rem' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginTop: '0.25rem' }}>
                     {['September', 'October', 'November'].map((month) => (
-                      <label key={month} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', color: '#ffffff' }}>
-                        <input
-                          type="radio"
-                          name="pollQ2"
-                          value={month}
-                          checked={formState.pollQ2 === month}
-                          onChange={handleInputChange}
-                          style={{ width: '18px', height: '18px', accentColor: '#2563eb' }}
-                          required
-                        />
-                        <span>{month}</span>
-                      </label>
+                      <div
+                        key={month}
+                        onClick={() => handlePollChange('pollQ2', month)}
+                        style={{
+                          cursor: 'pointer',
+                          padding: '1rem',
+                          borderRadius: '0.75rem',
+                          textAlign: 'center',
+                          fontWeight: 700,
+                          background: formState.pollQ2 === month ? 'rgba(59, 130, 246, 0.15)' : 'rgba(255, 255, 255, 0.03)',
+                          border: formState.pollQ2 === month ? '2px solid #3b82f6' : '2px solid rgba(255, 255, 255, 0.08)',
+                          color: formState.pollQ2 === month ? '#60a5fa' : '#cbd5e1',
+                          transition: 'all 0.2s',
+                          boxShadow: formState.pollQ2 === month ? '0 0 12px rgba(59,130,246,0.3)' : 'none'
+                        }}
+                      >
+                        {month === 'September' ? '🍁 Sep' : month === 'October' ? '🎃 Oct' : '🍂 Nov'}
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -656,30 +670,27 @@ export default function Registration() {
                   <label style={{ fontWeight: 600, color: '#ffffff' }}>
                     3. If you are interested, would you like to receive information? <span style={{ color: '#f87171' }}>*</span>
                   </label>
-                  <div style={{ display: 'flex', gap: '1.5rem', marginTop: '0.25rem', marginBottom: formState.pollQ3 === 'Yes' ? '1.5rem' : '0px' }}>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', color: '#ffffff' }}>
-                      <input
-                        type="radio"
-                        name="pollQ3"
-                        value="Yes"
-                        checked={formState.pollQ3 === 'Yes'}
-                        onChange={handleInputChange}
-                        style={{ width: '18px', height: '18px', accentColor: '#2563eb' }}
-                        required
-                      />
-                      <span>Yes</span>
-                    </label>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', color: '#ffffff' }}>
-                      <input
-                        type="radio"
-                        name="pollQ3"
-                        value="No"
-                        checked={formState.pollQ3 === 'No'}
-                        onChange={handleInputChange}
-                        style={{ width: '18px', height: '18px', accentColor: '#2563eb' }}
-                      />
-                      <span>No</span>
-                    </label>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem', marginTop: '0.25rem', marginBottom: formState.pollQ3 === 'Yes' ? '1.5rem' : '0px' }}>
+                    {['Yes', 'No'].map((opt) => (
+                      <div
+                        key={opt}
+                        onClick={() => handlePollChange('pollQ3', opt)}
+                        style={{
+                          cursor: 'pointer',
+                          padding: '1rem',
+                          borderRadius: '0.75rem',
+                          textAlign: 'center',
+                          fontWeight: 700,
+                          background: formState.pollQ3 === opt ? 'rgba(59, 130, 246, 0.15)' : 'rgba(255, 255, 255, 0.03)',
+                          border: formState.pollQ3 === opt ? '2px solid #3b82f6' : '2px solid rgba(255, 255, 255, 0.08)',
+                          color: formState.pollQ3 === opt ? '#60a5fa' : '#cbd5e1',
+                          transition: 'all 0.2s',
+                          boxShadow: formState.pollQ3 === opt ? '0 0 12px rgba(59,130,246,0.3)' : 'none'
+                        }}
+                      >
+                        {opt === 'Yes' ? '📬 Yes' : '📭 No'}
+                      </div>
+                    ))}
                   </div>
                 </div>
 
