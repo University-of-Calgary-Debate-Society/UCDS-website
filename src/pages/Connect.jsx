@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { collection, addDoc, query, where, getDocs, orderBy } from 'firebase/firestore';
+import { Link } from 'react-router-dom';
+import { collection, query, getDocs, orderBy } from 'firebase/firestore';
 import { db } from '../firebase';
 
 const DEFAULT_EXECUTIVES = [
@@ -14,17 +15,13 @@ const DEFAULT_EXECUTIVES = [
 ];
 
 export default function Connect() {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [newsletterName, setNewsletterName] = useState('');
-  const [newsletterEmail, setNewsletterEmail] = useState('');
-  const [submitStatus, setSubmitStatus] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
   // Executives state
   const [executives, setExecutives] = useState([]);
   const [execsLoading, setExecsLoading] = useState(true);
   const [startIndex, setStartIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [openDetails, setOpenDetails] = useState({});
+  const [isTransitioning, setIsTransitioning] = useState(true);
 
   // Fetch executives from Firestore
   useEffect(() => {
@@ -52,89 +49,73 @@ export default function Connect() {
     if (execsLoading || executives.length <= 3 || isHovered) return;
 
     const interval = setInterval(() => {
-      const step = 3;
-      setStartIndex(prev => (prev + step) % executives.length);
+      setStartIndex(prev => {
+        if (prev < 0 || prev >= executives.length) return prev;
+        setIsTransitioning(true);
+        return prev + 1;
+      });
     }, 8000);
 
     return () => clearInterval(interval);
   }, [execsLoading, executives.length, isHovered]);
 
-  // Modal handlers
-  const handleOpenModal = () => {
-    setModalOpen(true);
-    setSubmitStatus('');
-  };
-
-  const handleCloseModal = () => {
-    setModalOpen(false);
-    setNewsletterName('');
-    setNewsletterEmail('');
-  };
-
-  const handleSubscribe = async (e) => {
-    e.preventDefault();
-    if (!newsletterEmail.trim()) return;
-
-    setIsSubmitting(true);
-    setSubmitStatus('Subscribing...');
-
-    try {
-      // 1. Check if email already exists in subscribers
-      const subscribersRef = collection(db, 'subscribers');
-      const q = query(subscribersRef, where('email', '==', newsletterEmail.trim().toLowerCase()));
-      const querySnapshot = await getDocs(q);
-
-      if (!querySnapshot.empty) {
-        setSubmitStatus('You are already subscribed to our newsletter!');
-        setIsSubmitting(false);
-        return;
-      }
-
-      // 2. Add subscriber document to Firestore
-      await addDoc(collection(db, 'subscribers'), {
-        email: newsletterEmail.trim().toLowerCase(),
-        fullName: newsletterName.trim(),
-        grade: '', // Not specified in newsletter signup modal
-        lists: ['newsletter'],
-        active: true,
-        createdAt: new Date().toISOString()
-      });
-
-      setSubmitStatus('✅ Successfully subscribed! Thank you for joining.');
-      setNewsletterName('');
-      setNewsletterEmail('');
-    } catch (err) {
-      console.error(err);
-      setSubmitStatus('❌ Problem subscribing. Please verify connection and try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  // Carousel scroll actions (always step by 3)
-  const handleNext = () => {
+  // Handle infinite scroll boundary wrapping resets
+  useEffect(() => {
     if (executives.length === 0) return;
-    const step = 3;
-    setStartIndex(prev => (prev + step) % executives.length);
+
+    if (startIndex >= executives.length) {
+      const timer = setTimeout(() => {
+        setIsTransitioning(false);
+        setStartIndex(0);
+      }, 700); // match transition duration of 0.7s
+      return () => clearTimeout(timer);
+    }
+
+    if (startIndex < 0) {
+      const timer = setTimeout(() => {
+        setIsTransitioning(false);
+        setStartIndex(executives.length - 1);
+      }, 700);
+      return () => clearTimeout(timer);
+    }
+  }, [startIndex, executives.length]);
+
+  // Re-enable transitions on the next animation frame after reset
+  useEffect(() => {
+    if (!isTransitioning) {
+      const raf = requestAnimationFrame(() => {
+        setIsTransitioning(true);
+      });
+      return () => cancelAnimationFrame(raf);
+    }
+  }, [isTransitioning]);
+
+  // Carousel scroll actions (always step by 1)
+  const handleNext = () => {
+    if (executives.length === 0 || startIndex < 0 || startIndex >= executives.length) return;
+    setIsTransitioning(true);
+    setStartIndex(prev => prev + 1);
   };
 
   const handlePrev = () => {
-    if (executives.length === 0) return;
-    const step = 3;
-    setStartIndex(prev => (prev - step + executives.length) % executives.length);
+    if (executives.length === 0 || startIndex < 0 || startIndex >= executives.length) return;
+    setIsTransitioning(true);
+    setStartIndex(prev => prev - 1);
   };
 
-  // Select 3 executives at a time for circular infinite loop
-  const getVisibleExecutives = () => {
+  const handleDetailClick = (execName, tabName, e) => {
+    e.preventDefault();
+    setOpenDetails(prev => ({
+      ...prev,
+      [execName]: prev[execName] === tabName ? null : tabName
+    }));
+  };
+
+  // Select executives and append clones for circular infinite loop
+  const getExtendedExecutives = () => {
     if (executives.length === 0) return [];
     if (executives.length <= 3) return executives;
-
-    const visible = [];
-    for (let i = 0; i < 3; i++) {
-      const idx = (startIndex + i) % executives.length;
-      visible.push(executives[idx]);
-    }
-    return visible;
+    return [...executives, ...executives.slice(0, 3)];
   };
 
   return (
@@ -143,15 +124,25 @@ export default function Connect() {
       <section className="connect-page-banner">
         <div className="container hero-center" style={{ height: '100%', justifyContent: 'flex-end', paddingBottom: '2rem' }}>
           <div className="button-group" style={{ justifyContent: 'center' }}>
-            <a className="button" href="#socials">Socials</a>
+            <Link className="button" to="/socials">Socials</Link>
             <a className="button button-secondary" href="#executives">Executives</a>
           </div>
         </div>
       </section>
 
       {/* Executives Team Section */}
-      <section id="executives" className="section alt">
-        <div className="container" style={{ position: 'relative' }}>
+      <section id="executives" className="section alt" style={{ position: 'relative' }}>
+        {/* Background floating debate icons */}
+        <div className="section-bg-icons">
+          <svg className="floating-bg-icon icon-speech-bubble" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <svg className="floating-bg-icon icon-gavel" viewBox="0 0 24 24" fill="none" stroke="#fb923c" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="m14 13-5.5 5.5t-9-1.5M9.5 8.5l9 9M17 11l4.5-4.5M10.5 4.5 15 9"/><path d="m6 21 3-3"/></svg>
+          <svg className="floating-bg-icon icon-book" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          <svg className="floating-bg-icon icon-star" viewBox="0 0 24 24" fill="none" stroke="#fde047" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg className="floating-bg-icon icon-podium" viewBox="0 0 24 24" fill="none" stroke="#f43f5e" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 22h16M6 22V10h12v12M12 6V2M8 4h8"/></svg>
+          <svg className="floating-bg-icon icon-cap" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
+        </div>
+
+        <div className="container" style={{ position: 'relative', zIndex: 2 }}>
           <div className="section-header straddle">
             <h1 className="title-box"><span>Our executive team.</span></h1>
           </div>
@@ -172,45 +163,57 @@ export default function Connect() {
                 </button>
               )}
 
-              <div className="executives-carousel-deck" key={startIndex}>
-                {getVisibleExecutives().map((exec) => (
-                  <article key={exec.name} className="profile-item">
-                    {exec.photo ? (
-                      <div className="profile-avatar" style={{ backgroundImage: `url(${exec.photo})`, backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
-                    ) : (
-                      <div className="profile-avatar"></div>
-                    )}
-                    <div className="card profile-card">
-                      <p className="profile-role">
-                        {exec.role}
-                      </p>
-                      <h3>
-                        {exec.name}
-                      </h3>
-                    </div>
-                    
-                    <div className="profile-details">
-                      <details>
-                        <summary>About me</summary>
-                        <p>{exec.aboutMe || "Details coming soon."}</p>
-                      </details>
-                      <details>
-                        <summary>Debate experience</summary>
-                        <p>{exec.experience || "Details coming soon."}</p>
-                      </details>
-                      <details>
-                        <summary>Why I joined debate</summary>
-                        <p>{exec.whyJoined || "Details coming soon."}</p>
-                      </details>
-                      <details>
-                        <summary>Connect</summary>
-                        <p className="profile-email">
-                          <a href={`mailto:${exec.email}`}>{exec.email}</a>
+              <div className="executives-carousel-track">
+                <div 
+                  className="executives-carousel-deck"
+                  style={{
+                    transform: `translateX(calc(-${startIndex} * (100% + var(--carousel-gap)) / 3))`,
+                    transition: isTransitioning ? 'transform 0.7s cubic-bezier(0.16, 1, 0.3, 1)' : 'none',
+                    display: 'flex',
+                    gap: 'var(--carousel-gap)',
+                    width: '100%',
+                    justifyContent: 'flex-start'
+                  }}
+                >
+                  {getExtendedExecutives().map((exec, index) => (
+                    <article key={`${exec.name}-${index}`} className="profile-item">
+                      {exec.photo ? (
+                        <div className="profile-avatar" style={{ backgroundImage: `url(${exec.photo})`, backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
+                      ) : (
+                        <div className="profile-avatar"></div>
+                      )}
+                      <div className="card profile-card">
+                        <p className="profile-role">
+                          {exec.role}
                         </p>
-                      </details>
-                    </div>
-                  </article>
-                ))}
+                        <h3>
+                          {exec.name}
+                        </h3>
+                      </div>
+                      
+                      <div className="profile-details">
+                        <details open={openDetails[exec.name] === 'about'}>
+                          <summary onClick={(e) => handleDetailClick(exec.name, 'about', e)}>About me</summary>
+                          <p>{exec.aboutMe || "Details coming soon."}</p>
+                        </details>
+                        <details open={openDetails[exec.name] === 'experience'}>
+                          <summary onClick={(e) => handleDetailClick(exec.name, 'experience', e)}>Debate experience</summary>
+                          <p>{exec.experience || "Details coming soon."}</p>
+                        </details>
+                        <details open={openDetails[exec.name] === 'whyJoined'}>
+                          <summary onClick={(e) => handleDetailClick(exec.name, 'whyJoined', e)}>Why I joined debate</summary>
+                          <p>{exec.whyJoined || "Details coming soon."}</p>
+                        </details>
+                        <details open={openDetails[exec.name] === 'connect'}>
+                          <summary onClick={(e) => handleDetailClick(exec.name, 'connect', e)}>Connect</summary>
+                          <p className="profile-email">
+                            <a href={`mailto:${exec.email}`}>{exec.email}</a>
+                          </p>
+                        </details>
+                      </div>
+                    </article>
+                  ))}
+                </div>
               </div>
 
               {executives.length > 3 && (
@@ -224,135 +227,6 @@ export default function Connect() {
           )}
         </div>
       </section>
- 
-      {/* Social Media Grid */}
-      <section id="socials" className="section">
-        <div className="container">
-          <div className="section-header straddle">
-            <h1 className="title-box"><span>Connect with us online.</span></h1>
-          </div>
-          
-          <div className="cards social-grid">
-            <article className="card social-card">
-              <img src="/photos/instagram_footer.png" alt="Instagram logo" className="social-logo" />
-              <div>
-                <h3>Instagram</h3>
-                <p>Follow the University of Calgary Debate Society for news, events, and updates.</p>
-                <a className="button" href="https://www.instagram.com/ucalgary.debate/" target="_blank" rel="noreferrer">Visit</a>
-              </div>
-            </article>
-            <article className="card social-card">
-              <img src="/photos/discord_footer.png" alt="Discord logo" className="social-logo" />
-              <div>
-                <h3>Discord</h3>
-                <p>Join our Discord community for discussion, announcements, and debate sessions.</p>
-                <a className="button" href="https://discord.gg/5TAG3c8TwC" target="_blank" rel="noreferrer">Visit</a>
-              </div>
-            </article>
-            <article className="card social-card">
-              <img src="/photos/facebook_footer.png" alt="Facebook logo" className="social-logo" />
-              <div>
-                <h3>Facebook</h3>
-                <p>Connect with us on Facebook for event highlights and community updates.</p>
-                <a className="button" href="https://www.facebook.com/DebateUofC/" target="_blank" rel="noreferrer">Visit</a>
-              </div>
-            </article>
-            <article className="card social-card">
-              <img src="/photos/x_footer.png" alt="X logo" className="social-logo" />
-              <div>
-                <h3>X (Twitter)</h3>
-                <p>Follow our X account for real-time updates and debate news.</p>
-                <a className="button" href="https://x.com/UCDebate" target="_blank" rel="noreferrer">Visit</a>
-              </div>
-            </article>
-            <article className="card social-card">
-              <img src="/photos/linktree_footer.png" alt="Linktree logo" className="social-logo" />
-              <div>
-                <h3>Linktree</h3>
-                <p>Access all our important links, resources, and sign-up forms in one place.</p>
-                <a className="button" href="https://linktr.ee/ucds.debate" target="_blank" rel="noreferrer">Visit</a>
-              </div>
-            </article>
-            <article className="card social-card">
-              <img src="/photos/youtube_footer.png" alt="YouTube logo" className="social-logo" />
-              <div>
-                <h3>YouTube</h3>
-                <p>Subscribe to our channel for recorded debates, training sessions, and more.</p>
-                <a className="button" href="https://www.youtube.com/@ucds.debate" target="_blank" rel="noreferrer">Visit</a>
-              </div>
-            </article>
-            <article className="card social-card">
-              <img src="/photos/logo.jpg" alt="UCDS logo" className="social-logo" style={{ borderRadius: '0.375rem', objectFit: 'contain' }} />
-              <div>
-                <h3>Mailing List</h3>
-                <p>Subscribe to our monthly newsletter for updates, event reminders, and debate materials.</p>
-                <button className="button" onClick={handleOpenModal}>Subscribe</button>
-              </div>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      {/* Newsletter Modal */}
-      {modalOpen && (
-        <div className="modal-overlay" style={{ display: 'flex', position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(4, 10, 24, 0.85)', zIndex: 1000, justifyContent: 'center', alignItems: 'center' }}>
-          <div className="modal-content" style={{ background: '#ffffff', color: '#0f172a', padding: '2.5rem', borderRadius: '12px', width: '90%', maxWidth: '480px', position: 'relative' }}>
-            <button className="modal-close" onClick={handleCloseModal} aria-label="Close modal" style={{ position: 'absolute', top: '15px', right: '20px', background: 'none', border: 'none', fontSize: '1.75rem', cursor: 'pointer', color: '#64748b' }}>&times;</button>
-            
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '1.25rem' }}>
-              <img src="/photos/logo.jpg" alt="UCDS Logo" style={{ width: '2rem', height: '2rem', borderRadius: '0.25rem', objectFit: 'contain' }} />
-              <span style={{ fontWeight: 700, color: '#112854', fontSize: '1rem', letterSpacing: '0.05em', textTransform: 'uppercase' }}>UCDS Mailing List</span>
-            </div>
-
-            <h3 style={{ margin: '0 0 0.5rem', color: '#112854', fontSize: '1.5rem', textAlign: 'center', fontWeight: '700' }}>Join our Newsletter</h3>
-            <p style={{ color: '#64748b', textAlign: 'center', margin: '0 0 1.75rem', fontSize: '0.95rem', lineHeight: '1.5' }}>
-              Stay in the loop with our monthly newsletter. Get updates on upcoming events, tournament results, and debate resources delivered straight to your inbox.
-            </p>
-            
-            <form onSubmit={handleSubscribe} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-              <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <label htmlFor="newsletterName" style={{ color: '#475569', fontWeight: 600, fontSize: '0.9rem' }}>Full Name (Optional)</label>
-                <input 
-                  type="text" 
-                  id="newsletterName" 
-                  value={newsletterName}
-                  onChange={(e) => setNewsletterName(e.target.value)}
-                  placeholder="e.g. John Doe" 
-                  style={{ padding: '0.85rem 1rem', borderRadius: '0.5rem', border: '1px solid #cbd5e1', background: '#f8fafc', color: '#0f172a', fontSize: '0.95rem', outline: 'none' }} 
-                />
-              </div>
-              
-              <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <label htmlFor="newsletterEmail" style={{ color: '#475569', fontWeight: 600, fontSize: '0.9rem' }}>Email Address <span style={{ color: '#ef4444' }}>*</span></label>
-                <input 
-                  type="email" 
-                  id="newsletterEmail" 
-                  required 
-                  value={newsletterEmail}
-                  onChange={(e) => setNewsletterEmail(e.target.value)}
-                  placeholder="name@example.com" 
-                  style={{ padding: '0.85rem 1rem', borderRadius: '0.5rem', border: '1px solid #cbd5e1', background: '#f8fafc', color: '#0f172a', fontSize: '0.95rem', outline: 'none' }} 
-                />
-              </div>
-              
-              <button 
-                type="submit" 
-                disabled={isSubmitting}
-                className="button" 
-                style={{ width: '100%', padding: '0.95rem', fontSize: '1rem', fontWeight: '600', border: 'none', borderRadius: '999px', background: '#2563eb', color: '#ffffff', cursor: 'pointer' }}
-              >
-                {isSubmitting ? 'Subscribing...' : 'Subscribe Now'}
-              </button>
-              
-              {submitStatus && (
-                <p style={{ margin: '0.5rem 0 0', fontSize: '0.95rem', textAlign: 'center', fontWeight: '600', color: submitStatus.startsWith('✅') ? '#16a34a' : '#ef4444' }}>
-                  {submitStatus}
-                </p>
-              )}
-            </form>
-          </div>
-        </div>
-      )}
     </main>
   );
 }

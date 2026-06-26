@@ -125,26 +125,22 @@
   margin-top: 3.5rem;
   padding: 0 4.5rem;
   min-height: 520px;
+  --carousel-gap: 3.5rem;
+}
+
+.executives-carousel-track {
+  width: 100%;
+  overflow: hidden;
+  padding: 4.5rem 2rem;
+  margin: -4.5rem -2rem;
 }
 
 .executives-carousel-deck {
   display: flex;
-  justify-content: center;
-  gap: 3.5rem;
+  justify-content: flex-start;
+  gap: var(--carousel-gap);
   width: 100%;
-  animation: carouselSlideFade 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  will-change: opacity, transform;
-}
-
-@keyframes carouselSlideFade {
-  0% {
-    opacity: 0;
-    transform: translateY(18px) scale(0.99);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+  will-change: transform;
 }
 
 .carousel-arrow {
@@ -180,11 +176,13 @@
 }
 
 .prev-arrow {
-  left: 0.5rem;
+  left: 2.625rem;
+  z-index: 30 !important;
 }
 
 .next-arrow {
-  right: 0.5rem;
+  right: 2.625rem;
+  z-index: 30 !important;
 }
 
 /* Larger Roster Profiles */
@@ -194,23 +192,44 @@
   align-items: center;
   text-align: center;
   gap: 1.25rem;
-  max-width: 480px;
-  width: 100%;
+  flex: 0 0 calc((100% - 2 * var(--carousel-gap)) / 3);
+  width: calc((100% - 2 * var(--carousel-gap)) / 3);
   position: relative;
-  transition: transform 0.3s ease;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 2.5rem 2rem;
+  background: linear-gradient(135deg, rgba(17, 40, 84, 0.65) 0%, rgba(10, 25, 59, 0.8) 100%) !important;
+  border: 1px solid rgba(59, 130, 246, 0.25) !important;
+  box-shadow: none !important;
+  backdrop-filter: blur(16px);
+  border-radius: 1.5rem !important;
+  overflow: visible;
+}
+
+.profile-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2rem;
+  background: linear-gradient(90deg, #2563eb, #8b5cf6) top / 100% 4px no-repeat;
+  border-top-left-radius: 1.45rem;
+  border-top-right-radius: 1.45rem;
+  pointer-events: none;
 }
 
 .profile-item:hover {
-  transform: translateY(-3px);
+  transform: translateY(-8px);
+  box-shadow: none !important;
+  border-color: rgba(96, 165, 250, 0.5) !important;
 }
 
 .profile-card {
-  padding: 2.25rem !important;
-  background: rgba(17, 40, 84, 0.55) !important;
-  border: 1px solid rgba(59, 130, 246, 0.2) !important;
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3) !important;
-  backdrop-filter: blur(10px);
-  border-radius: 1.25rem !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
   color: #f8fafc !important;
   width: 100%;
 }
@@ -222,8 +241,8 @@
 }
 
 .profile-avatar {
-  width: 320px;
-  height: 320px;
+  width: 240px;
+  height: 240px;
   margin-bottom: 1.25rem;
   background-color: #1e293b;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Ccircle cx='60' cy='60' r='58' fill='%231e3a8a'/%3E%3Cpath fill='%2393c5fd' d='M60 34a18 18 0 1 0 0 36 18 18 0 0 0 0-36zm0 50c-16.1 0-29.2 11.7-31.2 26.9a3 3 0 0 0 3 3.1h56.4a3 3 0 0 0 3-3.1C89.2 95.7 76.1 84 60 84z'/%3E%3C/svg%3E");
@@ -243,12 +262,19 @@
 
 /* Responsive carousel display counts (3-card view scaling) */
 @media (max-width: 1120px) {
+  .carousel-container {
+    --carousel-gap: 1.5rem;
+  }
   .executives-carousel-deck {
-    gap: 1.5rem;
+    gap: var(--carousel-gap);
+  }
+  .profile-item {
+    flex: 0 0 calc((100% - 2 * var(--carousel-gap)) / 3);
+    width: calc((100% - 2 * var(--carousel-gap)) / 3);
   }
   .profile-avatar {
-    width: 250px;
-    height: 250px;
+    width: 210px;
+    height: 210px;
   }
   .profile-card {
     padding: 1.5rem !important;
@@ -258,13 +284,18 @@
 @media (max-width: 1024px) {
   .carousel-container {
     padding: 0 2.5rem;
+    --carousel-gap: 1rem;
   }
   .executives-carousel-deck {
-    gap: 1rem;
+    gap: var(--carousel-gap);
+  }
+  .profile-item {
+    flex: 0 0 calc((100% - 2 * var(--carousel-gap)) / 3);
+    width: calc((100% - 2 * var(--carousel-gap)) / 3);
   }
   .profile-avatar {
-    width: 200px;
-    height: 200px;
+    width: 180px;
+    height: 180px;
   }
   .profile-card {
     padding: 1.25rem !important;
@@ -278,9 +309,14 @@
   .carousel-container {
     padding: 0 1rem;
     min-height: 420px;
+    --carousel-gap: 0.5rem;
   }
   .executives-carousel-deck {
-    gap: 0.5rem;
+    gap: var(--carousel-gap);
+  }
+  .profile-item {
+    flex: 0 0 calc((100% - 2 * var(--carousel-gap)) / 3);
+    width: calc((100% - 2 * var(--carousel-gap)) / 3);
   }
   .profile-avatar {
     width: 120px;
@@ -540,21 +576,7 @@ details[open] summary~* {
   color: #93c5fd !important;
 }
 
-/* Accents and clear headers on connect page */
-.profile-card {
-  position: relative;
-  overflow: hidden;
-}
 
-.profile-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 4px;
-  height: 100%;
-  background: linear-gradient(180deg, #2563eb, #60a5fa);
-}
 
 .profile-details details {
   border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
@@ -567,5 +589,61 @@ details[open] summary~* {
 
 .profile-details summary:hover {
   color: #ffffff !important;
+}
+
+/* Background floating debate icons */
+.section-bg-icons {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.floating-bg-icon {
+  position: absolute;
+  opacity: 0.08;
+  width: 70px;
+  height: 70px;
+  pointer-events: none;
+  animation: float-icon-bg 12s ease-in-out infinite;
+  filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.15));
+  color: rgba(147, 197, 253, 0.6);
+}
+
+@keyframes float-icon-bg {
+  0% { transform: translateY(0px) rotate(0deg) scale(1); }
+  50% { transform: translateY(-20px) rotate(15deg) scale(1.05); }
+  100% { transform: translateY(0px) rotate(0deg) scale(1); }
+}
+
+/* Scattered positions on the Connect section background */
+.section-bg-icons .icon-speech-bubble { top: 10%; left: 8%; animation-delay: 0s; }
+.section-bg-icons .icon-gavel { top: 15%; right: 8%; animation-delay: 3s; }
+.section-bg-icons .icon-book { bottom: 15%; left: 6%; animation-delay: 6s; }
+.section-bg-icons .icon-star { bottom: 10%; right: 7%; animation-delay: 9s; }
+.section-bg-icons .icon-podium { top: 50%; left: 4%; animation-delay: 2.5s; width: 60px; height: 60px; }
+.section-bg-icons .icon-cap { top: 48%; right: 4%; animation-delay: 5.5s; width: 60px; height: 60px; }
+
+/* Custom responsive arrow positions */
+@media (max-width: 1024px) {
+  .prev-arrow {
+    left: 1.25rem !important;
+  }
+  .next-arrow {
+    right: 1.25rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .prev-arrow {
+    left: 0.25rem !important;
+  }
+  .next-arrow {
+    right: 0.25rem !important;
+  }
 }
 

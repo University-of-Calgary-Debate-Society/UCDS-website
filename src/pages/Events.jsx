@@ -1,6 +1,38 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { collection, getDocs, query } from 'firebase/firestore';
+import { db } from '../firebase';
+import { getGoogleCalendarLink, downloadCalendarICS } from '../utils/calendarUtils';
 
 export default function Events() {
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
+  const [loadingEvents, setLoadingEvents] = useState(true);
+
+  useEffect(() => {
+    const fetchUpcoming = async () => {
+      try {
+        const todayStr = new Date().toISOString().split('T')[0];
+        const q = query(collection(db, 'calendar_events'));
+        const snapshot = await getDocs(q);
+        const list = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        
+        // Filter events today onwards (or currently ongoing), sort chronologically by start date
+        const filtered = list.filter(evt => {
+          const start = evt.startDate || evt.date;
+          const end = evt.endDate || evt.date || start;
+          return (end || '') >= todayStr;
+        });
+        filtered.sort((a, b) => new Date(a.startDate || a.date || 0) - new Date(b.startDate || b.date || 0));
+        
+        setUpcomingEvents(filtered.slice(0, 3));
+      } catch (err) {
+        console.error("Error loading upcoming events:", err);
+      } finally {
+        setLoadingEvents(false);
+      }
+    };
+    fetchUpcoming();
+  }, []);
   return (
     <main>
       <section className="events-page-banner"></section>
@@ -133,13 +165,91 @@ export default function Events() {
           <div className="section-header animate-on-scroll fade-in-left">
             <h2><span>Events Calendar</span></h2>
           </div>
-          <div className="calendar-embed">
-            <iframe 
-              src="https://calendar.google.com/calendar/embed?height=600&wkst=1&ctz=America%2FEdmonton&showPrint=0&title=UCDS%20Public%20Calendar&src=dWNkcy5kZWJhdGVAZ21haWwuY29t&src=MmVkYzAyNDRmOWQxZjY5MGJhNTE3MjQ2ZWY3YTZmMzBmNWExMmM0YjFkZTRkN2UyM2YzMzJkNDMyZmFkZWE5MUBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=NzFkMjVmZGY4Y2M3NzE5OTFhODI4OTc3MjQyMDM5ZWJhMDRkM2Y1YjU5MzY4MmNjZTQ3Yzg1NTIwNTY1OGU0ZUBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=YTY2ZGE5ZDIxODc4MmZiNDI3NzQ1ZWNhZGQ3M2JjOTc1ZmIzOWFhMWUzNjY1NzE1M2U0NDMyZjg2ZTUyZDU2Y0Bncm91cC5jYWxlbmRhci5nb29nbGUuY29t&src=YzE5ZGQyZTJjZmMwODVkN2FmNGFkZGVmYzQ0NzllNWZkYjcxOTY0Yjg3YWM3Y2MwYmU5Nzk5MmQ0YzZkZDhjYUBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&color=%237986cb&color=%23ef6c00&color=%23d50000&color=%234285f4&color=%238e24aa" 
-              frameBorder="0" 
-              scrolling="no"
-              title="Google Calendar"
-            ></iframe>
+          
+          <div className="upcoming-events-preview" style={{ marginTop: '2.5rem' }}>
+            {loadingEvents ? (
+              <p style={{ color: '#cbd5e1', textAlign: 'center', padding: '2rem' }}>Loading upcoming events...</p>
+            ) : upcomingEvents.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '3rem 1.5rem', background: 'rgba(10, 25, 59, 0.4)', borderRadius: '1.5rem', border: '1px dashed rgba(255,255,255,0.1)' }}>
+                <p style={{ color: '#94a3b8', fontSize: '1.1rem', margin: '0 0 1rem' }}>No upcoming events scheduled right now.</p>
+              </div>
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', margin: '2rem 0' }}>
+                {upcomingEvents.map(event => (
+                  <div key={event.id} className="exec-card" style={{ background: 'rgba(17, 40, 84, 0.55)', border: '1px solid rgba(255, 255, 255, 0.15)', borderRadius: '16px', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.75rem', position: 'relative', overflow: 'hidden' }}>
+                    <div style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '4px',
+                      height: '100%',
+                      background: event.category === 'practice' ? '#3b82f6' : 
+                                  event.category === 'tournament' ? '#f97316' :
+                                  event.category === 'social' ? '#22c55e' :
+                                  event.category === 'meeting' ? '#8b5cf6' : '#14b8a6'
+                    }}></div>
+                    <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 700, color: event.category === 'practice' ? '#93c5fd' : 
+                                  event.category === 'tournament' ? '#fdba74' :
+                                  event.category === 'social' ? '#86efac' :
+                                  event.category === 'meeting' ? '#c084fc' : '#99f6e4' }}>
+                      {event.category}
+                    </span>
+                    <h3 style={{ margin: 0, fontSize: '1.2rem', color: '#ffffff', fontWeight: 'bold' }}>{event.title}</h3>
+                    <p style={{ margin: 0, color: '#cbd5e1', fontSize: '0.9rem' }}>
+                      📅 {event.startDate && event.endDate && event.startDate !== event.endDate ? `${event.startDate} to ${event.endDate}` : (event.startDate || event.date)} {event.startTime ? `• ⏰ ${event.startTime} ${event.timezone || 'MST'}` : ''}
+                    </p>
+                    {event.location && (
+                      <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.85rem' }}>📍 {event.location}</p>
+                    )}
+                    {event.description && (
+                      <p style={{ margin: '0.5rem 0 0', color: '#cbd5e1', fontSize: '0.85rem', lineClamp: 2, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{event.description}</p>
+                    )}
+                    <div style={{ display: 'flex', gap: '0.5rem', marginTop: 'auto', paddingTop: '0.75rem' }}>
+                      <a 
+                        href={getGoogleCalendarLink(event)} 
+                        target="_blank" 
+                        rel="noreferrer" 
+                        style={{ 
+                          fontSize: '0.75rem', 
+                          padding: '4px 10px', 
+                          borderRadius: '999px', 
+                          background: 'rgba(66, 133, 244, 0.15)', 
+                          color: '#60a5fa', 
+                          textDecoration: 'none',
+                          border: '1px solid rgba(66, 133, 244, 0.3)',
+                          fontWeight: 600,
+                          textAlign: 'center'
+                        }}
+                      >
+                        + Google Calendar
+                      </a>
+                      <button 
+                        onClick={() => downloadCalendarICS([event], `${event.title || 'event'}.ics`)} 
+                        style={{ 
+                          fontSize: '0.75rem', 
+                          padding: '4px 10px', 
+                          borderRadius: '999px', 
+                          background: 'rgba(244, 63, 94, 0.15)', 
+                          color: '#fb7185', 
+                          border: '1px solid rgba(244, 63, 94, 0.3)',
+                          cursor: 'pointer',
+                          fontWeight: 600,
+                          textAlign: 'center'
+                        }}
+                      >
+                        Export (.ics)
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
+              <Link to="/calendar" className="button" style={{ background: 'linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%)', textDecoration: 'none' }}>
+                Open Interactive Calendar
+              </Link>
+            </div>
           </div>
         </div>
       </section>

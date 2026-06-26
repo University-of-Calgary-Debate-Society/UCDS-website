@@ -11,17 +11,26 @@ import RegistrationSuccess from './pages/RegistrationSuccess';
 import Blog from './pages/Blog';
 import Resources from './pages/Resources';
 import Connect from './pages/Connect';
+import Socials from './pages/Socials';
+import Calendar from './pages/Calendar';
 import Join from './pages/Join';
 import JoinWelcome from './pages/JoinWelcome';
 import Unsubscribe from './pages/Unsubscribe';
 import Void from './pages/Void';
+import DiscordInstall from './pages/void/discord/DiscordInstall';
+import DiscordTermsAndPrivacy from './pages/void/discord/DiscordTermsAndPrivacy';
 import ExecutivePortal from './pages/executive/ExecutivePortal';
 import RosterManager from './pages/executive/RosterManager';
 import LedgerManager from './pages/executive/LedgerManager';
 import EmailCampaignManager from './pages/executive/EmailCampaignManager';
 import BlogManager from './pages/executive/BlogManager';
 import AccessControlManager from './pages/executive/AccessControlManager';
+import PostsManager from './pages/executive/PostsManager';
+import CalendarManager from './pages/executive/CalendarManager';
 import DebugPortal from './pages/executive/DebugPortal';
+import MembershipSignUp from './pages/MembershipSignUp';
+import MembershipFees from './pages/MembershipFees';
+import MembershipManager from './pages/executive/MembershipManager';
 
 // Component to handle scroll restoration and run the IntersectionObserver for scroll animations
 function RouteObserver() {
@@ -33,12 +42,20 @@ function RouteObserver() {
 
     // Toggle events-body class based on path to load the page background image
     const path = location.pathname;
-    const isEventsBodyRoute = path.startsWith('/events') || path.startsWith('/connect/unsubscribe') || path.startsWith('/executive');
+    const isEventsBodyRoute = path.startsWith('/events') || path.startsWith('/calendar') || path.startsWith('/connect/unsubscribe') || path.startsWith('/executive') || path.startsWith('/void') || path.startsWith('/membership-sign-up');
     
     if (isEventsBodyRoute) {
       document.body.classList.add('events-body');
     } else {
       document.body.classList.remove('events-body');
+    }
+
+    if (path === '/join') {
+      document.documentElement.classList.add('join-page');
+      document.body.classList.add('join-page');
+    } else {
+      document.documentElement.classList.remove('join-page');
+      document.body.classList.remove('join-page');
     }
 
     const observerOptions = {
@@ -98,17 +115,26 @@ function AnimatedRoutes() {
         <Route path="/blog" element={<Blog />} />
         <Route path="/resources" element={<Resources />} />
         <Route path="/connect" element={<Connect />} />
+        <Route path="/socials" element={<Socials />} />
+        <Route path="/calendar" element={<Calendar />} />
         <Route path="/connect/unsubscribe" element={<Unsubscribe />} />
         <Route path="/join" element={<Join />} />
         <Route path="/join/welcome" element={<JoinWelcome />} />
         <Route path="/void" element={<Void />} />
+        <Route path="/void/discord" element={<DiscordInstall />} />
+        <Route path="/void/discord/terms-and-privacy" element={<DiscordTermsAndPrivacy />} />
         <Route path="/executive" element={<ExecutivePortal />} />
         <Route path="/executive/roster" element={<RosterManager />} />
         <Route path="/executive/ledger" element={<LedgerManager />} />
         <Route path="/executive/email" element={<EmailCampaignManager />} />
         <Route path="/executive/blog" element={<BlogManager />} />
         <Route path="/executive/access" element={<AccessControlManager />} />
+        <Route path="/executive/posts" element={<PostsManager />} />
+        <Route path="/executive/calendar" element={<CalendarManager />} />
         <Route path="/executive/debug" element={<DebugPortal />} />
+        <Route path="/executive/membership" element={<MembershipManager />} />
+        <Route path="/membership-sign-up" element={<MembershipSignUp />} />
+        <Route path="/membership-sign-up/fees" element={<MembershipFees />} />
       </Routes>
     </div>
   );

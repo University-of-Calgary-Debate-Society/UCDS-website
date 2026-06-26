@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -29,10 +30,23 @@ export default function Header() {
         </button>
         <nav className={`site-nav ${isOpen ? 'active' : ''}`}>
           <NavLink to="/" end onClick={closeMenu}>Home</NavLink>
-          <NavLink to="/events" onClick={closeMenu}>Events</NavLink>
+          <div className="nav-dropdown-wrapper">
+            <NavLink to="/events" className="nav-dropdown-trigger" onClick={closeMenu}>Events</NavLink>
+            <div className="nav-dropdown-menu">
+              <Link to="/events" onClick={closeMenu}>Overview</Link>
+              <Link to="/calendar" onClick={closeMenu}>Interactive Calendar</Link>
+              <Link to="/events/calgary-summer-cup" onClick={closeMenu}>Summer Cup</Link>
+            </div>
+          </div>
           <NavLink to="/blog" onClick={closeMenu}>Blog</NavLink>
           <NavLink to="/resources" onClick={closeMenu}>Resources</NavLink>
-          <NavLink to="/connect" onClick={closeMenu}>Connect</NavLink>
+          <div className="nav-dropdown-wrapper">
+            <NavLink to="/connect" className="nav-dropdown-trigger" onClick={closeMenu}>Connect</NavLink>
+            <div className="nav-dropdown-menu">
+              <Link to="/connect" onClick={closeMenu}>Exec Team</Link>
+              <Link to="/socials" onClick={closeMenu}>Social Feed</Link>
+            </div>
+          </div>
           <NavLink to="/join" className="nav-join-button" onClick={closeMenu}>Join</NavLink>
         </nav>
       </div>

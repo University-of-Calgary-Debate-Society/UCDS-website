@@ -101,7 +101,7 @@ export default function RegistrationSuccess() {
                   onClick={() => setPaymentTab('stripe')}
                   style={{ flex: 1, padding: '10px', background: 'transparent', border: 'none', color: '#94a3b8', fontSize: '0.95rem', fontWeight: 700, cursor: 'pointer', borderRadius: '6px', transition: 'all 0.2s ease' }}
                 >
-                  Stripe Portal
+                  Stripe (Coming Soon)
                 </button>
               </div>
 
@@ -136,30 +136,11 @@ export default function RegistrationSuccess() {
               {paymentTab === 'stripe' && (
                 <div id="stripe-panel" className="payment-panel">
                   <div style={{ background: 'rgba(99, 102, 241, 0.1)', border: '1px solid rgba(99, 102, 241, 0.2)', borderLeft: '4px solid #6366f1', padding: '12px 16px', borderRadius: '6px', marginBottom: '15px', fontSize: '0.9rem', color: '#c7d2fe', lineHeight: 1.5 }}>
-                    🔒 Secure transaction processed via <strong>Stripe Checkout</strong>.
+                    ⏳ Stripe Payments are <strong>Coming Soon</strong>.
                   </div>
                   <p style={{ fontSize: '0.95rem', color: '#cbd5e1', marginBottom: '20px', lineHeight: 1.6 }}>
-                    Use the button below to navigate to the UCDS Stripe Payment Portal. You can complete the transaction using credit cards, Apple Pay, or Google Pay.
+                    Direct card payments via Stripe are currently under maintenance and will be available soon. Please use **Interac E-Transfer** to complete your Calgary Summer Cup registration.
                   </p>
-                  
-                  <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-                    <a 
-                      href={STRIPE_LINKS[feeOption]} 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px', width: '100%', padding: '14px', background: '#635bff', color: '#ffffff', borderRadius: '6px', fontSize: '1rem', fontWeight: 700, textDecoration: 'none', cursor: 'pointer', transition: 'background 0.2s ease', boxShadow: '0 4px 12px rgba(99, 91, 255, 0.3)' }}
-                    >
-                      <span>Pay with</span>
-                      <svg viewBox="0 0 40 16" fill="currentColor" style={{ height: '1.25rem', width: 'auto', verticalAlign: 'middle' }}>
-                        <path d="M40 7.82c0-2.65-1.28-4.28-3.64-4.28-2.52 0-3.83 1.88-3.83 4.36 0 2.82 1.4 4.3 3.83 4.3 1.18 0 2.22-.29 2.9-.7V9.38c-.66.31-1.47.53-2.3.53-1.14 0-1.85-.48-2.04-1.36h6.24c.05-.42.1-.95.1-1.44zM36.43 6.8c.04-.74.57-1.28 1.39-1.28.75 0 1.27.52 1.3 1.28h-2.69zm-11.83-.81c-.91 0-1.52.48-1.84.83l-.1-1H19.5v8.16l2.4-.5v-3.73c.33.3.88.7 1.72.7 1.9 0 3.39-1.39 3.39-4.08 0-2.83-1.51-4.08-3.39-4.08zm-.53 6.22c-.78 0-1.18-.4-1.18-1.24v-.7c0-.85.4-1.24 1.18-1.24.82 0 1.31.7 1.31 2.12-.01 1.45-.5 2.18-1.31 2.18zm-8.8-6.22c-.85 0-1.36.4-1.64.7l-.1-.54H10.4v8.16l2.4-.5V9.45c0-1.73.58-2.28 1.6-2.28.25 0 .48.03.65.1V5.9c-.24-.05-.52-.08-.75-.08zm-7.63.15h2.4v8.16h-2.4zm0-2.62h2.4V4.92h-2.4zm-3.1 3.52c-.6-.26-1.5-.46-2.14-.46-1.07 0-1.58.46-1.58 1 0 .7 1 .8 2.65 1.2 1.98.5 3.33 1.1 3.33 3.03 0 2.37-2.02 3.08-4.33 3.08-1.07 0-2.2-.25-3.05-.73V10.1c.84.46 1.83.74 2.82.74.88 0 1.23-.29 1.23-.74 0-.66-.65-.77-2.05-1.1-1.85-.45-3.92-.85-3.92-3.08 0-2.12 1.85-3.06 4.14-3.06.94 0 1.92.2 2.7.54v2.54z"/>
-                      </svg>
-                    </a>
-                  </div>
-                  
-                  <ul style={{ fontSize: '0.9rem', color: '#94a3b8', paddingLeft: '20px', lineHeight: '1.6', margin: 0 }}>
-                    <li>After successful payment, your spot will be secured automatically.</li>
-                    <li>Ensure you write the correct registration email on the Stripe form.</li>
-                  </ul>
                 </div>
               )}
             </div>

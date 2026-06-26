@@ -13,10 +13,12 @@ export default function Blog() {
         const postsRef = collection(db, 'posts');
         const q = query(postsRef, orderBy('date', 'desc'));
         const querySnapshot = await getDocs(q);
-        const fetchedPosts = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
+        const fetchedPosts = querySnapshot.docs
+          .map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          }))
+          .filter(post => post.type !== 'instagram');
         setPosts(fetchedPosts);
         setLoading(false);
       } catch (err) {

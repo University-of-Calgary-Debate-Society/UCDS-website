@@ -15,18 +15,49 @@
 }
 
 .special-join-button {
-  font-size: 1.5rem !important;
-  padding: 1.25rem 3.5rem !important;
-  transition: background-color 0.4s ease, box-shadow 0.4s ease, color 0.4s ease !important;
+  font-size: 1.75rem !important;
+  padding: 1.5rem 4.5rem !important;
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border: 2px solid #ffffff !important;
+  border-radius: 0px !important;
+  font-family: 'Outfit', Inter, sans-serif !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   position: relative;
-  z-index: 102;
-  will-change: transform;
+  z-index: 1010 !important;
+  overflow: hidden;
+  will-change: transform, letter-spacing;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+  box-shadow: 0 0 0 rgba(255, 255, 255, 0) !important;
+}
+
+.special-join-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: all 0.6s ease;
+}
+
+.special-join-button:hover::before {
+  left: 150%;
 }
 
 .special-join-button:hover {
-  background-color: #60a5fa !important;
-  box-shadow: 0 0 50px 20px rgba(96, 165, 250, 0.75) !important;
+  background-color: #111111 !important;
+  border-color: #ffffff !important;
   color: #ffffff !important;
+  letter-spacing: 0.15em !important;
+  box-shadow: 0 0 35px rgba(255, 255, 255, 0.35), inset 0 0 15px rgba(255, 255, 255, 0.15) !important;
 }
 
 #member-card {
@@ -59,4 +90,57 @@
 
 .mute-toggle-label:hover {
   background: #e5e7eb;
+}
+
+/* Proximity Opacity for site header & footer - only when effects are enabled */
+body.join-page.effects-enabled .site-header,
+body.join-page.effects-enabled .site-footer {
+  opacity: calc(1 - var(--btn-closeness, 0));
+  transition: opacity 0.15s ease-out;
+}
+
+/* Join Page Specially Dark Blue Background by default & scroll lock */
+html.join-page,
+body.join-page {
+  background-color: #0b1a3a !important;
+  background-image: none !important;
+  transition: background-color 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden !important;
+  height: 100vh !important;
+}
+
+body.join-page .section {
+  background-color: transparent !important;
+  background-image: none !important;
+  transition: background-color 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Direct Hover transitions & state rules */
+html.join-page.button-hovered,
+body.join-page.button-hovered {
+  background-color: #000000 !important;
+}
+
+body.join-page.button-hovered .site-header,
+body.join-page.button-hovered .site-footer,
+body.join-page.button-hovered .section-copy,
+body.join-page.button-hovered .mute-container {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+body.join-page .section-copy,
+body.join-page .mute-container,
+body.join-page canvas {
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body.join-page .section-header {
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body.join-page .page-transition-wrapper {
+  position: relative;
+  z-index: 1000;
 }

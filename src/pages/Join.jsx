@@ -3,9 +3,10 @@ import { Link, useNavigate } from 'react-router-dom';
 
 export default function Join() {
   const navigate = useNavigate();
-  const [effectsEnabled, setEffectsEnabled] = useState(true);
-  const [isMuted, setIsMuted] = useState(false);
+  const [effectsEnabled, setEffectsEnabled] = useState(false);
   const [eeTriggered, setEeTriggered] = useState(false);
+  const [isDirectlyHovering, setIsDirectlyHovering] = useState(false);
+  const targetScaleRef = useRef(1);
 
   const canvasRef = useRef(null);
   const specialBtnRef = useRef(null);
@@ -31,8 +32,7 @@ export default function Join() {
 
   // Open google form
   const handleCommence = () => {
-    window.open('https://docs.google.com/forms/d/e/1FAIpQLScF8JDuM1xkYcl47M0PffvOLgXThYukyjkn3FaghPwiPgIsNg/viewform', '_blank');
-    navigate('/join/welcome');
+    navigate('/membership-sign-up');
   };
 
   useEffect(() => {
@@ -42,7 +42,7 @@ export default function Join() {
 
     const ctx = canvas.getContext('2d');
     let canvasW = window.innerWidth;
-    let canvasH = window.innerHeight;
+    let canvasH = window.innerHeight + 80;
     canvas.width = canvasW;
     canvas.height = canvasH;
 
@@ -76,9 +76,9 @@ export default function Join() {
     // Track resize
     const handleResize = () => {
       const widthRatio = window.innerWidth / canvasW;
-      const heightRatio = window.innerHeight / canvasH;
+      const heightRatio = (window.innerHeight + 80) / canvasH;
       canvasW = window.innerWidth;
-      canvasH = window.innerHeight;
+      canvasH = window.innerHeight + 80;
       canvas.width = canvasW;
       canvas.height = canvasH;
       starsRef.current.forEach(star => {
@@ -94,6 +94,7 @@ export default function Join() {
 
     // Audio Playback Handler
     const playAudio = () => {
+      if (!effectsEnabled) return;
       if (bgAudioRef.current) bgAudioRef.current.play().catch(() => {});
       if (layer2AudioRef.current) layer2AudioRef.current.play().catch(() => {});
       if (layer3AudioRef.current) layer3AudioRef.current.play().catch(() => {});
@@ -105,12 +106,9 @@ export default function Join() {
     });
 
     // Star animation loop
-    let targetScale = 1;
     let currentScale = 1;
     let time = 0;
     let currentDistance = 1000;
-    let lastScrollX = window.scrollX;
-    let lastScrollY = window.scrollY;
 
     const animate = () => {
       const specialBtn = specialBtnRef.current;
@@ -128,30 +126,9 @@ export default function Join() {
       const dy = Math.max(rect.top - mousePosRef.current.y, 0, mousePosRef.current.y - rect.bottom);
       currentDistance = Math.hypot(dx, dy);
 
-      // Scroll changes
-      const currentScrollX = window.scrollX;
-      const currentScrollY = window.scrollY;
-      const scrollDeltaX = currentScrollX - lastScrollX;
-      const scrollDeltaY = currentScrollY - lastScrollY;
-      lastScrollX = currentScrollX;
-      lastScrollY = currentScrollY;
-
-      if (scrollDeltaX !== 0 || scrollDeltaY !== 0) {
-        starsRef.current.forEach(star => {
-          if (!star.isAccretion) {
-            star.x -= scrollDeltaX;
-            star.y -= scrollDeltaY;
-          }
-          star.baseX -= scrollDeltaX;
-          star.baseY -= scrollDeltaY;
-          if (star.history) {
-            star.history.forEach(p => {
-              p.x -= scrollDeltaX;
-              p.y -= scrollDeltaY;
-            });
-          }
-        });
-      }
+      // Proximity to button
+      const closenessVal = Math.max(0, 1 - (currentDistance / 600));
+      document.documentElement.style.setProperty('--btn-closeness', closenessVal);
 
       // Check 20 seconds hover
       if (isHoveringRef.current && !eeTriggered && hoverStartTimeRef.current > 0) {
@@ -172,10 +149,10 @@ export default function Join() {
 
         // Button scaling
         if (document.body.classList.contains('no-animations')) {
-          currentScale = targetScale;
+          currentScale = targetScaleRef.current;
           if (!eeTriggered) specialBtn.style.transform = `scale(${currentScale})`;
         } else {
-          currentScale += (targetScale - currentScale) * 0.15;
+          currentScale += (targetScaleRef.current - currentScale) * 0.15;
           const closeness = Math.max(0, 1 - (currentDistance / 400));
           const speed = 0.1 + (closeness * 0.4);
           const amplitude = closeness * 5;
@@ -225,9 +202,9 @@ export default function Join() {
               frontStars.push(star);
             }
           } else {
-            // Gravitational pull to cursor
-            const dxStar = mousePosRef.current.x - star.x;
-            const dyStar = mousePosRef.current.y - star.y;
+            // Gravitational pull to button center
+            const dxStar = bhX - star.x;
+            const dyStar = bhY - star.y;
             const dist = Math.hypot(dxStar, dyStar);
 
             if (isHoveringRef.current) {
@@ -235,8 +212,20 @@ export default function Join() {
               star.vx += Math.cos(Math.atan2(dyStar, dxStar)) * pullStrength;
               star.vy += Math.sin(Math.atan2(dyStar, dxStar)) * pullStrength;
               if (dist < 40) {
-                star.x = Math.random() > 0.5 ? -20 : canvasW + 20;
-                star.y = Math.random() * canvasH;
+                const randEdge = Math.floor(Math.random() * 4);
+                if (randEdge === 0) { // Top
+                  star.x = Math.random() * canvasW;
+                  star.y = -20;
+                } else if (randEdge === 1) { // Bottom
+                  star.x = Math.random() * canvasW;
+                  star.y = canvasH + 20;
+                } else if (randEdge === 2) { // Left
+                  star.x = -20;
+                  star.y = Math.random() * canvasH;
+                } else { // Right
+                  star.x = canvasW + 20;
+                  star.y = Math.random() * canvasH;
+                }
                 star.vx = 0;
                 star.vy = 0;
                 star.history = [];
@@ -344,7 +333,7 @@ export default function Join() {
         }
 
         if (eeTriggered) targetVol1 = 0;
-        if (isMuted || !effectsEnabled) targetVol1 = 0;
+        if (!effectsEnabled) targetVol1 = 0;
         bgAudioRef.current.volume += (targetVol1 - bgAudioRef.current.volume) * 0.1;
 
         if (layer2AudioRef.current) {
@@ -356,7 +345,7 @@ export default function Join() {
               targetVol2 = ((currentDistance - 250) / 250) * 0.5;
             }
           }
-          if (isMuted || !effectsEnabled) targetVol2 = 0;
+          if (!effectsEnabled) targetVol2 = 0;
           layer2AudioRef.current.volume += (targetVol2 - layer2AudioRef.current.volume) * 0.1;
         }
 
@@ -365,13 +354,13 @@ export default function Join() {
           if (!eeTriggered) {
             targetVol3 = currentDistance <= 500 ? 1 - (currentDistance / 500) : 0;
           }
-          if (isMuted || !effectsEnabled) targetVol3 = 0;
+          if (!effectsEnabled) targetVol3 = 0;
           layer3AudioRef.current.volume += (targetVol3 - layer3AudioRef.current.volume) * 0.1;
         }
 
         if (eeAudioRef.current) {
           let targetVolEE = eeTriggered ? 1.0 : 0;
-          if (isMuted || !effectsEnabled) targetVolEE = 0;
+          if (!effectsEnabled) targetVolEE = 0;
           eeAudioRef.current.volume += (targetVolEE - eeAudioRef.current.volume) * 0.05;
         }
       }
@@ -387,21 +376,69 @@ export default function Join() {
       if (animationFrameIdRef.current) {
         cancelAnimationFrame(animationFrameIdRef.current);
       }
+      document.documentElement.style.removeProperty('--btn-closeness');
     };
-  }, [eeTriggered, effectsEnabled, isMuted]);
+  }, [eeTriggered, effectsEnabled]);
+
+  useEffect(() => {
+    if (isDirectlyHovering && effectsEnabled) {
+      document.body.classList.add('button-hovered');
+    } else {
+      document.body.classList.remove('button-hovered');
+    }
+    return () => {
+      document.body.classList.remove('button-hovered');
+    };
+  }, [isDirectlyHovering, effectsEnabled]);
+
+  useEffect(() => {
+    if (effectsEnabled) {
+      document.body.classList.add('effects-enabled');
+    } else {
+      document.body.classList.remove('effects-enabled');
+    }
+    return () => {
+      document.body.classList.remove('effects-enabled');
+    };
+  }, [effectsEnabled]);
+
+  // Handle play/pause and force initial volume to 0 on effectsEnabled state toggle
+  useEffect(() => {
+    // Initialise audio volumes to 0 to prevent leakage during load/transitions
+    if (bgAudioRef.current) bgAudioRef.current.volume = 0;
+    if (layer2AudioRef.current) layer2AudioRef.current.volume = 0;
+    if (layer3AudioRef.current) layer3AudioRef.current.volume = 0;
+    if (eeAudioRef.current) eeAudioRef.current.volume = 0;
+
+    if (effectsEnabled) {
+      if (bgAudioRef.current) bgAudioRef.current.play().catch(() => {});
+      if (layer2AudioRef.current) layer2AudioRef.current.play().catch(() => {});
+      if (layer3AudioRef.current) layer3AudioRef.current.play().catch(() => {});
+      if (eeAudioRef.current) eeAudioRef.current.play().catch(() => {});
+    } else {
+      if (bgAudioRef.current) bgAudioRef.current.pause();
+      if (layer2AudioRef.current) layer2AudioRef.current.pause();
+      if (layer3AudioRef.current) layer3AudioRef.current.pause();
+      if (eeAudioRef.current) eeAudioRef.current.pause();
+    }
+  }, [effectsEnabled]);
 
   const handleMouseEnter = () => {
     isHoveringRef.current = true;
     hoverStartTimeRef.current = Date.now();
+    setIsDirectlyHovering(true);
+    targetScaleRef.current = 1.1;
   };
 
   const handleMouseLeave = () => {
     isHoveringRef.current = false;
     hoverStartTimeRef.current = 0;
+    setIsDirectlyHovering(false);
+    targetScaleRef.current = 1.0;
   };
 
   return (
-    <main>
+    <main className={isDirectlyHovering && effectsEnabled ? 'button-hovered' : ''}>
       {/* Audio tags */}
       <audio ref={bgAudioRef} src="/audio/button_proximity_1.mp3" loop />
       <audio ref={layer2AudioRef} src="/audio/button_proximity_2.mp3" loop />
@@ -413,39 +450,51 @@ export default function Join() {
         ref={canvasRef} 
         style={{
           position: 'fixed',
-          top: 0,
+          top: '-5rem',
           left: 0,
           width: '100vw',
-          height: '100vh',
+          height: 'calc(100vh + 5rem)',
           pointerEvents: 'none',
-          zIndex: 101,
-          opacity: eeTriggered ? 1 : 0.45,
+          zIndex: 1000,
+          opacity: 1,
           transition: eeTriggered ? 'none' : 'opacity 0.8s ease'
         }}
       />
 
-      <div className="mute-container" style={{ display: 'flex', gap: '1.25rem', justifyContent: 'center', zIndex: 105, position: 'relative', padding: '1rem 0' }}>
-        <label className="mute-toggle-label" style={{ cursor: 'pointer', fontSize: '0.9rem', color: '#cbd5e1' }}>
-          <input 
-            type="checkbox" 
-            checked={effectsEnabled}
-            onChange={(e) => setEffectsEnabled(e.target.checked)} 
-            style={{ marginRight: '6px' }}
-          />
-          Enable Special Effects
-        </label>
-        <label className="mute-toggle-label" style={{ cursor: 'pointer', fontSize: '0.9rem', color: '#cbd5e1' }}>
-          <input 
-            type="checkbox" 
-            checked={isMuted} 
-            onChange={(e) => setIsMuted(e.target.checked)}
-            style={{ marginRight: '6px' }}
-          />
-          Mute Audio
-        </label>
+      <div className="mute-container" style={{ display: eeTriggered ? 'none' : 'flex', justifyContent: 'center', zIndex: 105, position: 'relative', padding: '1rem 0' }}>
+        <button
+          onClick={() => setEffectsEnabled(!effectsEnabled)}
+          style={{
+            background: effectsEnabled ? 'rgba(96, 165, 250, 0.15)' : 'rgba(255, 255, 255, 0.05)',
+            border: effectsEnabled ? '1px solid rgba(96, 165, 250, 0.4)' : '1px solid rgba(255, 255, 255, 0.15)',
+            color: effectsEnabled ? '#60a5fa' : '#94a3b8',
+            padding: '0.6rem 1.5rem',
+            borderRadius: '999px',
+            cursor: 'pointer',
+            fontSize: '0.85rem',
+            fontWeight: 600,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.6rem',
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            boxShadow: effectsEnabled ? '0 0 15px rgba(96, 165, 250, 0.25)' : 'none',
+            outline: 'none'
+          }}
+        >
+          <span style={{
+            width: '8px',
+            height: '8px',
+            borderRadius: '50%',
+            background: effectsEnabled ? '#60a5fa' : '#64748b',
+            display: 'inline-block',
+            boxShadow: effectsEnabled ? '0 0 8px #60a5fa' : 'none',
+            transition: 'all 0.3s ease'
+          }}></span>
+          {effectsEnabled ? '★ Special Effects & Audio: ON' : '☆ Enable Special Effects & Audio'}
+        </button>
       </div>
 
-      <section className="section" style={{ zIndex: 102, position: 'relative' }}>
+      <section className="section" style={{ zIndex: 1010, position: 'relative' }}>
         <div className="container">
           <div className="section-header" style={{ opacity: eeTriggered ? 0 : 1, transition: 'opacity 1s ease' }}>
             <h1>Join the Debate Society</h1>
@@ -453,31 +502,8 @@ export default function Join() {
           <p className="section-copy" style={{ opacity: eeTriggered ? 0 : 1, transition: 'opacity 1s ease' }}>
             Become a part of our vibrant community. Whether you are an experienced debater or just starting, UCDS offers a platform to grow, learn, and compete. Joining is easy and opens up a world of opportunities.
           </p>
-          
-          <div style={{ maxWidth: '600px', margin: '3rem auto 0' }}>
-            <article 
-              id="member-card" 
-              className="card"
-              style={{
-                opacity: eeTriggered ? 0 : 1,
-                transition: 'opacity 1.2s ease',
-                background: '#112854',
-                color: '#ffffff',
-                border: '1px solid rgba(255,255,255,0.12)',
-                padding: '2.5rem',
-                borderRadius: '12px'
-              }}
-            >
-              <h3 style={{ marginTop: 0, fontSize: '1.5rem', color: '#60a5fa', marginBottom: '1rem', fontWeight: 700 }}>Become a Member</h3>
-              <p style={{ color: '#cbd5e1', lineHeight: '1.6' }}>
-                Sign up through the Google Form to become an official member. All members have access to all our training sessions, workshops, and social events. To vote and compete, you must pay club fees.
-              </p>
-            </article>
-          </div>
 
-          <section className="spacer"></section>
-
-          <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+          <div style={{ textAlign: 'center', marginTop: '10rem' }}>
             {!eeTriggered ? (
               <button 
                 ref={specialBtnRef} 
@@ -485,9 +511,9 @@ export default function Join() {
                 onClick={handleCommence}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
-                style={{ padding: '1rem 3.5rem', fontSize: '1.25rem', fontWeight: 'bold', zIndex: 104 }}
+                style={{ zIndex: 1010, position: 'relative' }}
               >
-                Commence
+                Become a Member
               </button>
             ) : (
               <div style={{ animation: 'fadeIn 2s ease', zIndex: 105, position: 'relative' }}>

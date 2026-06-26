@@ -101,6 +101,64 @@ const PANEL_THEMES = {
       </svg>
     )
   },
+  socials: {
+    id: 'socials',
+    label: 'Posts Manager',
+    path: '/executive/posts',
+    color: '#ec4899', // Pink
+    bgColor: 'rgba(236, 72, 153, 0.04)',
+    borderColor: 'rgba(236, 72, 153, 0.25)',
+    borderHoverColor: 'rgba(236, 72, 153, 0.45)',
+    shadowColor: 'rgba(236, 72, 153, 0.1)',
+    badgeColor: '#5b1236',
+    badgeTextColor: '#f472b6',
+    btnBg: '#ec4899',
+    btnHoverBg: '#db2777',
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" style={{ width: '20px', height: '20px' }}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg>
+    )
+  },
+  calendar: {
+    id: 'calendar',
+    label: 'Calendar Manager',
+    path: '/executive/calendar',
+    color: '#0ea5e9', // Sky Blue
+    bgColor: 'rgba(14, 165, 233, 0.04)',
+    borderColor: 'rgba(14, 165, 233, 0.25)',
+    borderHoverColor: 'rgba(14, 165, 233, 0.45)',
+    shadowColor: 'rgba(14, 165, 233, 0.1)',
+    badgeColor: '#0c4a6e',
+    badgeTextColor: '#38bdf8',
+    btnBg: '#0ea5e9',
+    btnHoverBg: '#0284c7',
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" style={{ width: '20px', height: '20px' }}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+      </svg>
+    )
+  },
+  membership: {
+    id: 'membership',
+    label: 'Membership Manager',
+    path: '/executive/membership',
+    color: '#34d399', // Emerald
+    bgColor: 'rgba(52, 211, 153, 0.04)',
+    borderColor: 'rgba(52, 211, 153, 0.25)',
+    borderHoverColor: 'rgba(52, 211, 153, 0.45)',
+    shadowColor: 'rgba(52, 211, 153, 0.1)',
+    badgeColor: '#064e3b',
+    badgeTextColor: '#6ee7b7',
+    btnBg: '#34d399',
+    btnHoverBg: '#059669',
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" style={{ width: '20px', height: '20px' }}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+      </svg>
+    )
+  },
   system: {
     id: 'system',
     label: 'System Debugging',
@@ -145,8 +203,12 @@ export default function ExecutivePortal() {
   const [subscribersCount, setSubscribersCount] = useState(0);
   const [ledgerCount, setLedgerCount] = useState(0);
   const [postsCount, setPostsCount] = useState(0);
+  const [instagramPostsCount, setInstagramPostsCount] = useState(0);
   const [allowedCount, setAllowedCount] = useState(0);
+  const [eventsCount, setEventsCount] = useState(0);
   const [netBalance, setNetBalance] = useState(0);
+  const [membersCount, setMembersCount] = useState(0);
+  const [alumniCount, setAlumniCount] = useState(0);
   const [metricsLoading, setMetricsLoading] = useState(true);
 
   // -------------------------------------------------------------
@@ -192,17 +254,29 @@ export default function ExecutivePortal() {
       const execsSnap = await getDocs(collection(db, 'executives'));
       setExecutivesCount(execsSnap.size);
 
-      // 3. Subscribers
+      // 3. Subscribers & Members
       const subsSnap = await getDocs(collection(db, 'subscribers'));
-      setSubscribersCount(subsSnap.size);
+      const allSubs = subsSnap.docs.map(doc => doc.data());
+      setSubscribersCount(allSubs.length);
+      
+      const membersSnap = await getDocs(collection(db, 'members'));
+      const allMembers = membersSnap.docs.map(doc => doc.data());
+      setMembersCount(allMembers.filter(m => !m.alumni).length);
+      setAlumniCount(allMembers.filter(m => m.alumni).length);
 
-      // 4. Blog Posts
+      // 4. Blog & Instagram Posts
       const postsSnap = await getDocs(collection(db, 'posts'));
-      setPostsCount(postsSnap.size);
+      const allPosts = postsSnap.docs.map(doc => doc.data());
+      setPostsCount(allPosts.filter(p => p.type !== 'instagram').length);
+      setInstagramPostsCount(allPosts.filter(p => p.type === 'instagram').length);
 
       // 5. Allowed Signups
       const allowedSnap = await getDocs(collection(db, 'allowed_emails'));
       setAllowedCount(allowedSnap.size);
+
+      // 6. Calendar Events
+      const eventsSnap = await getDocs(collection(db, 'calendar_events'));
+      setEventsCount(eventsSnap.size);
     } catch (err) {
       console.error("Error loading dashboard stats", err);
     } finally {
@@ -490,6 +564,24 @@ export default function ExecutivePortal() {
             </div>
           </div>
         );
+      case 'socials':
+        return (
+          <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+            <div style={{ background: 'rgba(0, 0, 0, 0.25)', padding: '1rem 1.5rem', borderRadius: '10px', minWidth: '150px' }}>
+              <div style={{ fontSize: '0.85rem', color: '#94a3b8', marginBottom: '0.25rem' }}>Instagram Posts</div>
+              <div style={{ fontSize: '1.75rem', fontWeight: 'bold', color: '#ec4899' }}>{instagramPostsCount}</div>
+            </div>
+          </div>
+        );
+      case 'calendar':
+        return (
+          <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+            <div style={{ background: 'rgba(0, 0, 0, 0.25)', padding: '1rem 1.5rem', borderRadius: '10px', minWidth: '150px' }}>
+              <div style={{ fontSize: '0.85rem', color: '#94a3b8', marginBottom: '0.25rem' }}>Scheduled Events</div>
+              <div style={{ fontSize: '1.75rem', fontWeight: 'bold', color: '#0ea5e9' }}>{eventsCount}</div>
+            </div>
+          </div>
+        );
       case 'system':
         return (
           <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap', marginTop: '1rem' }}>
@@ -499,6 +591,19 @@ export default function ExecutivePortal() {
                 <div style={{ fontSize: '0.85rem', color: '#94a3b8' }}>System Status</div>
                 <div style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#ffffff' }}>Operational</div>
               </div>
+            </div>
+          </div>
+        );
+      case 'membership':
+        return (
+          <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+            <div style={{ background: 'rgba(0, 0, 0, 0.25)', padding: '1rem 1.5rem', borderRadius: '10px', minWidth: '150px' }}>
+              <div style={{ fontSize: '0.85rem', color: '#94a3b8', marginBottom: '0.25rem' }}>Active Members</div>
+              <div style={{ fontSize: '1.75rem', fontWeight: 'bold', color: '#34d399' }}>{membersCount}</div>
+            </div>
+            <div style={{ background: 'rgba(0, 0, 0, 0.25)', padding: '1rem 1.5rem', borderRadius: '10px', minWidth: '150px' }}>
+              <div style={{ fontSize: '0.85rem', color: '#94a3b8', marginBottom: '0.25rem' }}>UCDS Alumni</div>
+              <div style={{ fontSize: '1.75rem', fontWeight: 'bold', color: '#a78bfa' }}>{alumniCount}</div>
             </div>
           </div>
         );
@@ -645,6 +750,9 @@ export default function ExecutivePortal() {
                       {activeTheme.id === 'email' && "Create newsletter drafts, schedule mail dispatches, and check subscribers."}
                       {activeTheme.id === 'blog' && "Write, edit, and publish posts shown on the dynamic club blog page."}
                       {activeTheme.id === 'access' && "Authorize signup emails to permit new executives to create accounts."}
+                      {activeTheme.id === 'socials' && "Manage dynamic Instagram post cards displayed natively to the socials feed."}
+                      {activeTheme.id === 'calendar' && "Schedule, edit, and organize society seminars, debate opens, socials, and executive board meetings."}
+                      {activeTheme.id === 'membership' && "Review member profiles, verify payments, approve fee waivers, and manage UCDS alumni."}
                       {activeTheme.id === 'system' && "Initialize Cloud Firestore collection tables with default mock databases."}
                     </p>
                   </div>

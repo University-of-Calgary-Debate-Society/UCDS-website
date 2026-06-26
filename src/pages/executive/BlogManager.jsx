@@ -42,7 +42,7 @@ export default function BlogManager() {
     try {
       const q = query(collection(db, 'posts'), orderBy('date', 'desc'));
       const snapshot = await getDocs(q);
-      setPostsList(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      setPostsList(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })).filter(post => post.type !== 'instagram'));
     } catch (err) {
       console.error("Error fetching posts list", err);
     } finally {
