@@ -109,6 +109,15 @@ body.join-page {
   height: 100vh !important;
 }
 
+@media (max-width: 768px) {
+  html.join-page,
+  body.join-page {
+    overflow: auto !important;
+    height: auto !important;
+    min-height: 100vh;
+  }
+}
+
 body.join-page .section {
   background-color: transparent !important;
   background-image: none !important;
