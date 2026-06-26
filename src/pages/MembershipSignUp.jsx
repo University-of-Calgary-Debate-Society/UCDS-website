@@ -17,7 +17,8 @@ export default function MembershipSignUp() {
   const [program, setProgram] = useState('');
   const [year, setYear] = useState('');
   const [feesWaived, setFeesWaived] = useState('no'); // 'yes' or 'no'
-  
+  const [newsletterSubscribe, setNewsletterSubscribe] = useState(true);
+
   // Interests state
   const [interests, setInterests] = useState({
     debater: false,
@@ -42,7 +43,7 @@ export default function MembershipSignUp() {
       alert("First name and last name are required.");
       return false;
     }
-    
+
     // Valid email regex
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(preferredEmail.trim())) {
@@ -116,7 +117,8 @@ export default function MembershipSignUp() {
         fullName: `${firstName.trim()} ${lastName.trim()}`,
         listType: 'ucds_members',
         lists: ['newsletter'],
-        active: true,
+        active: newsletterSubscribe,
+        'newsletter-subscribe': newsletterSubscribe,
         grade: year,
         institution: 'University of Calgary',
         club: 'The University of Calgary Debate Society',
@@ -144,6 +146,7 @@ export default function MembershipSignUp() {
         fees_paid: false,
         alumni: false,
         subscriberId: subDocRef.id, // linked reference
+        'newsletter-subscribe': newsletterSubscribe,
         institution: 'University of Calgary',
         club: 'The University of Calgary Debate Society',
         city: 'Calgary',
@@ -176,7 +179,7 @@ export default function MembershipSignUp() {
     <main>
       <section className="section" style={{ background: '#0b1a3a', padding: '4rem 0' }}>
         <div className="container" style={{ maxWidth: '900px' }}>
-          
+
           <div className="section-header" style={{ textAlign: 'center', marginBottom: '3rem' }}>
             <h1 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '3rem', fontWeight: 800, color: '#ffffff', marginBottom: '1rem' }}>
               UCDS Membership
@@ -205,7 +208,7 @@ export default function MembershipSignUp() {
             <h3 style={{ margin: '0 0 1.25rem 0', color: '#93c5fd', fontSize: '1.3rem', borderBottom: '1px solid rgba(147, 197, 253, 0.25)', paddingBottom: '0.5rem', fontWeight: 700 }}>
               📊 Package Comparison
             </h3>
-            
+
             <table style={{ width: '100%', borderCollapse: 'collapse', color: '#cbd5e1', textAlign: 'left', minWidth: '600px', fontSize: '0.95rem' }}>
               <thead>
                 <tr style={{ borderBottom: '2px solid rgba(255,255,255,0.1)' }}>
@@ -222,9 +225,9 @@ export default function MembershipSignUp() {
                   <td style={{ padding: '1rem' }}>$20</td>
                   <td style={{ padding: '1rem', position: 'relative' }}>
                     <span>Free</span>
-                    <button 
+                    <button
                       type="button"
-                      onMouseEnter={() => setShowTooltip(true)} 
+                      onMouseEnter={() => setShowTooltip(true)}
                       onMouseLeave={() => setShowTooltip(false)}
                       style={{ background: 'none', border: 'none', color: '#60a5fa', marginLeft: '0.4rem', cursor: 'pointer', outline: 'none', fontSize: '1rem' }}
                     >
@@ -301,92 +304,92 @@ export default function MembershipSignUp() {
           {/* Form Card */}
           <div className="form-section-card" style={{ background: 'rgba(17, 40, 84, 0.45)', border: '1px solid rgba(59, 130, 246, 0.2)', padding: '3rem', borderRadius: '1.25rem' }}>
             <h3 style={{ textTransform: 'uppercase', letterSpacing: '0.05em', color: '#93c5fd', textAlign: 'center', borderBottom: '1px solid rgba(147, 197, 253, 0.25)', marginBottom: '2rem', paddingBottom: '0.75rem', fontSize: '1.45rem', fontWeight: 700 }}>
-              📝 Sign-up Application
+              📝 Membership Sign-up Form
             </h3>
 
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
                 <div className="form-group">
                   <label htmlFor="firstName">First Name</label>
-                  <input 
-                    type="text" 
-                    id="firstName" 
-                    className="text-input" 
-                    placeholder="e.g. Jane"
-                    value={firstName} 
-                    onChange={e => setFirstName(e.target.value)} 
-                    required 
+                  <input
+                    type="text"
+                    id="firstName"
+                    className="text-input"
+                    placeholder="e.g. Yo"
+                    value={firstName}
+                    onChange={e => setFirstName(e.target.value)}
+                    required
                   />
                 </div>
                 <div className="form-group">
                   <label htmlFor="lastName">Last Name</label>
-                  <input 
-                    type="text" 
-                    id="lastName" 
-                    className="text-input" 
-                    placeholder="e.g. Smith"
-                    value={lastName} 
-                    onChange={e => setLastName(e.target.value)} 
-                    required 
+                  <input
+                    type="text"
+                    id="lastName"
+                    className="text-input"
+                    placeholder="e.g. mama"
+                    value={lastName}
+                    onChange={e => setLastName(e.target.value)}
+                    required
                   />
                 </div>
               </div>
 
               <div className="form-group">
                 <label htmlFor="preferredEmail">Preferred Email Address</label>
-                <input 
-                  type="email" 
-                  id="preferredEmail" 
-                  className="text-input" 
-                  placeholder="e.g. jane.smith@gmail.com"
-                  value={preferredEmail} 
-                  onChange={e => setPreferredEmail(e.target.value)} 
-                  required 
+                <input
+                  type="email"
+                  id="preferredEmail"
+                  className="text-input"
+                  placeholder="e.g. yo.mama@gmail.com"
+                  value={preferredEmail}
+                  onChange={e => setPreferredEmail(e.target.value)}
+                  required
                 />
               </div>
 
               <div className="form-group">
                 <label htmlFor="ucalgaryEmail">UCalgary Email Address (@ucalgary.ca)</label>
-                <input 
-                  type="email" 
-                  id="ucalgaryEmail" 
-                  className="text-input" 
-                  placeholder="e.g. jane.smith1@ucalgary.ca"
-                  value={ucalgaryEmail} 
-                  onChange={e => setUcalgaryEmail(e.target.value)} 
-                  required 
+                <input
+                  type="email"
+                  id="ucalgaryEmail"
+                  className="text-input"
+                  placeholder="e.g. yo.mama@ucalgary.ca"
+                  value={ucalgaryEmail}
+                  onChange={e => setUcalgaryEmail(e.target.value)}
+                  required
                 />
               </div>
 
               <div className="form-group">
                 <label htmlFor="ucid">UCalgary UCID (8+ digit number)</label>
-                <input 
-                  type="text" 
-                  id="ucid" 
-                  className="text-input" 
+                <input
+                  type="text"
+                  id="ucid"
+                  className="text-input"
                   placeholder="e.g. 30123456"
-                  value={ucid} 
-                  onChange={e => setUcid(e.target.value)} 
-                  required 
+                  value={ucid}
+                  onChange={e => setUcid(e.target.value)}
+                  required
                 />
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1.5rem' }}>
                 <div className="form-group">
                   <label htmlFor="program">Program of Study (Optional)</label>
-                  <input 
-                    type="text" 
-                    id="program" 
-                    className="text-input" 
+                  <input
+                    type="text"
+                    id="program"
+                    className="text-input"
                     placeholder="e.g. Bachelor of Science in Physics"
-                    value={program} 
-                    onChange={e => setProgram(e.target.value)} 
+                    value={program}
+                    onChange={e => setProgram(e.target.value)}
                   />
                 </div>
                 <div className="form-group">
                   <label htmlFor="year">Academic Year (Optional)</label>
-                  <select 
-                    id="year" 
+                  <select
+                    id="year"
                     className="select-input"
                     value={year}
                     onChange={e => setYear(e.target.value)}
@@ -394,7 +397,7 @@ export default function MembershipSignUp() {
                   >
                     <option value="" style={{ color: '#94a3b8' }}>Select...</option>
                     {[...Array(10)].map((_, i) => (
-                      <option key={i+1} value={String(i+1)} style={{ color: '#fff' }}>Year {i+1}</option>
+                      <option key={i + 1} value={String(i + 1)} style={{ color: '#fff' }}>Year {i + 1}</option>
                     ))}
                   </select>
                 </div>
@@ -404,9 +407,9 @@ export default function MembershipSignUp() {
               <div className="form-group" style={{ position: 'relative' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
                   <label style={{ margin: 0 }}>Request fee waiver?</label>
-                  <button 
+                  <button
                     type="button"
-                    onMouseEnter={() => setShowWaivedInfo(true)} 
+                    onMouseEnter={() => setShowWaivedInfo(true)}
                     onMouseLeave={() => setShowWaivedInfo(false)}
                     style={{ background: 'none', border: 'none', color: '#60a5fa', cursor: 'pointer', outline: 'none', fontSize: '1rem' }}
                   >
@@ -435,7 +438,7 @@ export default function MembershipSignUp() {
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', maxWidth: '300px', margin: '0 auto' }}>
-                  <div 
+                  <div
                     onClick={() => setFeesWaived('yes')}
                     style={{
                       cursor: 'pointer',
@@ -451,7 +454,7 @@ export default function MembershipSignUp() {
                   >
                     <div style={{ fontWeight: 700, fontSize: '1.05rem' }}>Yes</div>
                   </div>
-                  <div 
+                  <div
                     onClick={() => setFeesWaived('no')}
                     style={{
                       cursor: 'pointer',
@@ -473,11 +476,11 @@ export default function MembershipSignUp() {
               {/* Interests Glow Checkboxes */}
               <div className="form-group" style={{ marginTop: '0.5rem' }}>
                 <label style={{ marginBottom: '1rem' }}>Interested Club Activity Roles (Select all that apply)</label>
-                
+
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                  
+
                   {/* Judging */}
-                  <div 
+                  <div
                     onClick={() => toggleInterest('judge')}
                     style={{
                       cursor: 'pointer',
@@ -496,7 +499,7 @@ export default function MembershipSignUp() {
                   </div>
 
                   {/* Debating */}
-                  <div 
+                  <div
                     onClick={() => toggleInterest('debater')}
                     style={{
                       cursor: 'pointer',
@@ -515,7 +518,7 @@ export default function MembershipSignUp() {
                   </div>
 
                   {/* Volunteering */}
-                  <div 
+                  <div
                     onClick={() => toggleInterest('volunteer')}
                     style={{
                       cursor: 'pointer',
@@ -534,7 +537,7 @@ export default function MembershipSignUp() {
                   </div>
 
                   {/* Chilling */}
-                  <div 
+                  <div
                     onClick={() => toggleInterest('chill')}
                     style={{
                       cursor: 'pointer',
@@ -555,11 +558,25 @@ export default function MembershipSignUp() {
                 </div>
               </div>
 
+              {/* Newsletter subscription checkbox */}
+              <div className="form-group" style={{ marginTop: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.6rem' }}>
+                <input 
+                  type="checkbox" 
+                  id="newsletterSubscribe" 
+                  checked={newsletterSubscribe}
+                  onChange={e => setNewsletterSubscribe(e.target.checked)}
+                  style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+                />
+                <label htmlFor="newsletterSubscribe" style={{ margin: 0, color: '#cbd5e1', fontSize: '0.98rem', cursor: 'pointer', userSelect: 'none', fontWeight: 600 }}>
+                  Sign up for UCDS Newsletters!
+                </label>
+              </div>
+
               <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
-                <button 
-                  type="submit" 
-                  disabled={loading} 
-                  className="form-submit-btn" 
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="form-submit-btn"
                   style={{ width: '100%', maxWidth: '400px' }}
                 >
                   {loading ? 'Submitting registration...' : 'Continue to Payments'}

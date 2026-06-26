@@ -32,6 +32,7 @@ export default function CalendarManager() {
   const [location, setLocation] = useState('');
   const [description, setDescription] = useState('');
   const [link, setLink] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
 
   // Recurrence states (creation mode only)
   const [isRecurring, setIsRecurring] = useState(false);
@@ -168,6 +169,7 @@ export default function CalendarManager() {
         location: location.trim() || '',
         description: description.trim() || '',
         link: link.trim() || '',
+        imageUrl: imageUrl.trim() || '',
         updatedAt: new Date().toISOString()
       };
 
@@ -196,6 +198,7 @@ export default function CalendarManager() {
                   location: basePayload.location,
                   description: basePayload.description,
                   link: basePayload.link,
+                  imageUrl: basePayload.imageUrl,
                   updatedAt: new Date().toISOString()
                 });
                 updatedCount++;
@@ -270,6 +273,7 @@ export default function CalendarManager() {
     setLocation(evt.location || '');
     setDescription(evt.description || '');
     setLink(evt.link || '');
+    setImageUrl(evt.imageUrl || '');
     
     setOriginalEventGroupId(evt.recurrenceGroupId || null);
     setOriginalEventStartDate(evt.startDate || evt.date || null);
@@ -340,6 +344,7 @@ export default function CalendarManager() {
     setLocation('');
     setDescription('');
     setLink('');
+    setImageUrl('');
     setIsRecurring(false);
     setRecurrenceType('weekly');
     setCustomWeeks(2);
@@ -546,6 +551,18 @@ export default function CalendarManager() {
                   value={link} 
                   onChange={e => setLink(e.target.value)} 
                   placeholder="https://..." 
+                  className="exec-input-premium"
+                  style={{ padding: '0.75rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(15,23,42,0.6)', color: '#ffffff', outline: 'none' }}
+                />
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                <label style={{ fontSize: '0.85rem', color: '#cbd5e1', fontWeight: 600 }}>Event Image URL</label>
+                <input 
+                  type="text" 
+                  value={imageUrl} 
+                  onChange={e => setImageUrl(e.target.value)} 
+                  placeholder="https://.../image.jpg (Optional)" 
                   className="exec-input-premium"
                   style={{ padding: '0.75rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(15,23,42,0.6)', color: '#ffffff', outline: 'none' }}
                 />

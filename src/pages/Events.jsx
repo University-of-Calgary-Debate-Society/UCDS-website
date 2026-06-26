@@ -33,6 +33,18 @@ export default function Events() {
     };
     fetchUpcoming();
   }, []);
+
+  const formatEventDate = (dateStr) => {
+    if (!dateStr) return '';
+    const parts = dateStr.split('-');
+    if (parts.length !== 3) return dateStr;
+    const year = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1; // 0-indexed
+    const day = parseInt(parts[2], 10);
+    const date = new Date(year, month, day);
+    return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+  };
+
   return (
     <main>
       <section className="events-page-banner"></section>
@@ -188,6 +200,11 @@ export default function Events() {
                                   event.category === 'social' ? '#22c55e' :
                                   event.category === 'meeting' ? '#8b5cf6' : '#14b8a6'
                     }}></div>
+                    {event.imageUrl && (
+                      <div className="event-preview-image-wrapper" style={{ width: '100%', height: '140px', overflow: 'hidden', borderRadius: '8px', marginBottom: '0.25rem' }}>
+                        <img src={event.imageUrl} alt={event.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      </div>
+                    )}
                     <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 700, color: event.category === 'practice' ? '#93c5fd' : 
                                   event.category === 'tournament' ? '#fdba74' :
                                   event.category === 'social' ? '#86efac' :
@@ -196,7 +213,7 @@ export default function Events() {
                     </span>
                     <h3 style={{ margin: 0, fontSize: '1.2rem', color: '#ffffff', fontWeight: 'bold' }}>{event.title}</h3>
                     <p style={{ margin: 0, color: '#cbd5e1', fontSize: '0.9rem' }}>
-                      📅 {event.startDate && event.endDate && event.startDate !== event.endDate ? `${event.startDate} to ${event.endDate}` : (event.startDate || event.date)} {event.startTime ? `• ⏰ ${event.startTime} ${event.timezone || 'MST'}` : ''}
+                      📅 {event.startDate && event.endDate && event.startDate !== event.endDate ? `${formatEventDate(event.startDate)} to ${formatEventDate(event.endDate)}` : formatEventDate(event.startDate || event.date)} {event.startTime ? `• ⏰ ${event.startTime} ${event.timezone || 'MST'}` : ''}
                     </p>
                     {event.location && (
                       <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.85rem' }}>📍 {event.location}</p>
