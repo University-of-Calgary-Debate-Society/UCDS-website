@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import './../styles/constitution.css';
+import '../../../styles/constitution.css';
 
 export default function Constitution() {
   const [activeSection, setActiveSection] = useState('preamble');
