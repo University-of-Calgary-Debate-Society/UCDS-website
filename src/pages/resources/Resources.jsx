@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
 const BookIcon = ({ size = 24, style = {} }) => (
@@ -31,59 +32,193 @@ const NoteIcon = ({ size = 24, style = {} }) => (
   </svg>
 );
 
-const bgIcons = [
-  // Densest around title (top center area)
-  { type: 'book', size: 48, top: '40px', left: '12%', delay: '0s', duration: 'float-anim-slow' },
-  { type: 'youtube', size: 36, top: '25px', left: '26%', delay: '2s', duration: 'float-anim-medium' },
-  { type: 'headphone', size: 42, top: '80px', left: '38%', delay: '1s', duration: 'float-anim-fast' },
-  { type: 'note', size: 32, top: '30px', left: '55%', delay: '4s', duration: 'float-anim-slow' },
-  { type: 'book', size: 50, top: '75px', left: '68%', delay: '3s', duration: 'float-anim-medium' },
-  { type: 'youtube', size: 44, top: '35px', left: '82%', delay: '0.5s', duration: 'float-anim-fast' },
-  { type: 'note', size: 38, top: '110px', left: '90%', delay: '1.5s', duration: 'float-anim-slow' },
-  { type: 'headphone', size: 36, top: '130px', left: '18%', delay: '2.5s', duration: 'float-anim-medium' },
-  { type: 'book', size: 30, top: '160px', left: '48%', delay: '3.5s', duration: 'float-anim-fast' },
-  { type: 'youtube', size: 34, top: '190px', left: '76%', delay: '5s', duration: 'float-anim-slow' },
-
-  // Scattered lower down the page
-  { type: 'book', size: 44, top: '420px', left: '5%', delay: '1.2s', duration: 'float-anim-medium' },
-  { type: 'headphone', size: 48, top: '560px', left: '92%', delay: '0.8s', duration: 'float-anim-slow' },
-  { type: 'note', size: 40, top: '820px', left: '88%', delay: '2.2s', duration: 'float-anim-fast' },
-  { type: 'book', size: 36, top: '980px', left: '10%', delay: '4.1s', duration: 'float-anim-medium' },
-  { type: 'youtube', size: 46, top: '1150px', left: '8%', delay: '1.7s', duration: 'float-anim-slow' },
-  { type: 'note', size: 42, top: '1280px', left: '91%', delay: '3.3s', duration: 'float-anim-fast' }
-];
-
 export default function Resources() {
-  const renderIcon = (type, size) => {
-    switch (type) {
-      case 'book': return <BookIcon size={size} />;
-      case 'youtube': return <YouTubeIcon size={size} />;
-      case 'headphone': return <HeadphoneIcon size={size} />;
-      case 'note': return <NoteIcon size={size} />;
-      default: return null;
+  const canvasRef = useRef(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let animationFrameId;
+    let width = canvas.width = canvas.parentElement.scrollWidth || window.innerWidth;
+    let height = canvas.height = canvas.parentElement.scrollHeight || 1200;
+
+    const particles = [];
+    const particleCount = Math.min(150, Math.floor((width * height) / 7000)); // Increased node density
+
+    // Mouse tracker
+    const mouse = { x: null, y: null, active: false };
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.vx = (Math.random() - 0.5) * 0.35;
+        this.vy = (Math.random() - 0.5) * 0.35;
+        this.baseRadius = Math.random() * 2.0 + 2.0; // Larger base radius for visibility (2.0 to 4.0px)
+        this.radius = this.baseRadius;
+        this.baseOpacity = Math.random() * 0.12 + 0.22; // More visible base opacity (0.22 to 0.34)
+        this.opacity = this.baseOpacity;
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+
+        if (this.x < 0 || this.x > width) this.vx *= -1;
+        if (this.y < 0 || this.y > height) this.vy *= -1;
+
+        // Proximity check for cursor glow
+        if (mouse.active) {
+          const dx = this.x - mouse.x;
+          const dy = this.y - mouse.y;
+          const dist = Math.hypot(dx, dy);
+          const limit = 160;
+
+          if (dist < limit) {
+            const factor = 1 - dist / limit;
+            this.opacity = Math.min(0.95, this.baseOpacity + factor * 0.60); // Glowing opacity
+            this.radius = this.baseRadius + factor * 3.0; // Larger pulse
+          } else {
+            this.opacity = this.opacity * 0.95 + this.baseOpacity * 0.05;
+            this.radius = this.radius * 0.95 + this.baseRadius * 0.05;
+          }
+        } else {
+          this.opacity = this.opacity * 0.95 + this.baseOpacity * 0.05;
+          this.radius = this.radius * 0.95 + this.baseRadius * 0.05;
+        }
+      }
+
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        
+        // Add drop shadow glow when cursor is near
+        if (this.opacity > this.baseOpacity + 0.05) {
+          ctx.shadowBlur = 15;
+          ctx.shadowColor = 'rgba(96, 165, 250, 0.9)';
+          ctx.fillStyle = `rgba(186, 218, 255, ${this.opacity})`;
+        } else {
+          ctx.shadowBlur = 0;
+          ctx.fillStyle = `rgba(96, 165, 250, ${this.opacity})`;
+        }
+        
+        ctx.fill();
+        ctx.shadowBlur = 0; // Reset shadow for lines
+      }
     }
-  };
+
+    const init = () => {
+      particles.length = 0;
+      for (let i = 0; i < particleCount; i++) {
+        particles.push(new Particle());
+      }
+    };
+
+    const handleResize = () => {
+      if (!canvas.parentElement) return;
+      width = canvas.width = canvas.parentElement.scrollWidth || window.innerWidth;
+      height = canvas.height = canvas.parentElement.scrollHeight || 1200;
+      init();
+    };
+
+    const handleMouseMove = (e) => {
+      const rect = canvas.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+      mouse.active = true;
+    };
+
+    const handleMouseLeave = () => {
+      mouse.active = false;
+    };
+
+    const container = canvas.parentElement;
+    container.addEventListener('mousemove', handleMouseMove);
+    container.addEventListener('mouseleave', handleMouseLeave);
+    window.addEventListener('resize', handleResize);
+
+    init();
+
+    const animate = () => {
+      ctx.clearRect(0, 0, width, height);
+
+      // 1. Update & Draw Particles
+      particles.forEach(p => {
+        p.update();
+        p.draw();
+      });
+
+      // 2. Draw Network Lines between close nodes
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const p1 = particles[i];
+          const p2 = particles[j];
+          const dist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
+          const limit = 115;
+
+          if (dist < limit) {
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+
+            let opacity = (1 - dist / limit) * 0.22; // Base line opacity increased
+
+            // Highlight connections close to mouse pointer
+            if (mouse.active) {
+              const d1 = Math.hypot(p1.x - mouse.x, p1.y - mouse.y);
+              const d2 = Math.hypot(p2.x - mouse.x, p2.y - mouse.y);
+              if (d1 < 160 || d2 < 160) {
+                const mouseFactor = Math.max(1 - d1 / 160, 1 - d2 / 160);
+                opacity += mouseFactor * 0.40;
+              }
+            }
+
+            ctx.strokeStyle = `rgba(96, 165, 250, ${opacity})`;
+            ctx.lineWidth = opacity > 0.3 ? 1.4 : opacity > 0.15 ? 0.9 : 0.6;
+            ctx.stroke();
+          }
+        }
+      }
+
+      // 3. Draw clean connection line directly to mouse pointer
+      if (mouse.active) {
+        particles.forEach(p => {
+          const dist = Math.hypot(p.x - mouse.x, p.y - mouse.y);
+          const limit = 150;
+          if (dist < limit) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(mouse.x, mouse.y);
+            const opacity = (1 - dist / limit) * 0.45; // Increased line to mouse opacity
+            ctx.strokeStyle = `rgba(165, 203, 255, ${opacity})`;
+            ctx.lineWidth = 1.2;
+            ctx.stroke();
+          }
+        });
+      }
+
+      animationFrameId = requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      container.removeEventListener('mousemove', handleMouseMove);
+      container.removeEventListener('mouseleave', handleMouseLeave);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   return (
     <main className="resources-page-container">
-      {/* Floating decorative icons in background */}
-      <div className="resources-bg-decorations">
-        {bgIcons.map((icon, index) => (
-          <div 
-            key={index}
-            className={`floating-bg-icon ${icon.duration}`}
-            style={{
-              top: icon.top,
-              left: icon.left,
-              animationDelay: icon.delay
-            }}
-          >
-            {renderIcon(icon.type, icon.size)}
-          </div>
-        ))}
-      </div>
+      {/* Animated interactive neural network background */}
+      <canvas ref={canvasRef} className="resources-bg-decorations" />
 
-      <section className="section">
+      <section className="section" style={{ background: 'transparent', position: 'relative', zIndex: 1 }}>
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div className="section-header">
             <h2>Resources</h2>

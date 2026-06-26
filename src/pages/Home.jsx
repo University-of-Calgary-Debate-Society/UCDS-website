@@ -142,18 +142,24 @@ export default function Home() {
       <section className="hero">
         <div className="container hero-center">
           <div className={`hero-intro animate-fade-in-up ${isMobile ? 'hero-strip' : ''}`}>
-            <h1>Welcome to the UCDS!</h1>
-            <p className="hero-subtitle">University of Calgary Debate Society</p>
-            <div className="hero-actions">
+            <h1>Welcome to <span className="hero-large-ucds">UCDS</span>!</h1>
+            <div className="hero-actions" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '1.25rem', justifyContent: 'center', flexWrap: 'nowrap' }}>
               <Link className="button" to="/events">Events</Link>
-              <Link className="button button-secondary" to="/join">Get Involved</Link>
-              <button 
-                id="toggleAnimationsBtn" 
-                className="button button-secondary"
-                onClick={toggleAnimations}
-              >
-                {animationsDisabled ? 'Enable Animations' : 'Disable Animations'}
-              </button>
+              <Link className="button button-secondary" to="/join">Join</Link>
+              <div className="animation-toggle-wrapper">
+                <button 
+                  id="toggleAnimationsBtn" 
+                  className="button button-secondary"
+                  onClick={toggleAnimations}
+                >
+                  {animationsDisabled ? 'Enable Animations' : 'Disable Animations'}
+                </button>
+                <img 
+                  src={animationsDisabled ? "/photos/frown.png" : "/photos/smile.png"} 
+                  alt={animationsDisabled ? "Animations disabled (frown)" : "Animations enabled (smile)"} 
+                  className="animation-toggle-face"
+                />
+              </div>
             </div>
           </div>
         </div>

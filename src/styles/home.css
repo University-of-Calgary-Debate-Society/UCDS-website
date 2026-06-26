@@ -46,14 +46,14 @@
 .hero-intro {
   max-width: 45rem;
   width: min(92%, 45rem);
-  background: linear-gradient(135deg, rgba(17, 40, 84, 0.55) 0%, rgba(11, 26, 58, 0.65) 100%) !important;
-  backdrop-filter: blur(24px) !important;
-  -webkit-backdrop-filter: blur(24px) !important;
+  background: linear-gradient(135deg, rgba(30, 58, 114, 0.22) 0%, rgba(18, 38, 80, 0.26) 100%) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
   padding: 3.5rem 2.5rem !important;
   border-radius: 2.5rem !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
-  box-shadow: 0 30px 60px rgba(4, 10, 24, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 30px 60px rgba(4, 10, 24, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -64,7 +64,7 @@
   z-index: 20;
   opacity: 0;
   animation: fadeInUpIntro 1s ease-out 1s forwards, heroFloat 6s ease-in-out 2s infinite;
-  filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.45)) !important;
+  filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.35)) !important;
 }
 
 .hero-intro::after {
@@ -77,10 +77,38 @@
   height: 0 !important;
   border-left: 18px solid transparent !important;
   border-right: 18px solid transparent !important;
-  border-top: 18px solid rgba(11, 26, 58, 0.65) !important;
+  border-top: 18px solid rgba(18, 38, 80, 0.26) !important;
   border-width: 18px 18px 0 !important;
-  border-color: rgba(11, 26, 58, 0.65) transparent transparent transparent !important;
+  border-color: rgba(18, 38, 80, 0.26) transparent transparent transparent !important;
   display: block !important;
+}
+
+.hero-large-ucds {
+  font-size: 1.35em !important;
+  background: linear-gradient(135deg, #ffffff 10%, #60a5fa 55%, #3b82f6 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  display: inline-block;
+  font-weight: 900 !important;
+}
+
+.animation-toggle-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.animation-toggle-face {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.25));
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.animation-toggle-face:hover {
+  transform: scale(1.15) rotate(10deg);
 }
 
 @keyframes heroFloat {
@@ -143,22 +171,22 @@
 .hero-actions .button,
 .hero-actions .button-secondary,
 .hero-actions button#toggleAnimationsBtn {
-  background-color: #2563eb !important;
+  background-color: #000000 !important;
   color: #ffffff !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
-  padding: 0.95rem 1.5rem !important;
-  border-radius: 999px !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  padding: 0.95rem 1rem !important;
+  border-radius: 0px !important;
   font-weight: 700 !important;
-  font-size: 1rem !important;
+  font-size: 0.95rem !important;
   text-decoration: none !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
   height: 3.5rem !important;
-  width: 220px !important;
+  width: 175px !important;
   max-width: 100% !important;
   text-align: center !important;
-  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2) !important;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4) !important;
   transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
   cursor: pointer !important;
   outline: none !important;
@@ -169,9 +197,10 @@
 .hero-actions .button:hover,
 .hero-actions .button-secondary:hover,
 .hero-actions button#toggleAnimationsBtn:hover {
-  background-color: #3b82f6 !important;
+  background-color: #161616 !important;
+  border-color: rgba(96, 165, 250, 0.6) !important;
   transform: translateY(-2px) !important;
-  box-shadow: 0 14px 28px rgba(37, 99, 235, 0.35) !important;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.6) !important;
 }
 
 @media (max-width: 860px) {
