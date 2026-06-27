@@ -1,4 +1,4 @@
-import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { DialogProvider } from './context/DialogContext';
 import Header from './components/Header';
@@ -6,9 +6,9 @@ import Footer from './components/Footer';
 import Mascot from './components/Mascot';
 import Home from './pages/Home';
 import Events from './pages/events/Events';
-import CalgarySummerCup from './pages/events/hosted-tournaments/calgary-summer-2026/CalgarySummerCup';
-import Registration from './pages/events/hosted-tournaments/calgary-summer-2026/Registration';
-import RegistrationSuccess from './pages/events/hosted-tournaments/calgary-summer-2026/RegistrationSuccess';
+import CalgarySummerCup from './pages/events/tournaments/hosted-tournaments/calgary-summer-2026/CalgarySummerCup';
+import Registration from './pages/events/tournaments/hosted-tournaments/calgary-summer-2026/Registration';
+import RegistrationSuccess from './pages/events/tournaments/hosted-tournaments/calgary-summer-2026/RegistrationSuccess';
 import Blog from './pages/Blog';
 import Resources from './pages/resources/Resources';
 import Constitution from './pages/resources/internal/Constitution';
@@ -39,6 +39,9 @@ import MembershipFees from './pages/join/MembershipFees';
 import MembershipManager from './pages/executive/MembershipManager';
 import Tournaments from './pages/Tournaments';
 import EventManager from './pages/executive/EventManager';
+import HostedTournaments from './pages/events/tournaments/hosted-tournaments/HostedTournaments';
+import Help from './pages/events/tournaments/hosted-tournaments/help/Help';
+import HelpThanks from './pages/events/tournaments/hosted-tournaments/help/HelpThanks';
 
 // Component to handle scroll restoration and run the IntersectionObserver for scroll animations
 function RouteObserver() {
@@ -50,7 +53,7 @@ function RouteObserver() {
 
     // Toggle events-body class based on path to load the page background image
     const path = location.pathname;
-    const isEventsBodyRoute = path.startsWith('/events') || path.startsWith('/calendar') || path.startsWith('/connect/unsubscribe') || path.startsWith('/executive') || path.startsWith('/membership-sign-up');
+    const isEventsBodyRoute = path.startsWith('/events') || path.startsWith('/calendar') || path.startsWith('/connect/unsubscribe') || path.startsWith('/executive') || path.startsWith('/membership-sign-up') || path.startsWith('/help');
     
     if (isEventsBodyRoute) {
       document.body.classList.add('events-body');
@@ -242,6 +245,9 @@ function AnimatedRoutes() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/events" element={<Events />} />
+        <Route path="/events/hosted-tournaments" element={<HostedTournaments />} />
+        <Route path="/help" element={<Help />} />
+        <Route path="/help/thanks" element={<HelpThanks />} />
         <Route path="/events/calgary-summer-cup" element={<CalgarySummerCup />} />
         <Route path="/events/calgary-summer-cup/registration" element={<Registration />} />
         <Route path="/events/calgary-summer-cup/registration/success" element={<RegistrationSuccess />} />

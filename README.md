@@ -32,7 +32,7 @@ npm run build
 
 ## 🛠️ Technology Stack
 * **Frontend Core**: [React 19](https://react.dev/) + [Vite](https://vite.dev/)
-* **Routing**: [React Router 7](https://reactrouter.com/) (configured in Hash routing mode for smooth GitHub Pages integration)
+* **Routing**: [React Router 7](https://reactrouter.com/) (configured in Browser routing mode for clean URLs)
 * **Database & Auth**: [Firebase v12 client SDK](https://firebase.google.com/) (using Firestore for real-time document sync and Firebase Auth for secure executive access)
 * **Styling**: Modern, premium vanilla CSS with custom HSL variables, fluid micro-animations, glassmorphism containers, and full responsive layout grids.
 * **Backend Utilities**: Python (contained in the `backend/` directory) powering a Discord integration bot, email campaign worker script, and automated ledger operations.

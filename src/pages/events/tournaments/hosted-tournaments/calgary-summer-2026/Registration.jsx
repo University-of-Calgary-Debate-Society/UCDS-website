@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { collection, addDoc, query, where, getDocs, updateDoc, doc } from 'firebase/firestore';
-import { db } from '../../../../firebase';
-import { useDialog } from '../../../../context/DialogContext';
+import { db } from '../../../../../firebase';
+import { useDialog } from '../../../../../context/DialogContext';
 
 const STORAGE_KEY = "CalgarySummerCup2026_RegistrationDraft";
 

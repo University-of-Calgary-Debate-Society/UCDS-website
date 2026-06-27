@@ -107,6 +107,7 @@ export default function Header() {
               <Link to="/events" onClick={closeMenu}>Overview</Link>
               <Link to="/calendar" onClick={closeMenu}>Interactive Calendar</Link>
               <Link to="/events/tournaments" onClick={closeMenu}>Tournaments</Link>
+              <Link to="/events/hosted-tournaments" onClick={closeMenu}>Hosted Tournaments</Link>
             </div>
           </div>
           <NavLink to="/blog" onClick={closeMenu}>Blog</NavLink>

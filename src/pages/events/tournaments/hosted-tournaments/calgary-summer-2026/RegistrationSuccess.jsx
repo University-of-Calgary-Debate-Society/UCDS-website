@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../../../../firebase';
+import { db } from '../../../../../firebase';
 
 const STRIPE_LINKS = {
   30: 'https://buy.stripe.com/placeholder-30-cad',
