@@ -27,7 +27,7 @@ export default function HostedTournaments() {
 
       <section className="section" style={{ position: 'relative', zIndex: 1, padding: '6rem 0' }}>
         <div className="container" style={{ maxWidth: '1000px' }}>
-          
+
           {/* Header Title */}
           <div className="section-header straddle" style={{ textAlign: 'center', marginBottom: '4rem' }}>
             <h1 className="animate-on-scroll fade-in-left" style={{ fontFamily: 'Outfit, Inter, sans-serif', fontSize: 'clamp(2.5rem, 5vw, 4rem)', fontWeight: 800, margin: '0 0 1rem', letterSpacing: '-0.02em', background: 'linear-gradient(135deg, #ffffff 40%, #93c5fd 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
@@ -39,7 +39,7 @@ export default function HostedTournaments() {
           </div>
 
           <div style={{ display: 'grid', gap: '2.5rem' }}>
-            
+
             {/* Active Tournament Card: Calgary Summer Cup */}
             <article className="card animate-on-scroll lift-out-shadow" style={{
               background: 'linear-gradient(145deg, rgba(17, 40, 84, 0.6) 0%, rgba(13, 27, 56, 0.8) 100%)',
@@ -69,10 +69,10 @@ export default function HostedTournaments() {
                 Active Registration
               </div>
 
-              <h2 style={{ fontSize: '2rem', fontWeight: 800, margin: '0 0 1rem', color: '#ffffff', borderBottom: 'none', paddingBottom: 0 }}>
+              <h2 style={{ fontSize: '2rem', fontWeight: 800, margin: '0 0 1rem', color: '#1b1b1bff', borderBottom: 'none', paddingBottom: 0 }}>
                 Calgary Summer Cup 2026
               </h2>
-              
+
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', margin: '1rem 0 1.5rem', color: '#cbd5e1', fontSize: '0.95rem' }}>
                 <div>📅 <strong>Date:</strong> July 25-26, 2026</div>
                 <div>📍 <strong>Location:</strong> Online (Discord)</div>
@@ -80,7 +80,7 @@ export default function HostedTournaments() {
               </div>
 
               <p style={{ color: '#94a3b8', lineHeight: '1.6', fontSize: '1.05rem', margin: '0 0 2rem' }}>
-                Welcoming junior high and senior high school debaters in grades 6-12 to the Calgary Summer Cup 2026! 
+                Welcoming junior high and senior high school debaters in grades 6-12 to the Calgary Summer Cup 2026!
                 This tournament offers open adjudication, high-quality debate rounds, and competitive categories for both beginners and open speakers. Join independent adjudicators and top debaters for a weekend of academic excellence.
               </p>
 
@@ -96,7 +96,7 @@ export default function HostedTournaments() {
 
             {/* Inactive Tournament Grid */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
-              
+
               {/* Stub 1: Fall Open Novice Championships */}
               <article className="card animate-on-scroll lift-out-shadow" style={{
                 background: 'rgba(17, 40, 84, 0.25)',
@@ -121,7 +121,7 @@ export default function HostedTournaments() {
                     Our flagship training tournament designed specifically for university novices to gain competitive experience. Offers coaching seminars and constructive adjudication panels.
                   </p>
                 </div>
-                
+
                 <button disabled style={{
                   background: 'rgba(255, 255, 255, 0.05)',
                   border: '1px solid rgba(255, 255, 255, 0.1)',
