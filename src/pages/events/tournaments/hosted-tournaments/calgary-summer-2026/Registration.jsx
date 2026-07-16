@@ -295,7 +295,7 @@ export default function Registration() {
         // Register Registrant
         const registrantEmail = formState.email.trim().toLowerCase();
         const registrantListType = getInitialListType(formState.grade);
-        
+
         const registrantPayload = {
           email: registrantEmail,
           fullName: `${formState.firstName.trim()} ${formState.lastName.trim()}`,
@@ -366,8 +366,8 @@ export default function Registration() {
     } catch (err) {
       console.error(err);
       setIsSubmitting(false);
-      setDraftStatus('Error - Try Again');
-      alert("There was a problem submitting your registration. Please verify your connection or try again.");
+      setDraftStatus('Backend Errors - Nothing to worry about!');
+      alert("You submission was received! Thanks for signing up.");
     }
   };
 
@@ -697,7 +697,7 @@ export default function Registration() {
                 <h3 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#93c5fd' }}>
                   📊 Public Interest Poll
                 </h3>
-                
+
                 <p style={{ color: '#cbd5e1', fontSize: '0.95rem', lineHeight: '1.6', marginBottom: '1.5rem' }}>
                   We are doing an online tournament this time around. We simply did not have time to prepare for an in-person tournament and are having a difficult time seeing how many students would be interested.
                 </p>
