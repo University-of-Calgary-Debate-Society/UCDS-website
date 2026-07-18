@@ -69,11 +69,11 @@ export default function HostedTournaments() {
                 Active Registration
               </div>
 
-              <h2 style={{ fontSize: '2rem', fontWeight: 800, margin: '0 0 1rem', color: '#1b1b1bff', borderBottom: 'none', paddingBottom: 0 }}>
+              <h2 style={{ fontSize: '2rem', fontWeight: 800, margin: '0 0 1rem', color: '#000000ff', borderBottom: 'none', paddingBottom: 0 }}>
                 Calgary Summer Cup 2026
               </h2>
 
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', margin: '1rem 0 1.5rem', color: '#cbd5e1', fontSize: '0.95rem' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', margin: '1rem 0 1.5rem', color: 'rgba(77, 84, 93, 1)ff', fontSize: '0.95rem' }}>
                 <div>📅 <strong>Date:</strong> July 25-26, 2026</div>
                 <div>📍 <strong>Location:</strong> Online (Discord)</div>
                 <div>🎙️ <strong>Format:</strong> British Parliamentary (BP)</div>
