@@ -63,7 +63,7 @@ export default function CalgarySummerCup() {
       draw() {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        
+
         if (this.opacity > this.baseOpacity + 0.05) {
           ctx.shadowBlur = 12;
           ctx.shadowColor = 'rgba(96, 165, 250, 0.8)';
@@ -72,7 +72,7 @@ export default function CalgarySummerCup() {
           ctx.shadowBlur = 0;
           ctx.fillStyle = `rgba(96, 165, 250, ${this.opacity})`;
         }
-        
+
         ctx.fill();
         ctx.shadowBlur = 0;
       }
@@ -201,8 +201,8 @@ export default function CalgarySummerCup() {
       {/* Schedule Section */}
       <section className="section" style={{ position: 'relative' }}>
         <div className="bg-art-container" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>
-          <svg className="bg-art" style={{ top: '10%', left: '3%', width: '140px', height: '140px' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M4 22h16M6 22V10h12v12M12 6V2M8 4h8"/></svg>
-          <svg className="bg-art reverse" style={{ bottom: '15%', right: '4%', width: '130px', height: '130px' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" strokeLinecap="round" strokeLinejoin="round"><path d="m14 13-5.5 5.5t-9-1.5M9.5 8.5l9 9M17 11l4.5-4.5M10.5 4.5 15 9"/><path d="m6 21 3-3"/></svg>
+          <svg className="bg-art" style={{ top: '10%', left: '3%', width: '140px', height: '140px' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M4 22h16M6 22V10h12v12M12 6V2M8 4h8" /></svg>
+          <svg className="bg-art reverse" style={{ bottom: '15%', right: '4%', width: '130px', height: '130px' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" strokeLinecap="round" strokeLinejoin="round"><path d="m14 13-5.5 5.5t-9-1.5M9.5 8.5l9 9M17 11l4.5-4.5M10.5 4.5 15 9" /><path d="m6 21 3-3" /></svg>
         </div>
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div className="section-header straddle animate-on-scroll fade-in-left">
@@ -246,8 +246,8 @@ export default function CalgarySummerCup() {
       {/* Format & Platforms Section */}
       <section className="section alt" style={{ position: 'relative' }}>
         <div className="bg-art-container" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>
-          <svg className="bg-art" style={{ top: '25%', left: '8%', width: '130px', height: '130px' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-          <svg className="bg-art reverse" style={{ bottom: '20%', right: '6%', width: '140px', height: '140px' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M4 22h16M6 22V10h12v12M12 6V2M8 4h8"/></svg>
+          <svg className="bg-art" style={{ top: '25%', left: '8%', width: '130px', height: '130px' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" /></svg>
+          <svg className="bg-art reverse" style={{ bottom: '20%', right: '6%', width: '140px', height: '140px' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M4 22h16M6 22V10h12v12M12 6V2M8 4h8" /></svg>
         </div>
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div className="section-header straddle animate-on-scroll fade-in-left">
@@ -282,8 +282,8 @@ export default function CalgarySummerCup() {
       {/* Eligibility & Rules Section */}
       <section className="section" style={{ position: 'relative' }}>
         <div className="bg-art-container" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>
-          <svg className="bg-art reverse" style={{ top: '30%', right: '5%', width: '140px', height: '140px' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          <svg className="bg-art" style={{ bottom: '10%', left: '4%', width: '120px', height: '120px' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
+          <svg className="bg-art reverse" style={{ top: '30%', right: '5%', width: '140px', height: '140px' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
+          <svg className="bg-art" style={{ bottom: '10%', left: '4%', width: '120px', height: '120px' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z" /><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5" /></svg>
         </div>
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div className="section-header straddle animate-on-scroll fade-in-left">
@@ -344,8 +344,8 @@ export default function CalgarySummerCup() {
       {/* Judging & Awards Section */}
       <section className="section alt" style={{ position: 'relative' }}>
         <div className="bg-art-container" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>
-          <svg className="bg-art" style={{ top: '15%', right: '7%', width: '150px', height: '150px' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34M12 2a5 5 0 0 0-5 5v3c0 2.76 2.24 5 5 5s5-2.24 5-5V7a5 5 0 0 0-5-5z"/></svg>
-          <svg className="bg-art reverse" style={{ bottom: '25%', left: '5%', width: '130px', height: '130px' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="m14 13-5.5 5.5t-9-1.5M9.5 8.5l9 9M17 11l4.5-4.5M10.5 4.5 15 9"/><path d="m6 21 3-3"/></svg>
+          <svg className="bg-art" style={{ top: '15%', right: '7%', width: '150px', height: '150px' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34M12 2a5 5 0 0 0-5 5v3c0 2.76 2.24 5 5 5s5-2.24 5-5V7a5 5 0 0 0-5-5z" /></svg>
+          <svg className="bg-art reverse" style={{ bottom: '25%', left: '5%', width: '130px', height: '130px' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="m14 13-5.5 5.5t-9-1.5M9.5 8.5l9 9M17 11l4.5-4.5M10.5 4.5 15 9" /><path d="m6 21 3-3" /></svg>
         </div>
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div className="section-header straddle animate-on-scroll fade-in-left">
@@ -373,8 +373,8 @@ export default function CalgarySummerCup() {
       {/* Registration Section */}
       <section className="section" style={{ position: 'relative' }}>
         <div className="bg-art-container" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>
-          <svg className="bg-art" style={{ top: '20%', left: '6%', width: '120px', height: '120px' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-          <svg className="bg-art reverse" style={{ bottom: '10%', right: '7%', width: '140px', height: '140px' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <svg className="bg-art" style={{ top: '20%', left: '6%', width: '120px', height: '120px' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>
+          <svg className="bg-art reverse" style={{ bottom: '10%', right: '7%', width: '140px', height: '140px' }} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
         </div>
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <div className="section-header straddle animate-on-scroll fade-in-left">
@@ -391,9 +391,9 @@ export default function CalgarySummerCup() {
                     Registration Deadline
                   </h3>
                 </div>
-                <p style={{ fontSize: '2rem', fontWeight: 800, color: '#60a5fa', margin: '0.5rem 0', textAlign: 'left' }}>July 18th, 2026</p>
+                <p style={{ fontSize: '2rem', fontWeight: 800, color: '#60a5fa', margin: '0.5rem 0', textAlign: 'left' }}>July 22nd, 2026</p>
                 <p style={{ fontSize: '0.95rem', color: '#cbd5e1', margin: 0, textAlign: 'left', lineHeight: 1.5, maxWidth: '100%' }}>
-                  Please complete the <Link to="/events/calgary-summer-cup/registration" style={{ color: '#60a5fa', textDecoration: 'underline', fontWeight: 600 }}>registration form</Link> by this date to participate.
+                  Registration has been extended to July 22nd! Please complete the <Link to="/events/calgary-summer-cup/registration" style={{ color: '#60a5fa', textDecoration: 'underline', fontWeight: 600 }}>registration form</Link> by this date to participate.
                 </p>
               </div>
 
@@ -405,7 +405,7 @@ export default function CalgarySummerCup() {
                     Payment Deadline
                   </h3>
                 </div>
-                <p style={{ fontSize: '2rem', fontWeight: 800, color: '#fca5a5', margin: '0.5rem 0', textAlign: 'left' }}>July 20th, 2026</p>
+                <p style={{ fontSize: '2rem', fontWeight: 800, color: '#fca5a5', margin: '0.5rem 0', textAlign: 'left' }}>July 24th, 2026</p>
                 <p style={{ fontSize: '0.95rem', color: '#cbd5e1', margin: 0, textAlign: 'left', lineHeight: 1.5, maxWidth: '100%' }}>
                   Fee is <strong>$30 per debater</strong>. Send e-transfer payments to <a href="mailto:ucds.debate@gmail.com" style={{ color: '#60a5fa', textDecoration: 'underline' }}>ucds.debate@gmail.com</a>.
                 </p>
