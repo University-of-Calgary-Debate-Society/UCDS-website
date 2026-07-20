@@ -69,7 +69,7 @@ export default function HostedTournaments() {
                 Active Registration
               </div>
 
-              <h2 style={{ fontSize: '2rem', fontWeight: 800, margin: '0 0 1rem', color: '#000000ff', borderBottom: 'none', paddingBottom: 0 }}>
+              <h2 style={{ fontSize: '2rem', fontWeight: 800, margin: '0 0 1rem', color: 'rgba(77, 84, 93, 1)ff', borderBottom: 'none', paddingBottom: 0 }}>
                 Calgary Summer Cup 2026
               </h2>
 
