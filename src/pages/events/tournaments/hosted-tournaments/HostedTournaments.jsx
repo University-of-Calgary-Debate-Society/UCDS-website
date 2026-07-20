@@ -30,7 +30,7 @@ export default function HostedTournaments() {
 
           {/* Header Title */}
           <div className="section-header straddle" style={{ textAlign: 'center', marginBottom: '4rem' }}>
-            <h1 className="animate-on-scroll fade-in-left" style={{ fontFamily: 'Outfit, Inter, sans-serif', fontSize: 'clamp(2.5rem, 5vw, 4rem)', fontWeight: 800, margin: '0 0 1rem', letterSpacing: '-0.02em', background: 'linear-gradient(135deg, #ffffff 40%, #93c5fd 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+            <h1 className="animate-on-scroll fade-in-left" style={{ fontFamily: 'Outfit, Inter, sans-serif', fontSize: 'clamp(2.5rem, 5vw, 4rem)', fontWeight: 800, margin: '0 0 1rem', letterSpacing: '-0.02em', background: 'linear-gradient(135deg, #5c5c5cff 40%, #93c5fd 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               Hosted Tournaments
             </h1>
             <p className="animate-on-scroll fade-in" style={{ color: '#94a3b8', fontSize: '1.15rem', maxWidth: '700px', margin: '0 auto', lineHeight: '1.6' }}>
@@ -69,11 +69,11 @@ export default function HostedTournaments() {
                 Active Registration
               </div>
 
-              <h2 style={{ fontSize: '2rem', fontWeight: 800, margin: '0 0 1rem', color: 'rgba(77, 84, 93, 1)ff', borderBottom: 'none', paddingBottom: 0 }}>
+              <h2 style={{ fontSize: '2rem', fontWeight: 800, margin: '0 0 1rem', color: 'rgba(0, 0, 0, 1)ff', borderBottom: 'none', paddingBottom: 0 }}>
                 Calgary Summer Cup 2026
               </h2>
 
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', margin: '1rem 0 1.5rem', color: 'rgba(77, 84, 93, 1)ff', fontSize: '0.95rem' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', margin: '1rem 0 1.5rem', color: 'rgba(0, 0, 0, 1)ff', fontSize: '0.95rem' }}>
                 <div>📅 <strong>Date:</strong> July 25-26, 2026</div>
                 <div>📍 <strong>Location:</strong> Online (Discord)</div>
                 <div>🎙️ <strong>Format:</strong> British Parliamentary (BP)</div>
